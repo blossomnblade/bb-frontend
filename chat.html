@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Chat — Blossom & Blade</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/styles/chat.css" />
+</head>
+<body>
+  <div id="app" class="app">
+    <div class="bg" id="bg"></div>
+    <header class="bar">
+      <div class="left">
+        <a class="home" href="/index.html" title="Back">←</a>
+        <div id="manName" class="man">Blade</div>
+        <span id="planBadge" class="plan">Trial</span>
+        <span id="redBadge" class="red" title="Type RED any time">RED</span>
+      </div>
+      <div class="right">
+        <a class="planlink" href="/pay.html">Plans</a>
+      </div>
+    </header>
+
+    <main id="feed" class="feed" aria-live="polite"></main>
+
+    <footer class="composer">
+      <input id="input" type="text" maxlength="1000" placeholder="Say anything. Your fantasy, your rules." />
+      <button id="send" class="send">Send</button>
+    </footer>
+  </div>
+
+  <script src="/scripts/phrases.js"></script>
+  <script src="/scripts/chat.js"></script>
+</body>
+</html>
