@@ -1,15 +1,15 @@
-/* Blossom & Blade — chat runtime (frontend-only)
- * - Uses window.PHRASES for first/fallback lines (cheap local)
- * - Tries backend at https://api.blossomnblade.com/api/chat
- * - Keeps history per-man in localStorage (last 12 turns)
- * - Safety: RED badge + "RED" message triggers check-in
- * - Reply style: short (1–3 sentences); backend gets a styleHint to keep cost down
+/* Blossom & Blade — chat runtime with local "boyfriend memory"
+ * - Keeps short-term memory per-man in localStorage (nickname, likes, vibe, boundaries)
+ * - Uses window.PHRASES for cheap openers/fallbacks
+ * - Tries backend at https://api.blossomnblade.com/api/chat (sends memory{})
+ * - Safe mode: RED badge + "RED" message triggers check-in
+ * - Style: 1–3 sentences, vivid, non-graphic, follow her lead
  */
 (() => {
   // --- Config ---
-  const API_BASE = "https://api.blossomnblade.com"; // double-check spelling: blossomnblade.com
-  const MAX_TURNS = 12; // keep context small to save tokens
-  const FETCH_TIMEOUT_MS = 12000; // fail fast to local fallback
+  const API_BASE = "https://api.blossomnblade.com"; // spelling check: blossomnblade.com
+  const MAX_TURNS = 12;           // keep token cost down
+  const FETCH_TIMEOUT_MS = 12000; // fail fast → local fallback
 
   // --- URL & age gate ---
   const qs = new URLSearchParams(location.search);
@@ -32,7 +32,7 @@
   const redBadge = document.getElementById("redBadge");
   const bg = document.getElementById("bg");
 
-  // --- Labels & backgrounds (swap to your actual files) ---
+  // --- Labels & backgrounds (swap to your actual images later) ---
   const LABEL = {blade:"Blade", viper:"Viper", dylan:"Dylan", alexander:"Alexander", grayson:"Grayson", silas:"Silas"};
   const BG = {
     blade: "/images/characters/blade/chat-bg.jpg",
@@ -44,13 +44,32 @@
   };
 
   manName.textContent = LABEL[chosen];
-  planBadge.textContent = localStorage.getItem("bb.plan") || "Trial";
+  const PLAN = localStorage.getItem("bb.plan") || "Trial";
+  planBadge.textContent = PLAN;
   bg.style.backgroundImage = `url('${BG[chosen]}')`;
 
   // --- History per man ---
-  const KEY = `bb.chat.${chosen}.history`;
-  const loadHist = () => { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } };
-  const saveHist = (h) => localStorage.setItem(KEY, JSON.stringify(h.slice(-MAX_TURNS)));
+  const KEY_HIST = `bb.chat.${chosen}.history`;
+  const loadHist = () => { try { return JSON.parse(localStorage.getItem(KEY_HIST) || "[]"); } catch { return []; } };
+  const saveHist = (h) => localStorage.setItem(KEY_HIST, JSON.stringify(h.slice(-MAX_TURNS)));
+
+  // --- Local "boyfriend memory" per man ---
+  const KEY_MEM = `bb.mem.${chosen}`; // persisted per persona
+  function loadMem(){
+    try {
+      const m = JSON.parse(localStorage.getItem(KEY_MEM) || "{}");
+      // shape defaults
+      return {
+        nickname: m.nickname || null,     // e.g., "Red"
+        likes: Array.isArray(m.likes) ? m.likes.slice(0,20) : [], // "soft", "knife fantasy", "praise"
+        boundaries: Array.isArray(m.boundaries) ? m.boundaries.slice(0,20) : [], // "no choking", "no slurs"
+        vibe: m.vibe || null,             // "soft", "sharper", "supportive"
+        lastSeen: m.lastSeen || Date.now()
+      };
+    } catch { return { nickname:null, likes:[], boundaries:[], vibe:null, lastSeen:Date.now() }; }
+  }
+  function saveMem(m){ try { m.lastSeen = Date.now(); localStorage.setItem(KEY_MEM, JSON.stringify(m)); } catch {} }
+  const MEM = loadMem();
 
   // --- Render helpers ---
   function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -62,18 +81,18 @@
     feed.scrollTop = feed.scrollHeight;
   }
 
-  // --- First line (cheap local opener) ---
+  // --- First line (cheap local opener + nickname if known) ---
   const hist = loadHist();
   if (hist.length === 0) {
-    // Prefer BBPhrases if present (anti-repeat), else PHRASES
     let line = "";
-    if (window.BBPhrases && window.BBPhrases.personas?.[chosen]?.first?.length) {
+    if (window.BBPhrases?.personas?.[chosen]?.first?.length) {
       const bank = window.BBPhrases.personas[chosen].first;
       line = bank[Math.floor(Math.random()*bank.length)];
     } else {
       const firsts = (window.PHRASES?.[chosen]?.first) || ["I’m here. Lead the scene."];
       line = firsts[Math.floor(Math.random()*firsts.length)];
     }
+    if (MEM.nickname) line = line.replace(/^\s*/,"") + ` ${MEM.nickname}.`;
     addMsg("him", line);
     hist.push({role:"assistant", content:line});
     saveHist(hist);
@@ -84,12 +103,53 @@
   // --- RED handling ---
   redBadge.onclick = () => addMsg("him", (window.PHRASES?.system?.redCheck) || "RED noted. Pause, soften, or switch?");
 
+  // --- Memory extraction from her message (very simple, safe regexes) ---
+  function learnFrom(text){
+    const t = text.trim();
+
+    // nickname: "call me X", "my name is X", "I'm X" (one word or two)
+    let m = t.match(/\bcall me\s+([A-Za-z][\w'-]{1,20})(?:\s+([A-Za-z][\w'-]{1,20}))?/i)
+          || t.match(/\bmy name is\s+([A-Za-z][\w'-]{1,20})(?:\s+([A-Za-z][\w'-]{1,20}))?/i)
+          || t.match(/\bi['’]m\s+([A-Za-z][\w'-]{1,20})(?:\s+([A-Za-z][\w'-]{1,20}))?\b/i);
+    if (m) {
+      const nick = m.slice(1).filter(Boolean).join(" ");
+      if (nick && nick.length <= 24) MEM.nickname = nick;
+    }
+
+    // vibe prefs
+    if (/\bsoft(er)?\b/i.test(t)) MEM.vibe = "soft";
+    if (/\bsharp(er)?|rough(er)?|hard(er)?\b/i.test(t)) MEM.vibe = "sharper";
+    if (/\bsupport(ive)?|comfort\b/i.test(t)) MEM.vibe = "supportive";
+
+    // likes: "I like/love/am into/enjoy X"
+    const likeMatch = t.match(/\b(i\s+(really\s+)?(like|love|enjoy|am into)\s+)([^.!,;]{1,40})/i);
+    if (likeMatch) {
+      const item = likeMatch[4].trim().toLowerCase();
+      if (item && !MEM.likes.includes(item)) MEM.likes.push(item);
+    }
+
+    // boundaries: "no X", "not into X", "don't X"
+    const b = t.match(/\b(no|not into|don['’]t)\s+([^.!,;]{1,40})/i);
+    if (b) {
+      const bound = b[2].trim().toLowerCase();
+      if (bound && !MEM.boundaries.includes(bound)) MEM.boundaries.push(bound);
+    }
+
+    // Cap lists
+    MEM.likes = MEM.likes.slice(0,20);
+    MEM.boundaries = MEM.boundaries.slice(0,20);
+    saveMem(MEM);
+  }
+
   // --- Send handler ---
   sendBtn.onclick = async () => {
     const userText = (input.value || "").trim();
     if (!userText) return;
     input.value = "";
     addMsg("you", userText);
+
+    // Learn from her message (nickname/prefs)
+    learnFrom(userText);
 
     // If she types RED explicitly
     if (userText.toUpperCase() === "RED") {
@@ -99,7 +159,7 @@
       return;
     }
 
-    // Try backend with short style hint; fall back to local
+    // Try backend with memory; fallback locally
     try {
       const controller = new AbortController();
       const t = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -115,15 +175,28 @@
           mode: "romance",
           pov: "first-person",
           consented: true,
+          memory: {
+            nickname: MEM.nickname,
+            likes: MEM.likes,
+            boundaries: MEM.boundaries,
+            vibe: MEM.vibe,
+            plan: PLAN
+          },
           signals: { budget: "short", safety: "consent-first" },
-          styleHint: "Reply in 1-3 short sentences, vivid but non-graphic, follow her lead."
+          styleHint: "Reply in 1-3 short sentences, vivid but non-graphic, address her by nickname if known, follow her lead."
         })
       });
       clearTimeout(t);
 
       if (!res.ok) throw new Error("bad status " + res.status);
       const data = await res.json();
-      const reply = (data && data.reply && typeof data.reply === "string") ? data.reply : pickFallback();
+      let reply = (data && typeof data.reply === "string") ? data.reply : pickFallback();
+
+      // If backend forgot nickname, add a light tag on local side
+      if (MEM.nickname && !/(\bRed\b|\b\s?@?${MEM.nickname}\b)/i.test(reply)) {
+        reply = reply.replace(/\.$/,"") + ` ${MEM.nickname}.`;
+      }
+
       addMsg("him", reply);
       hist.push({role:"user", content:userText},{role:"assistant", content:reply});
       saveHist(hist);
@@ -140,14 +213,15 @@
 
   // --- Local fallback (cheap) ---
   function pickFallback(safe=false){
-    // Prefer persona fallback; then global; then generic
     const personaList =
       (window.PHRASES?.[chosen]?.fallback) ||
       (window.BBPhrases?.personas?.[chosen]?.fallback) ||
       [];
     const globalList = (window.PHRASES?.global?.fallback) || (window.BBPhrases?.global || {}).fallback || [];
-    const pool = personaList.concat(globalList);
-    const line = pool.length ? pool[Math.floor(Math.random()*pool.length)] : "Your fantasy—set the pace; I’ll follow.";
+    let line = (personaList.concat(globalList))[Math.floor(Math.random()*Math.max(1, personaList.length + globalList.length))] || "Your fantasy—set the pace; I’ll follow.";
+    if (MEM.nickname) line = line.replace(/\.$/,"") + ` ${MEM.nickname}.`;
+    if (MEM.vibe === "soft") line = "Soft and steady. " + line;
+    if (MEM.vibe === "supportive") line = "I’ve got you—breathe. " + line;
     return safe ? (line + " " + ((window.PHRASES?.system?.safeDefault) || "Staying within safe, consensual fantasy.")) : line;
   }
 })();
