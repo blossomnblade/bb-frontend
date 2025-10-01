@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Adults Only — Verify</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/styles/home.css" />
+  <style>.agebox{max-width:680px;margin:40px auto;padding:24px;border:1px solid #333;border-radius:14px;background:#0f0f11}</style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Adults-Only Check</h1>
+    <div class="agebox">
+      <p>Blossom &amp; Blade is for adults 18+ only. By continuing you confirm:</p>
+      <label><input id="a1" type="checkbox" /> I am 18 years or older.</label><br/>
+      <label><input id="a2" type="checkbox" /> I accept the community standards.</label><br/>
+      <label><input id="a3" type="checkbox" /> I understand refunds are within 24 hours only.</label>
+      <div class="cta"><button id="go" class="button">Continue</button></div>
+      <p class="hint">You can change plans anytime on the pay page.</p>
+    </div>
+  </main>
+  <script>
+    const next = new URLSearchParams(location.search).get("next") || "/index.html";
+    document.getElementById("go").onclick = () => {
+      if (!a1.checked || !a2.checked || !a3.checked) { alert("Please check all three boxes."); return; }
+      localStorage.setItem("bb.age.ok","1");
+      location.href = next;
+    };
+  </script>
+</body>
+</html>
