@@ -1,8 +1,10 @@
-/* Blossom & Blade — chat runtime (lead-first + richer memory + typing delay)
+/* Blossom & Blade — chat runtime (lead-first + richer memory + typing delay + WEBP autodetect)
+ * - Keeps your WEBP files. No renaming required.
+ * - Finds first existing image among common names: chat-bg.webp/jpg, <man>-chat.webp/jpg.
  * - Guys lead confidently; casual cussing OK (non-graphic).
- * - "Read the room" safety (no RED keyword).
+ * - Read-the-room safety (no RED keyword).
  * - Local boyfriend memory: nickname, hair, eyes, likes, boundaries, vibe.
- * - Smooth page scroll AND a typing bubble with ~3s jittered delay.
+ * - Smooth page scroll AND typing bubble with ~3s jittered delay.
  * - Backend (if up): https://api.blossomnblade.com/api/chat
  */
 (() => {
@@ -34,21 +36,45 @@
   const redBadge = document.getElementById("redBadge"); // optional safety menu
   const bg = document.getElementById("bg");
 
-  // --- Labels & backgrounds (images optional) ---
+  // --- Labels ---
   const LABEL = {blade:"Blade", viper:"Viper", dylan:"Dylan", alexander:"Alexander", grayson:"Grayson", silas:"Silas"};
-  const BG = {
-    blade: "/images/characters/blade/chat-bg.jpg",
-    viper: "/images/characters/viper/chat-bg.jpg",
-    dylan: "/images/characters/dylan/chat-bg.jpg",
-    alexander: "/images/characters/alexander/chat-bg.jpg",
-    grayson: "/images/characters/grayson/chat-bg.jpg",
-    silas: "/images/characters/silas/chat-bg.jpg"
-  };
-
   manName.textContent = LABEL[chosen];
   const PLAN = localStorage.getItem("bb.plan") || "Trial";
   planBadge.textContent = PLAN;
-  bg.style.backgroundImage = `url('${BG[chosen]}')`;
+
+  // --- Image helpers (auto-detect your filenames) ---------------------------
+  function testImage(url){
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(url);
+      img.onerror = () => reject(url);
+      img.src = url + (url.includes("?") ? "&" : "?") + "v=" + Date.now(); // bust cache
+    });
+  }
+  async function firstExisting(candidates){
+    for (const url of candidates) {
+      try { const ok = await testImage(url); return ok; } catch {}
+    }
+    return null;
+  }
+  function bgCandidatesFor(m){
+    // Try standard names first, then common personal ones you already use
+    return [
+      `/images/characters/${m}/chat-bg.webp`,
+      `/images/characters/${m}/chat-bg.jpg`,
+      `/images/characters/${m}/${m}-chat.webp`,
+      `/images/characters/${m}/${m}-chat.jpg`,
+      // a couple of likely alternates seen in your screenshots:
+      `/images/characters/${m}/bg_${m}_boardroom.webp`,
+      `/images/characters/${m}/bg_${m}_night.webp`
+    ];
+  }
+
+  // Set a placeholder, then swap when we find a real one
+  bg.style.backgroundImage = "linear-gradient(180deg,#0b0c0f,#151821)";
+  firstExisting(bgCandidatesFor(chosen)).then(url => {
+    if (url) bg.style.backgroundImage = `url('${url}')`;
+  });
 
   // --- History per man ---
   const KEY_HIST = `bb.chat.${chosen}.history`;
@@ -75,7 +101,7 @@
   function saveMem(m){ try { m.lastSeen = Date.now(); localStorage.setItem(KEY_MEM, JSON.stringify(m)); } catch {} }
   const MEM = loadMem();
 
-  // --- Render + smooth scroll ---
+  // --- Render + smooth scroll + typing bubble --------------------------------
   function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function scrollPageToBottom(){
     try { feed.scrollTop = feed.scrollHeight; } catch {}
@@ -88,12 +114,10 @@
     feed.appendChild(div);
     scrollPageToBottom();
   }
-
-  // Typing bubble (… animates)
   function startTyping(){
     const div = document.createElement("div");
     div.className = "msg him typing";
-    div.innerHTML = `<div class="meta">${LABEL[chosen]}</div><span class="dots">…</span>`;
+    div.innerHTML = `<div class="meta">${LABEL[chosen]}</div><span class="dots">•</span>`;
     feed.appendChild(div);
     scrollPageToBottom();
     const dots = div.querySelector(".dots");
@@ -103,7 +127,7 @@
     return () => { clearInterval(timer); div.remove(); };
   }
 
-  // --- First line (cheap local opener + nickname if known) ---
+  // --- First line (cheap local opener + nickname if known) -------------------
   const hist = loadHist();
   if (hist.length === 0) {
     let line = "";
@@ -122,11 +146,11 @@
     hist.slice(-10).forEach(m => addMsg(m.role === "user" ? "you" : "him", m.content));
   }
 
-  // --- Optional safety menu (no keyword required) ---
+  // --- Optional safety menu (no keyword required) ----------------------------
   redBadge.title = "Click to pause, soften, or switch";
   redBadge.onclick = () => addMsg("him", "Want to pause, soften, or switch personas?");
 
-  // --- Learn memory from her text ---
+  // --- Learn memory from her text --------------------------------------------
   function learnFrom(text){
     const t = text.trim();
 
@@ -167,7 +191,7 @@
     saveMem(MEM);
   }
 
-  // --- Read-the-room (no magic word) ---
+  // --- Read-the-room (no magic word) -----------------------------------------
   function detectIntent(text){
     const t = text.toLowerCase();
     if (/\b(pause|break|hold up|one sec|brb)\b/.test(t)) return "pause";
@@ -192,7 +216,7 @@
     }
   }
 
-  // --- Persona-forward lead lines (non-graphic; a little filthy is fine) ---
+  // --- Persona-forward lead lines (non-graphic; a little filthy is fine) -----
   function leadLine(man, mem){
     const nick = mem.nickname ? ` ${mem.nickname}` : "";
     const hair = mem.hair ? ` with that ${mem.hair} hair` : "";
@@ -232,7 +256,7 @@
     return x[Math.floor(Math.random()*x.length)];
   }
 
-  // --- Local fallback when API fails (assertive, 1–3 sentences) ---
+  // --- Local fallback when API fails (assertive, 1–3 sentences) --------------
   function pickFallback(){
     const personaList =
       (window.PHRASES?.[chosen]?.fallback) ||
@@ -248,7 +272,7 @@
     return line;
   }
 
-  // --- Utilities ---
+  // --- Utilities --------------------------------------------------------------
   const sleep = (ms)=> new Promise(res=>setTimeout(res, ms));
 
   async function getAPIReply(userText, leadMode){
@@ -289,7 +313,7 @@
     }
   }
 
-  // --- Send handler ---
+  // --- Send handler -----------------------------------------------------------
   sendBtn.onclick = async () => {
     const userText = (input.value || "").trim();
     if (!userText) return;
@@ -310,7 +334,7 @@
       }
     }
 
-    // Show typing, wait ~3s, gather backend reply (or fallback)
+    // Show typing, wait ~3s, then reply
     const stopTyping = startTyping();
     const delay = sleep(DELAY_MIN_MS + Math.random()*DELAY_JITTER_MS);
 
