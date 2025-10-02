@@ -210,26 +210,73 @@
 
     const text = chooseReply(userText);
     swapTypingToText(typing, text);
-  }
+ // Persona-specific openers
+const PERSONA_GREETS = {
+  blade: [
+    'hi, little rabbit.',
+    'found you again.',
+    'were you trying to get away?',
+    'come on—run.',
+    'I was already behind you.',
+    "don't look back.",
+  ],
+  viper: [
+    'evening, little treasure.',
+    'late again? I was waiting.',
+    "you know I'd find you.",
+    'come be good for me.',
+    'I smelled your fear.',
+  ],
+  dylan: [
+    'hey, backpack.',
+    'hop on.',
+    'you sitting up front or back.',
+    'you coming with me or am I stealing you?',
+    'helmet on, angel.',
+  ],
+  alexander: [
+    'evening, amuri miu.',
+    'come here, Cori.',
+    'eyes on me, amore.',
+    "I have you—don't worry.",
+    'closer, little one.',
+  ],
+  grayson: [
+    'checking in?',
+    'hey sassy.',
+    'eyes up, good girl.',
+    'that tone means you need orders.',
+    'on your knees.',
+  ],
+  silas: [
+    'alright, lass.',
+    'come curl in.',
+    'come sit with me.',
+    "I'll tune you just right.",
+    "let's get indecent.",
+  ],
+};
 
-  /* ---------- Greetings ---------- */
+/* ---------- Greetings ---------- */
 function greet() {
-  const greets = {
-    blade:     ['there you are.', 'evening.', 'good girl—say what you want.'],
-    alexander: ['come here, love.', 'morning, gorgeous.', 'there you are.'],
-    dylan:     ['hey you.', 'helmet’s off—eyes on you.', 'miss me?'],
-    viper:     ['there you are.', 'hey.', 'morning, gorgeous.'],
-    grayson:   ['good to see you.', 'you again—lucky me.', 'trouble?'],
-    silas:     ['hey luv.', 'backstage or front row, yeah?', 'c’mere.'],
-  };
-  const choices = greets[state.man] || ['hey.'];
-  const line = choices[Math.floor(Math.random() * choices.length)];
+  // 70% persona flavor, 30% shared variety
+  const persona = PERSONA_GREETS[state.man] || [];
+  const pool =
+    Math.random() < 0.7
+      ? [...persona, ...SHARED_GREETS]
+      : [...SHARED_GREETS, ...persona];
 
+  // light no-repeat per tab
+  const seenKey = `bb:greet:${state.man}`;
+  let ix = Number(sessionStorage.getItem(seenKey) || '-1');
+  ix = (ix + 1) % pool.length;
+  sessionStorage.setItem(seenKey, String(ix));
+
+  const line = pool[ix];
   const typing = addBubble('man', '', { typing: true });
   setTimeout(() => swapTypingToText(typing, line), jitterDelay(800, 1400));
 }
 
-  /* ---------- Wire send box (robust Enter + button) ---------- */
 function findComposerEl() {
   return (
     $('#composer') ||
