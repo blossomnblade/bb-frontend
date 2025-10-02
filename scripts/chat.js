@@ -74,9 +74,8 @@
   }
 
   /* ---------- Chat UI: bubbles ---------- */
-  const feed = $('#feed') || $('.feed') || $('#chat-feed') || document.body;
-  const input = $('#composer') || $('input[type="text"]') || $('textarea');
-  const sendBtn = $('#sendBtn') || $('button[type="submit"]') || $('button.send');
+ const feed = $('#feed') || $('.feed') || $('#chat-feed') || document.body;
+
 
   function addBubble(role, text, opts = {}) {
     const wrap = el('div', 'msg ' + (role === 'you' ? 'you' : 'man'));
@@ -211,25 +210,71 @@
     setTimeout(() => swapTypingToText(typing, open), jitterDelay(800, 1400));
   }
 
-  /* ---------- Wire send box ---------- */
-  function wireComposer() {
-    if (!input) return;
+  /* ---------- Wire send box (robust Enter + button) ---------- */
+function findComposerEl() {
+  return (
+    $('#composer') ||
+    $('#message') ||
+    $('.composer input') ||
+    $('.composer textarea') ||
+    $('.chat-input input') ||
+    $('.chat-input textarea') ||
+    $('textarea[placeholder]') ||
+    $('input[placeholder]') ||
+    $('[contenteditable="true"]')
+  );
+}
 
-    function send() {
-      const val = (input.value || '').trim();
-      if (!val) return;
-      addBubble('you', val);
-      input.value = '';
-      reply(val);
-    }
+function readComposerText(el) {
+  if (!el) return '';
+  if (el.matches('[contenteditable="true"]')) return (el.textContent || '').trim();
+  return (el.value || '').trim();
+}
 
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+function clearComposer(el) {
+  if (!el) return;
+  if (el.matches('[contenteditable="true"]')) el.textContent = '';
+  else el.value = '';
+}
+
+function wireComposer() {
+  const button =
+    $('#sendBtn') ||
+    $('button[type="submit"]') ||
+    $('button.send') ||
+    $('button:has(> .send)');
+
+  function send() {
+    const el = findComposerEl();
+    const val = readComposerText(el);
+    if (!val) return;
+    addBubble('you', val);
+    clearComposer(el);
+    reply(val);
+  }
+
+  // Enter (no Shift) inside any input/textarea/contenteditable
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    const el = document.activeElement;
+    if (!el) return;
+    if (el.matches('input, textarea, [contenteditable="true"]')) {
+      if (el.id === 'composer' || el.closest('.composer, .chat-input, .input-row, form')) {
         e.preventDefault();
         send();
       }
+    }
+  });
+
+  // Click on the visible Send button
+  if (button) {
+    button.addEventListener('click', (e) => {
+      e.preventDefault?.();
+      send();
     });
-    if (sendBtn) sendBtn.addEventListener('click', send);
+  }
+}
+
   }
 
   /* ---------- Plan badge / Main button / RED badge toggle ---------- */
