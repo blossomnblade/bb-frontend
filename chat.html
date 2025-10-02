@@ -10,17 +10,20 @@
   <!-- persona background (always BEHIND) -->
   <div class="bg" id="bg" aria-hidden="true"></div>
 
-  <header class="bar">
-    <div class="left">
-      <a class="home" href="/index.html" title="Back">‹</a>
-      <span id="manName" class="man">Blade</span>
-      <span id="planBadge" class="badge plan">Trial</span>
-      <span id="redBadge" class="badge red" title="Type RED any time">RED</span>
-    </div>
-    <div class="right">
-      <a class="planlink" href="/pay.html">Plans</a>
-    </div>
-  </header>
+ <header class="bar">
+  <div class="left">
+    <a class="home" href="/index.html" title="Back">←</a>
+    <span id="manName" class="man">Blade</span>
+    <span id="planBadge" class="plan">Trial</span>
+    <span id="redBadge" class="red hidden">RED</span> <!-- keep but hidden -->
+  </div>
+
+  <div class="right">
+    <a class="mainBtn hidden" href="/index.html" title="Choose">Main</a>
+    <a class="planlink" href="/pay.html">Plans</a>
+  </div>
+</header>
+
 
   <div class="stage" id="app">
     <!-- LEFT: portrait -->
