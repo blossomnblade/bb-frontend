@@ -20,6 +20,25 @@
     grayson: 'Grayson',
     silas: 'Silas',
   };
+  // Friendly callsigns (nicknames) + helpers
+  const CALLSIGNS = {
+    blade:     ['rabbit', 'sweetheart', 'pretty thing'],
+    alexander: ['love', 'darling', 'beautiful'],
+    dylan:     ['angel', 'babygirl', 'sweetheart'],
+    viper:     ['love', 'gorgeous', 'miu', 'baby'],
+    grayson:   ['darlin’', 'trouble', 'sweet thing'],
+    silas:     ['luv', 'darlin’', 'gorgeous'],
+  };
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function maybe(p=0.45){ return Math.random() < p; }
+  function sprinkleNick(text){
+    const list = CALLSIGNS[state.man] || [];
+    if (!list.length || !maybe()) return text;
+    const pre = pick(['hey', 'mm', '']);
+    const nick = pick(list);
+    return `${pre ? pre + ' ' : ''}${nick}, ${text}`.replace(/\s+/g,' ').trim();
+  }
 
   // Optional: background hints for CSS (some themes use body[data-man] selectors)
   const BG_HINT = {
@@ -194,21 +213,21 @@
   }
 
   /* ---------- Greetings ---------- */
-  function greet() {
-    // Short hello, no lectures
-    const styles = [
-      'hey there.',
-      'there you are.',
-      'morning, gorgeous.',
-      'good to see you.',
-      'hi.',
-    ];
-    const open = styles[Math.floor(rnd(0, styles.length))];
+function greet() {
+  const greets = {
+    blade:     ['there you are.', 'evening.', 'good girl—say what you want.'],
+    alexander: ['come here, love.', 'morning, gorgeous.', 'there you are.'],
+    dylan:     ['hey you.', 'helmet’s off—eyes on you.', 'miss me?'],
+    viper:     ['there you are.', 'hey.', 'morning, gorgeous.'],
+    grayson:   ['good to see you.', 'you again—lucky me.', 'trouble?'],
+    silas:     ['hey luv.', 'backstage or front row, yeah?', 'c’mere.'],
+  };
+  const choices = greets[state.man] || ['hey.'];
+  const line = choices[Math.floor(Math.random() * choices.length)];
 
-    // Type a hair, then greet
-    const typing = addBubble('man', '', { typing: true });
-    setTimeout(() => swapTypingToText(typing, open), jitterDelay(800, 1400));
-  }
+  const typing = addBubble('man', '', { typing: true });
+  setTimeout(() => swapTypingToText(typing, line), jitterDelay(800, 1400));
+}
 
   /* ---------- Wire send box (robust Enter + button) ---------- */
 function findComposerEl() {
