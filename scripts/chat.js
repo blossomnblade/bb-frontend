@@ -5,6 +5,11 @@
    - Fixed left portrait set via #bg
    - Graceful offline fallback if API is down
 */
+// ----- lock the selected persona for this tab -----
+const q = new URLSearchParams(location.search);
+let CURRENT_MAN = q.get('man') || sessionStorage.getItem('bb:man') || 'blade';
+sessionStorage.setItem('bb:man', CURRENT_MAN);
+// From now on, ALWAYS use CURRENT_MAN (do not re-read from URL later)
 
 (() => {
   // ---------- DOM ----------
