@@ -51,5 +51,65 @@
       };
     });
   </script>
+  <!-- === BEGIN: BB checkout (paste just above </body>) =================== -->
+<section id="bb-checkout" style="max-width:840px;margin:32px auto;padding:20px;border-radius:14px;background:#121317;border:1px solid #23262d">
+  <h2 style="margin:0 0 12px">Choose your access</h2>
+  <p style="opacity:.8;margin:0 0 16px">No auto-billing unless you check “Renew monthly”.</p>
+
+  <label style="display:flex;align-items:center;gap:.6rem;margin:.5rem 0 1rem">
+    <input id="bb-renew" type="checkbox">
+    <span>Renew monthly (auto-billing)</span>
+  </label>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <button id="bb-buy-monthly" style="padding:.8rem 1.2rem;border-radius:10px;background:#ff2d7a;border:0;color:white;font-weight:700">
+      Get monthly
+    </button>
+    <button id="bb-buy-day" style="padding:.8rem 1.2rem;border-radius:10px;background:#2b2f36;border:1px solid #3b4049;color:white">
+      Day Pass — $7.99
+    </button>
+  </div>
+
+  <p style="opacity:.7;margin-top:12px;font-size:.9rem">
+    You’ll get instant access after payment. Adults-only, fantasy chat.
+  </p>
+</section>
+
+<script>
+/* Replace these three URLs with your processor product links.
+   You can use:
+   - CCBill FlexForms product links (or dynamic pricing URLs you sign on your server)
+   - Segpay subscription/product links
+   - Epoch buy links
+   Keep the ?custom1= part—we append the selected man so the postback can grant the right access for a Day Pass.
+*/
+const LINKS = {
+  monthly_one_time : 'https://PROCESSOR.example/buy?product=MONTHLY_ONETIME',   // no rebill
+  monthly_recurring: 'https://PROCESSOR.example/buy?product=MONTHLY_RECUR',     // auto-renew
+  day_pass         : 'https://PROCESSOR.example/buy?product=DAY_PASS'           // 24 hours
+};
+
+// Helper: get current man from URL, default blade
+function currentMan() {
+  const q = new URLSearchParams(location.search);
+  return (q.get('man') || 'blade').toLowerCase();
+}
+// Append ?custom1=<man> (or change to custom field your processor uses)
+function withMan(url) {
+  const sep = url.includes('?') ? '&' : '?';
+  return url + sep + 'custom1=' + encodeURIComponent(currentMan());
+}
+
+document.getElementById('bb-buy-monthly').addEventListener('click', () => {
+  const renew = document.getElementById('bb-renew').checked;
+  const url = renew ? LINKS.monthly_recurring : LINKS.monthly_one_time;
+  location.href = withMan(url);
+});
+document.getElementById('bb-buy-day').addEventListener('click', () => {
+  location.href = withMan(LINKS.day_pass);
+});
+</script>
+<!-- === END: BB checkout ================================================ -->
+
 </body>
 </html>
