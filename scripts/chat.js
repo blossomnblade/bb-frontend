@@ -275,9 +275,7 @@ function wireComposer() {
   }
 }
 
-  }
-
-  /* ---------- Plan badge / Main button / RED badge toggle ---------- */
+    /* ---------- Plan badge / Main button / RED badge toggle ---------- */
   function wireHeaderBadges() {
     const plan = localStorage.getItem('bb_plan') || 'trial';
     const planBadge = $('#planBadge');
