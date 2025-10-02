@@ -1,17 +1,17 @@
-/* Blossom & Blade — chat runtime (lead-forward, memory, typing, WEBP/JPG autodetect) */
+/* Blossom & Blade — chat runtime (lead-forward, memory, typing, image autodetect) */
 (() => {
-  // --- Config ---
+  // ---- Config --------------------------------------------------------------
   const API_BASE = "https://api.blossomnblade.com";
   const MAX_TURNS = 12;
   const FETCH_TIMEOUT_MS = 12000;
   const DELAY_MIN_MS = 2800;
   const DELAY_JITTER_MS = 700;
 
-  // --- URL & age gate ---
+  // ---- URL & age gate ------------------------------------------------------
   const qs = new URLSearchParams(location.search);
-  const man = (qs.get("man") || "blade").toLowerCase();
-  const allowed = ["blade","viper","dylan","alexander","grayson","silas"];
-  const chosen = allowed.includes(man) ? man : "blade";
+  const manParam = (qs.get("man") || "blade").toLowerCase();
+  const ALLOWED = ["blade","viper","dylan","alexander","grayson","silas"];
+  const MAN = ALLOWED.includes(manParam) ? manParam : "blade";
 
   if (localStorage.getItem("bb.age.ok") !== "1") {
     const next = encodeURIComponent(location.pathname + location.search);
@@ -19,75 +19,66 @@
     return;
   }
 
-  // --- DOM ---
-  const feed = document.getElementById("feed");
-  const input = document.getElementById("input");
-  const sendBtn = document.getElementById("send");
-  const manName = document.getElementById("manName");
-  const planBadge = document.getElementById("planBadge");
-  const redBadge = document.getElementById("redBadge");
-  const bg = document.getElementById("bg");
+  // ---- DOM -----------------------------------------------------------------
+  const $ = (id) => document.getElementById(id);
+  const feed = $("feed") || $("messages") || document.querySelector(".feed");
+  const input = $("input") || $("message");
+  const sendBtn = $("send") || $("submit");
+  const manName = $("manName");
+  const planBadge = $("planBadge");
+  const redBadge = $("redBadge");
+  const bg = $("bg");
 
-  // --- Labels / plan ---
   const LABEL = {blade:"Blade", viper:"Viper", dylan:"Dylan", alexander:"Alexander", grayson:"Grayson", silas:"Silas"};
-  manName.textContent = LABEL[chosen];
-  planBadge.textContent = localStorage.getItem("bb.plan") || "Trial";
+  if (manName) manName.textContent = LABEL[MAN];
+  if (planBadge) planBadge.textContent = localStorage.getItem("bb.plan") || "Trial";
 
-  // --- Image helpers: broadened to match your actual names -------------------
+  // ---- Image helpers (match your actual filenames) -------------------------
   function testImage(url){
-    return new Promise((resolve, reject) => {
+    return new Promise((res, rej) => {
       const img = new Image();
-      img.onload = () => resolve(url);
-      img.onerror = () => reject(url);
+      img.onload = () => res(url);
+      img.onerror = () => rej(url);
       img.src = url + (url.includes("?") ? "&" : "?") + "v=" + Date.now();
     });
   }
   async function firstExisting(candidates){
-    for (const url of candidates) {
-      try { await testImage(url); return url; } catch {}
-    }
+    for (const url of candidates){ try{ await testImage(url); return url; }catch{} }
     return null;
   }
-
-  // Folder-specific extras seen in your repo
   const BG_EXTRAS = {
-    blade:     ["blade-woods.jpg", "blade.webp"],
+    blade:     ["blade-woods.jpg","blade.webp"],
     dylan:     ["dylan-garage.jpg"],
     viper:     ["viper-bg.jpg"],
     grayson:   ["grayson-bg.jpg"],
     silas:     ["bg_silas_stage.jpg"],
     alexander: ["bg_alexander_boardroom.jpg"]
   };
-
   function bgCandidatesFor(m){
     const base = [
-      `/images/characters/${m}/chat-bg.webp`,
-      `/images/characters/${m}/chat-bg.jpg`,
       `/images/characters/${m}/${m}-chat.webp`,
       `/images/characters/${m}/${m}-chat.jpg`,
       `/images/characters/${m}/${m}-bg.webp`,
       `/images/characters/${m}/${m}-bg.jpg`,
-      `/images/characters/${m}/bg_${m}.webp`,
-      `/images/characters/${m}/bg_${m}.jpg`,
-      `/images/characters/${m}/bg-${m}.webp`,
-      `/images/characters/${m}/bg-${m}.jpg`,
+      `/images/characters/${m}/chat-bg.webp`,
+      `/images/characters/${m}/chat-bg.jpg`,
       `/images/characters/${m}/background.webp`,
       `/images/characters/${m}/background.jpg`
     ];
-    const extras = (BG_EXTRAS[m] || []).map(n => `/images/characters/${m}/${n}`);
-    return base.concat(extras);
+    return base.concat((BG_EXTRAS[m] || []).map(n => `/images/characters/${m}/${n}`));
+  }
+  if (bg){
+    bg.style.backgroundImage = "linear-gradient(180deg,#0b0c0f,#151821)";
+    firstExisting(bgCandidatesFor(MAN)).then(url => { if (url) bg.style.backgroundImage = `url('${url}')`; });
   }
 
-  // set gradient, then swap in first file that exists
-  bg.style.backgroundImage = "linear-gradient(180deg,#0b0c0f,#151821)";
-  firstExisting(bgCandidatesFor(chosen)).then(url => { if (url) bg.style.backgroundImage = `url('${url}')`; });
-
-  // --- History & memory ------------------------------------------------------
-  const KEY_HIST = `bb.chat.${chosen}.history`;
+  // ---- History & memory ----------------------------------------------------
+  const KEY_HIST = `bb.chat.${MAN}.history`;
   const loadHist = () => { try { return JSON.parse(localStorage.getItem(KEY_HIST) || "[]"); } catch { return []; } };
   const saveHist = (h) => localStorage.setItem(KEY_HIST, JSON.stringify(h.slice(-MAX_TURNS)));
+  const hist = loadHist(); // <-- single declaration (fixes earlier crash)
 
-  const KEY_MEM = `bb.mem.${chosen}`;
+  const KEY_MEM = `bb.mem.${MAN}`;
   const cap = s => (!s ? s : s.replace(/\b\w/g, m => m.toUpperCase()));
   function loadMem(){
     try {
@@ -106,50 +97,65 @@
   function saveMem(m){ try { m.lastSeen = Date.now(); localStorage.setItem(KEY_MEM, JSON.stringify(m)); } catch {} }
   const MEM = loadMem();
 
-  // --- Render helpers + smooth page scroll + typing --------------------------
+  // ---- Render helpers + typing ---------------------------------------------
   function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function scrollPageToBottom(){
     try { feed.scrollTop = feed.scrollHeight; } catch {}
     try { window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" }); } catch {}
   }
   function addMsg(who, text){
+    if (!feed) return;
     const div = document.createElement("div");
     div.className = "msg " + (who === "you" ? "you" : "him");
-    div.innerHTML = `<div class="meta">${who === "you" ? "You" : LABEL[chosen]}</div>${escapeHtml(text)}`;
+    div.innerHTML = `<div class="meta">${who === "you" ? "You" : LABEL[MAN]}</div>${escapeHtml(text)}`;
     feed.appendChild(div);
     scrollPageToBottom();
   }
   function startTyping(){
+    if (!feed) return () => {};
     const div = document.createElement("div");
     div.className = "msg him typing";
-    div.innerHTML = `<div class="meta">${LABEL[chosen]}</div><span class="dots">•</span>`;
+    div.innerHTML = `<div class="meta">${LABEL[MAN]}</div><span class="dots">•</span>`;
     feed.appendChild(div);
     scrollPageToBottom();
     const dots = div.querySelector(".dots");
-    let i = 0;
-    const frames = ["•", "••", "•••"];
-    const timer = setInterval(()=>{ i=(i+1)%frames.length; dots.textContent = frames[i]; }, 450);
-    return () => { clearInterval(timer); div.remove(); };
+    let i=0, frames=["•","••","•••"];
+    const t = setInterval(()=>{ i=(i+1)%frames.length; dots.textContent = frames[i]; }, 450);
+    return () => { clearInterval(t); div.remove(); };
   }
 
-  // --- First line (local) ----------------------------------------------------
-  const hist = loadHist();
+  // ---- First line (warm + persona-forward) ---------------------------------
+  const PETS = ["sweetheart","love","gorgeous","trouble","angel","doll","beautiful","darling","hun"];
+  function pet(){ return PETS[Math.floor(Math.random()*PETS.length)]; }
+  function firstLine(man, mem){
+    const nick = mem.nickname ? mem.nickname : pet();
+    const bank = {
+      blade:     [`Hey, ${nick}. Come closer.`, `There you are, ${nick}. I’ve got you tonight.`],
+      viper:     [`Evening, ${nick}. Eyes on me.`, `There you are—good timing, ${nick}.`],
+      dylan:     [`Hey, ${nick}. Hop in.`, `You made it—helmet on, ${nick}.`],
+      alexander: [`Evening, ${nick}. Stand glorious for me.`, `Come here, ${nick}. I’ll take my time.`],
+      grayson:   [`Report in, ${nick}.`, `Eyes up, ${nick}. I’ve got orders and praise.`],
+      silas:     [`Alright, ${nick}. Come curl in.`, `Hey, ${nick}. Let me tune your mood.`]
+    }[man] || [`Hey, ${nick}. I’m right here.`];
+    return bank[Math.floor(Math.random()*bank.length)];
+  }
+
   if (hist.length === 0) {
-    const firsts = (window.PHRASES?.[chosen]?.first) || ["I’m here. Make room for me."];
-    let line = firsts[Math.floor(Math.random()*firsts.length)];
-    if (MEM.nickname) line = line.replace(/\s*$/, "") + ` ${MEM.nickname}.`;
-    addMsg("him", line);
-    hist.push({role:"assistant", content:line});
+    const opener = firstLine(MAN, MEM);
+    addMsg("him", opener);
+    hist.push({role:"assistant", content: opener});
     saveHist(hist);
   } else {
     hist.slice(-10).forEach(m => addMsg(m.role === "user" ? "you" : "him", m.content));
   }
 
-  // --- Safety menu (no magic word required) ----------------------------------
-  redBadge.title = "Click to pause, soften, or switch";
-  redBadge.onclick = () => addMsg("him", "Want to pause, soften, or switch personas?");
+  // ---- Safety quick actions (no magic word) --------------------------------
+  if (redBadge) {
+    redBadge.title = "Click to pause, soften, or switch";
+    redBadge.onclick = () => addMsg("him", "Want to pause, soften, or switch personas?");
+  }
 
-  // --- Learn memory from her text --------------------------------------------
+  // ---- Learn memory from her text ------------------------------------------
   function learnFrom(text){
     const t = text.trim();
 
@@ -191,7 +197,7 @@
     saveMem(MEM);
   }
 
-  // --- Intent sensing (pause/softer/stop/switch/lead) ------------------------
+  // ---- Intent sensing (pause/softer/stop/switch/lead) ----------------------
   function detectIntent(text){
     const t = text.toLowerCase();
     if (/\b(pause|break|hold up|one sec|brb)\b/.test(t)) return "pause";
@@ -209,52 +215,26 @@
       case "softer": return "I’ll slow the pace and keep it soft." + nick;
       case "stop":   return "Stopped. You’re safe with me." + nick;
       case "switch": return "Tell me who you want—Blade, Viper, Dylan, Alexander, Grayson, or Silas." + nick;
-      case "invite": return leadLine(chosen, MEM);
+      case "invite": return leadLine(MAN, MEM);
       default:       return null;
     }
   }
 
-  // --- Persona-forward lead lines (non-graphic; casual cussing allowed) ------
+  // ---- Persona-forward “lead” line (short, confident, a little filthy ok) --
   function leadLine(man, mem){
     const nick = mem.nickname ? ` ${mem.nickname}` : "";
-    const hair = mem.hair ? ` with that ${mem.hair} hair` : "";
-    const eyes = mem.eyes ? ` and those ${mem.eyes} eyes` : "";
-    const x = {
-      blade: [
-        `Come here and let me set the pace${nick}.`,
-        `I’m taking you out of your head and into my hands${hair}${eyes}.`,
-        `You’re mine for the night—relax and let me run the scene${nick}.`
-      ],
-      viper: [
-        `Chin up. I’ll handle the rest—watch me work${nick}.`,
-        `I’m mapping you, inch by inch—don’t look away.`,
-        `Be greedy. I’ll make you say my name, then thank me.`
-      ],
-      dylan: [
-        `Hop on—I’ll steer hard and keep you laughing.`,
-        `I’ve got the keys and a wicked route; hold tight${nick}.`,
-        `I’ll pick the song and the sin—just say when to stop.`
-      ],
-      alexander: [
-        `Yield with pride and I’ll worship you properly${nick}.`,
-        `Velvet first, steel later—stand gorgeous and let me indulge you.`,
-        `I’ll ruin your doubts and polish your crown.`
-      ],
-      grayson: [
-        `Eyes up. I’ll give the orders and the praise when you earn it${nick}.`,
-        `Square your shoulders; I’ll make you blush for it.`,
-        `Stand here. I’ll handle the lesson—then the reward.`
-      ],
-      silas: [
-        `Come curl in and let me tune you to my rhythm${nick}.`,
-        `I’ll pour you through a chorus and make you shiver—damn, you’re pretty.`,
-        `Let me be shameless for both of us tonight.`
-      ]
-    }[man] || [`I’ll take the lead and keep you smiling${nick}.`];
-    return x[Math.floor(Math.random()*x.length)];
+    const lines = {
+      blade:     [`Come here and let me set the pace.${nick}`, `Relax—I’ll run the scene.${nick}`],
+      viper:     [`Chin up. I’ll handle the rest.${nick}`, `I’m mapping you—don’t look away.`],
+      dylan:     [`Hop on—I’ll steer hard and keep you laughing.${nick}`, `I’ve got the keys and a wicked route.`],
+      alexander: [`Yield with pride and I’ll worship you properly.${nick}`, `Velvet first, steel later—stand gorgeous.`],
+      grayson:   [`Eyes up. I’ll give the orders and the praise when you earn it.${nick}`, `Stand here; I’ll handle the lesson.`],
+      silas:     [`Come curl in; I’ll tune you to my rhythm.${nick}`, `Let me be shameless for both of us tonight.`]
+    }[man] || [`I’ll take the lead and keep you smiling.${nick}`];
+    return lines[Math.floor(Math.random()*lines.length)];
   }
 
-  // --- Backend call + fallback ----------------------------------------------
+  // ---- API + fallback ------------------------------------------------------
   const sleep = (ms)=> new Promise(res=>setTimeout(res, ms));
 
   async function getAPIReply(userText, leadMode){
@@ -266,7 +246,7 @@
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
         body: JSON.stringify({
-          man: chosen,
+          man: MAN,
           userText,
           history: hist.slice(-MAX_TURNS),
           mode: "romance",
@@ -279,7 +259,7 @@
           },
           signals: { budget: "short", lead: leadMode ? "assert" : "follow" },
           styleHint:
-            "Be confident, suave, a little filthy if it fits; casual cussing allowed. " +
+            "Confident, suave, a little filthy if it fits; casual cussing allowed. " +
             "1–3 short sentences. Persona-forward (Blade/Viper/Dylan/Alexander/Grayson/Silas). " +
             "Lead if she invites or stays passive; otherwise follow her specifics. " +
             "Use her nickname/hair/eyes if known; no consent boilerplate."
@@ -295,60 +275,53 @@
     }
   }
 
-  const hist = loadHist();
-
   function pickFallback(){
-    const personaList =
-      (window.PHRASES?.[chosen]?.fallback) ||
-      (window.BBPhrases?.personas?.[chosen]?.fallback) ||
-      [];
-    let line = personaList.length
-      ? personaList[Math.floor(Math.random()*personaList.length)]
-      : leadLine(chosen, MEM);
+    let line = leadLine(MAN, MEM);
     if (MEM.vibe === "soft") line = "Soft and steady. " + line;
     if (MEM.vibe === "supportive") line = "I’ve got you—breathe. " + line;
-    if (MEM.nickname && !line.endsWith(`${MEM.nickname}.`)) line = line.replace(/\s*$/, "") + ` ${MEM.nickname}.`;
     return line;
   }
 
-  // --- Send ------------------------------------------------------------------
-  sendBtn.onclick = async () => {
-    const userText = (input.value || "").trim();
-    if (!userText) return;
-    input.value = "";
-    addMsg("you", userText);
-    learnFrom(userText);
+  // ---- Send ----------------------------------------------------------------
+  if (sendBtn) {
+    sendBtn.onclick = async () => {
+      const userText = (input && input.value || "").trim();
+      if (!userText) return;
+      if (input) input.value = "";
+      addMsg("you", userText);
+      learnFrom(userText);
 
-    const sensed = detectIntent(userText);
-    if (sensed && sensed !== "invite") {
-      const ir = intentReply(sensed);
-      if (ir) {
-        addMsg("him", ir);
-        hist.push({role:"user", content:userText},{role:"assistant", content:ir});
-        saveHist(hist);
-        return;
+      const sensed = detectIntent(userText);
+      if (sensed && sensed !== "invite") {
+        const ir = intentReply(sensed);
+        if (ir) {
+          addMsg("him", ir);
+          hist.push({role:"user", content:userText},{role:"assistant", content:ir});
+          saveHist(hist);
+          return;
+        }
       }
-    }
 
-    const stopTyping = startTyping();
-    const delay = sleep(DELAY_MIN_MS + Math.random()*DELAY_JITTER_MS);
+      const stopTyping = startTyping();
+      const delay = sleep(DELAY_MIN_MS + Math.random()*DELAY_JITTER_MS);
 
-    const leadMode = /(\bwhat would you do\b|take control|show me|teach me|surprise me|you decide|\?)|(^\s*$)/i.test(userText) || sensed === "invite";
+      const leadMode = /(\bwhat would you do\b|take control|show me|teach me|surprise me|you decide|\?)|(^\s*$)/i.test(userText) || sensed === "invite";
 
-    let reply = await getAPIReply(userText, leadMode);
-    if (!reply) reply = pickFallback();
+      let reply = await getAPIReply(userText, leadMode);
+      if (!reply) reply = pickFallback();
 
-    await delay;
-    stopTyping();
+      await delay;
+      stopTyping && stopTyping();
 
-    if (MEM.nickname && reply && !new RegExp(`\\b${MEM.nickname}\\b`, "i").test(reply)) {
-      reply = reply.replace(/\s*$/, "") + ` ${MEM.nickname}.`;
-    }
+      if (MEM.nickname && reply && !new RegExp(`\\b${MEM.nickname}\\b`, "i").test(reply)) {
+        reply = reply.replace(/\s*$/, "") + ` ${MEM.nickname}.`;
+      }
 
-    addMsg("him", reply);
-    hist.push({role:"user", content:userText},{role:"assistant", content:reply});
-    saveHist(hist);
-  };
+      addMsg("him", reply);
+      hist.push({role:"user", content:userText},{role:"assistant", content:reply});
+      saveHist(hist);
+    };
 
-  input.addEventListener("keydown", (e)=>{ if (e.key === "Enter") sendBtn.click(); });
+    if (input) input.addEventListener("keydown", (e)=>{ if (e.key === "Enter") sendBtn.click(); });
+  }
 })();
