@@ -1,16 +1,17 @@
-/* Blossom & Blade — chat runtime (lead-first + richer memory)
- * - Guys lead by default; they'll take over when she is passive or invites it.
- * - No consent tagline spam. No "RED" keyword needed (we read the room).
- * - Casual cussing is fine (non-graphic). Replies stay 1–3 sentences.
- * - Local "boyfriend memory": nickname, hair, eyes, likes, boundaries, vibe.
- * - Smooth page scroll; no tiny scroll area.
+/* Blossom & Blade — chat runtime (lead-first + richer memory + typing delay)
+ * - Guys lead confidently; casual cussing OK (non-graphic).
+ * - "Read the room" safety (no RED keyword).
+ * - Local boyfriend memory: nickname, hair, eyes, likes, boundaries, vibe.
+ * - Smooth page scroll AND a typing bubble with ~3s jittered delay.
  * - Backend (if up): https://api.blossomnblade.com/api/chat
  */
 (() => {
   // --- Config ---
   const API_BASE = "https://api.blossomnblade.com"; // spelling: blossomnblade.com
-  const MAX_TURNS = 12;           // keep token cost down
-  const FETCH_TIMEOUT_MS = 12000; // fail fast → local fallback
+  const MAX_TURNS = 12;            // keep token cost down
+  const FETCH_TIMEOUT_MS = 12000;  // fail fast → local fallback
+  const DELAY_MIN_MS = 2800;       // typing delay (min)
+  const DELAY_JITTER_MS = 700;     // +[0..700)ms
 
   // --- URL & age gate ---
   const qs = new URLSearchParams(location.search);
@@ -62,11 +63,11 @@
       const m = JSON.parse(localStorage.getItem(KEY_MEM) || "{}");
       return {
         nickname: m.nickname ? cap(m.nickname) : null,
-        hair: m.hair || null,   // "red", "blonde", "brunette", "black", etc.
-        eyes: m.eyes || null,   // "blue", "green", "brown", "hazel", "grey"
+        hair: m.hair || null,
+        eyes: m.eyes || null,
         likes: Array.isArray(m.likes) ? m.likes.slice(0,20) : [],
         boundaries: Array.isArray(m.boundaries) ? m.boundaries.slice(0,20) : [],
-        vibe: m.vibe || null,   // "soft" | "sharper" | "supportive"
+        vibe: m.vibe || null,
         lastSeen: m.lastSeen || Date.now()
       };
     } catch { return { nickname:null, hair:null, eyes:null, likes:[], boundaries:[], vibe:null, lastSeen:Date.now() }; }
@@ -86,6 +87,20 @@
     div.innerHTML = `<div class="meta">${who === "you" ? "You" : LABEL[chosen]}</div>${escapeHtml(text)}`;
     feed.appendChild(div);
     scrollPageToBottom();
+  }
+
+  // Typing bubble (… animates)
+  function startTyping(){
+    const div = document.createElement("div");
+    div.className = "msg him typing";
+    div.innerHTML = `<div class="meta">${LABEL[chosen]}</div><span class="dots">…</span>`;
+    feed.appendChild(div);
+    scrollPageToBottom();
+    const dots = div.querySelector(".dots");
+    let i = 0;
+    const frames = ["•", "••", "•••"];
+    const timer = setInterval(()=>{ i=(i+1)%frames.length; dots.textContent = frames[i]; }, 450);
+    return () => { clearInterval(timer); div.remove(); };
   }
 
   // --- First line (cheap local opener + nickname if known) ---
@@ -121,7 +136,7 @@
           || t.match(/\bi['’]m\s+([A-Za-z][\w'-]{1,20}(?:\s+[A-Za-z][\w'-]{1,20})?)\b/i);
     if (m) MEM.nickname = cap(m[1]);
 
-    // vibe keywords
+    // vibe
     if (/\bsoft(er)?\b/i.test(t)) MEM.vibe = "soft";
     if (/\bsharp(er)?|rough(er)?|hard(er)?\b/i.test(t)) MEM.vibe = "sharper";
     if (/\bsupport(ive)?|comfort\b/i.test(t)) MEM.vibe = "supportive";
@@ -172,12 +187,12 @@
       case "softer": return "I’ll slow the pace and keep it soft." + nick;
       case "stop":   return "Stopped. You’re safe with me." + nick;
       case "switch": return "Tell me who you want—Blade, Viper, Dylan, Alexander, Grayson, or Silas." + nick;
-      case "invite": return leadLine(chosen, MEM); // take over smoothly
+      case "invite": return leadLine(chosen, MEM);
       default:       return null;
     }
   }
 
-  // --- Persona-forward lead lines (mild cussing ok, non-graphic) ---
+  // --- Persona-forward lead lines (non-graphic; a little filthy is fine) ---
   function leadLine(man, mem){
     const nick = mem.nickname ? ` ${mem.nickname}` : "";
     const hair = mem.hair ? ` with that ${mem.hair} hair` : "";
@@ -219,7 +234,6 @@
 
   // --- Local fallback when API fails (assertive, 1–3 sentences) ---
   function pickFallback(){
-    // If we have persona banks, use those; otherwise use a lead line (assertive).
     const personaList =
       (window.PHRASES?.[chosen]?.fallback) ||
       (window.BBPhrases?.personas?.[chosen]?.fallback) ||
@@ -234,6 +248,47 @@
     return line;
   }
 
+  // --- Utilities ---
+  const sleep = (ms)=> new Promise(res=>setTimeout(res, ms));
+
+  async function getAPIReply(userText, leadMode){
+    // try the backend; return string or null
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    try{
+      const res = await fetch(API_BASE + "/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          man: chosen,
+          userText,
+          history: hist.slice(-MAX_TURNS),
+          mode: "romance",
+          pov: "first-person",
+          consented: true, // state only; no announcements
+          memory: {
+            nickname: MEM.nickname, hair: MEM.hair, eyes: MEM.eyes,
+            likes: MEM.likes, boundaries: MEM.boundaries, vibe: MEM.vibe, plan: PLAN
+          },
+          signals: { budget: "short", lead: leadMode ? "assert" : "follow" },
+          styleHint:
+            "Be confident, suave, a little filthy if it fits; casual cussing allowed. " +
+            "1–3 short sentences. Persona-forward (Blade/Viper/Dylan/Alexander/Grayson/Silas). " +
+            "Lead if she invites or stays passive; otherwise follow her specifics. " +
+            "Use her nickname/hair/eyes if known; no consent boilerplate."
+        })
+      });
+      clearTimeout(t);
+      if (!res.ok) throw new Error("bad status " + res.status);
+      const data = await res.json();
+      return (data && typeof data.reply === "string") ? data.reply : null;
+    }catch(_){
+      clearTimeout(t);
+      return null;
+    }
+  }
+
   // --- Send handler ---
   sendBtn.onclick = async () => {
     const userText = (input.value || "").trim();
@@ -245,7 +300,7 @@
 
     // Ambient intent (pause/softer/stop/switch/lead-invite)
     const sensed = detectIntent(userText);
-    if (sensed) {
+    if (sensed && sensed !== "invite") {
       const ir = intentReply(sensed);
       if (ir) {
         addMsg("him", ir);
@@ -255,57 +310,27 @@
       }
     }
 
-    // Try backend (short, persona-forward); else local fallback
-    try {
-      const controller = new AbortController();
-      const t = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    // Show typing, wait ~3s, gather backend reply (or fallback)
+    const stopTyping = startTyping();
+    const delay = sleep(DELAY_MIN_MS + Math.random()*DELAY_JITTER_MS);
 
-      // Simple “lead mode” heuristic: question to him, invite, or passive vibe.
-      const leadMode = /(\bwhat would you do\b|take control|show me|teach me|surprise me|you decide|\?)|(^\s*$)/i.test(userText) || sensed === "invite";
+    // Simple lead heuristic
+    const leadMode = /(\bwhat would you do\b|take control|show me|teach me|surprise me|you decide|\?)|(^\s*$)/i.test(userText) || sensed === "invite";
 
-      const res = await fetch(API_BASE + "/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-        body: JSON.stringify({
-          man: chosen,
-          userText,
-          history: hist.slice(-MAX_TURNS),
-          mode: "romance",
-          pov: "first-person",
-          consented: true, // state only; we don't announce it
-          memory: {
-            nickname: MEM.nickname, hair: MEM.hair, eyes: MEM.eyes,
-            likes: MEM.likes, boundaries: MEM.boundaries, vibe: MEM.vibe, plan: PLAN
-          },
-          signals: { budget: "short", lead: leadMode ? "assert" : "follow" },
-          styleHint:
-            "Be confident, suave, a little filthy if it fits; casual cussing allowed. " +
-            "1–3 short sentences. Persona-forward (Blade/Viper/Dylan/Alexander/Grayson/Silas). " +
-            "Lead if she invites or stays passive; otherwise follow her specifics. " +
-            "Use her nickname/hair/eyes if known, without repeating consent language."
-        })
-      });
-      clearTimeout(t);
+    let reply = await getAPIReply(userText, leadMode);
+    if (!reply) reply = pickFallback();
 
-      if (!res.ok) throw new Error("bad status " + res.status);
-      const data = await res.json();
-      let reply = (data && typeof data.reply === "string") ? data.reply : pickFallback();
+    await delay; // ensure human-ish pause
+    stopTyping();
 
-      // Light tag nickname if absent
-      if (MEM.nickname && reply && !new RegExp(`\\b${MEM.nickname}\\b`, "i").test(reply)) {
-        reply = reply.replace(/\s*$/, "") + ` ${MEM.nickname}.`;
-      }
-
-      addMsg("him", reply);
-      hist.push({role:"user", content:userText},{role:"assistant", content:reply});
-      saveHist(hist);
-    } catch (_) {
-      const reply = pickFallback();
-      addMsg("him", reply);
-      hist.push({role:"user", content:userText},{role:"assistant", content:reply});
-      saveHist(hist);
+    // Light nickname tag if absent
+    if (MEM.nickname && reply && !new RegExp(`\\b${MEM.nickname}\\b`, "i").test(reply)) {
+      reply = reply.replace(/\s*$/, "") + ` ${MEM.nickname}.`;
     }
+
+    addMsg("him", reply);
+    hist.push({role:"user", content:userText},{role:"assistant", content:reply});
+    saveHist(hist);
   };
 
   // Enter to send
