@@ -1,105 +1,113 @@
-/* Blossom & Blade — chat layout (fixed portrait, no inner scroll, no RED badge) */
+/* Blossom & Blade — chat.css (2-col layout, glass behind, bubbles on top) */
 
 :root{
-  --bg:#0b0c10;
-  --panel:#111318;
-  --panel-2:#0c0e13;
-  --ink:#e8ecf1;
-  --ink-dim:#a9b0ba;
-  --pink:#ff2e86;
-  --chip:#262a33;
-  --bubble:#14161c;
-  --bubble-you:#1a1d25;
-  --border:rgba(255,255,255,.08);
+  --bg: #0b0c10;
+  --ink: #e6e6f0;
+  --muted: #a9a9b5;
+  --me: #ff2e7e;
+  --them: #121318;
+  --glass: rgba(8,10,14,.40);
+  --radius: 18px;
+  --shadow: 0 12px 30px rgba(0,0,0,.45);
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
-  /* reserve space for the portrait on desktop */
-  padding-left:420px;
-}
+*{ box-sizing:border-box }
+html,body{ height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif; }
+a{ color:#95b8ff; text-decoration:none }
 
-/* ===== Fixed Left Portrait (fed by chat.js via #bg) ===== */
-#bg{
-  position:fixed;
-  left:0; top:64px;               /* below header */
-  width:420px; height:calc(100vh - 64px);
-  background:#0b0c10 center/cover no-repeat;
-  border-right:1px solid var(--border);
-  z-index:0;
-  box-shadow:inset -40px 0 80px -40px rgba(0,0,0,.75);
-}
-
-/* ===== Header ===== */
-.bar{
-  position:sticky; top:0; z-index:2;
+header.bar{
+  position:sticky; top:0; z-index:50;
   display:flex; align-items:center; justify-content:space-between;
-  height:64px; padding:12px 16px;
-  background:linear-gradient(180deg,#0f1117 0%, #0d0f14 100%);
-  border-bottom:1px solid var(--border);
+  gap:12px; padding:10px 14px;
+  background:linear-gradient(180deg, rgba(10,10,12,.85), rgba(10,10,12,.55));
+  backdrop-filter: blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.06);
 }
-.bar .left{display:flex; align-items:center; gap:12px}
-.bar .home{color:var(--ink); text-decoration:none; font-weight:600}
-.bar .man{font-weight:700}
-.bar .plan{background:var(--chip); padding:4px 8px; border-radius:999px; font-size:12px; color:var(--ink-dim)}
-.bar .red{display:none !important;} /* <- remove RED badge */
-.bar .planlink{color:var(--ink); text-decoration:none}
+.bar .left, .bar .right{ display:flex; align-items:center; gap:12px }
+.bar .home{ font-weight:700 }
+.bar .man{ font-weight:700 }
+.badge{ padding:3px 8px; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,.18); opacity:.9 }
+.plan{ background:#1b1d23 }
+.red{ color:#ff6b6b; border-color:rgba(255,107,107,.4); }
 
-/* ===== Feed ===== */
-#feed{
-  position:relative;
-  z-index:1;
-  padding:18px 16px 96px;
-  max-width:980px;
-  margin:0 auto;
+/* Full-screen persona background sits BEHIND everything */
+#bg{
+  position:fixed; inset:0; z-index:1;
+  background-size:cover; background-position:center;
+  filter:contrast(1.02) saturate(1.05) brightness(.95);
 }
-.msg{
-  width:fit-content; max-width:min(760px, 90%);
-  margin:12px 0; padding:14px 16px;
-  background:var(--bubble);
-  border:1px solid var(--border);
-  border-radius:14px;
-  box-shadow:0 4px 16px rgba(0,0,0,.25);
+#bg::after{ /* darken for readability */
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 60% 50%, rgba(0,0,0,.25) 0%, rgba(0,0,0,.70) 70%);
 }
-.msg.you{ margin-left:auto; background:var(--bubble-you); }
-.msg .meta{ display:block; font-size:12px; color:var(--ink-dim); margin-bottom:6px }
-.msg.typing{opacity:.85}
-.msg.typing .dots{display:inline-block; min-width:2ch}
 
-/* keep bubbles above any overlays */
-.msg, #feed{ position:relative; z-index:2 }
-
-/* ===== Composer ===== */
-.dock{
-  position:sticky; bottom:0; z-index:3;
-  background:linear-gradient(180deg, rgba(11,12,15,0) 0%, #0b0c0f 20%, #0b0c0f 100%);
-  padding:14px 12px 16px;
-  border-top:1px solid var(--border);
+/* Stage grid */
+.stage{
+  position:relative; z-index:2;   /* above bg */
+  display:grid; grid-template-columns: 420px minmax(0,1fr);
+  gap:22px; padding:16px 18px 26px;
+  max-width:1300px; margin:0 auto;
 }
-.inputRow{
-  display:flex; gap:10px; max-width:980px; margin:0 auto;
+
+/* Left portrait panel */
+.portraitPanel{
+  position:relative; border-radius:20px; overflow:hidden;
+  background:rgba(12,14,18,.6); box-shadow:var(--shadow);
+  min-height:560px;
+}
+.portraitPanel img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  transform:translateZ(0);  /* crisp */
+}
+
+/* Right chat panel */
+.chatPanel{
+  position:relative; display:flex; flex-direction:column; gap:14px;
+  min-height:560px;
+}
+.chatGlass{     /* “glass” is BEHIND bubbles */
+  position:absolute; inset:0; border-radius:20px; z-index:2;
+  background:var(--glass); backdrop-filter: blur(8px) saturate(1.1);
+  box-shadow:var(--shadow);
+}
+.messages{
+  position:relative; z-index:3;  /* bubbles ABOVE glass */
+  padding:20px; overflow:auto; height:calc(100svh - 210px);
+  display:flex; flex-direction:column; gap:14px;
+  scroll-behavior:smooth;
+}
+
+/* Bubbles */
+.bubble{
+  max-width:min(780px, 80%);
+  padding:14px 16px; border-radius:16px;
+  background:var(--them); color:var(--ink);
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+  line-height:1.35; letter-spacing:.1px;
+}
+.bubble small.nick{ display:block; opacity:.65; margin-bottom:6px }
+.bubble.me{
+  align-self:flex-end; background:var(--me); color:#020204;
+}
+.bubble.typing{ opacity:.85; }
+
+/* Composer */
+.composer{
+  position:relative; z-index:3; display:flex; gap:10px;
+  padding:6px; border-radius:16px; background:rgba(12,14,18,.65); box-shadow:var(--shadow);
 }
 #input{
-  flex:1; padding:14px 16px;
-  border-radius:12px; border:1px solid var(--border);
-  background:#0f1218; color:var(--ink);
-  outline:none;
+  flex:1; padding:14px 14px; border-radius:12px; background:#0e1015; color:var(--ink);
+  border:1px solid rgba(255,255,255,.08); outline:none;
 }
-#send{
-  padding:12px 16px; border-radius:12px; border:1px solid transparent;
-  background:var(--pink); color:white; font-weight:700; cursor:pointer;
+#sendBtn{
+  padding:12px 18px; border-radius:12px; border:0; cursor:pointer;
+  font-weight:700; background:var(--me); color:#08080c;
 }
-#send:disabled{opacity:.6; cursor:not-allowed}
 
-/* ===== Mobile: collapse portrait for space ===== */
-@media (max-width: 900px){
-  body{ padding-left:0 }
-  #bg{ display:none }
-  #feed{ padding:14px 12px 88px }
-  .bar{ padding-left:12px; padding-right:12px }
+/* Mobile */
+@media (max-width: 980px){
+  .stage{ grid-template-columns: 1fr; gap:14px; padding:12px }
+  .portraitPanel{ height:48svh; min-height:360px }
+  .messages{ height:calc(100svh - 320px) }
 }
