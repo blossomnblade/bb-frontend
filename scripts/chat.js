@@ -339,3 +339,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const red = document.getElementById('redBadge');
   if (red) red.classList.add('hidden');
 });
+/* ========= PATCH: stop form reload + keep the selected man ========= */
+document.addEventListener('DOMContentLoaded', () => {
+  const form  = document.getElementById('composer') || document.querySelector('form');
+  const input = document.getElementById('input')     || document.querySelector('textarea, input[type="text"]');
+  const send  = document.getElementById('send')      || document.querySelector('button[type="submit"], button.send');
+
+  if (form) form.setAttribute('action', '#');
+  if (send) send.setAttribute('type', 'button');
+
+  const triggerSend = () => { if (send) send.click(); };
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      triggerSend();
+    });
+  }
+
+  if (input) {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        triggerSend();
+      }
+    });
+  }
+});
+/* ========= /PATCH ========= */
