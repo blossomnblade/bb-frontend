@@ -1,3 +1,20 @@
+/* ========= PATCH 1: persona lock + display names ========= */
+const TITLE_MAP = {
+  blade: 'Blade',
+  alexander: 'Alexander',
+  dylan: 'Dylan',
+  viper: 'Viper',
+  grayson: 'Grayson',
+  silas: 'Silas'
+};
+
+// Lock the chosen man for this browser tab/session.
+// Priority: ?man= in URL → previous session value → 'blade'
+const _q = new URLSearchParams(location.search);
+let CURRENT_MAN = _q.get('man') || sessionStorage.getItem('bb:man') || 'blade';
+sessionStorage.setItem('bb:man', CURRENT_MAN);
+/* ========= /PATCH 1 ========= */
+
 /* Blossom & Blade — chat runtime (human cadence, typing, persona cards)
    - Distinct voices wired from BBPhrases (phrases.js)
    - Typing indicator with jitter
@@ -69,7 +86,8 @@ sessionStorage.setItem('bb:man', CURRENT_MAN);
   function addBubble(role, text, opts = {}){
     const wrap = el('div', 'msg' + (role === 'you' ? ' you' : ''));
     if (opts.typing) wrap.classList.add('typing');
-    const name = role === 'you' ? 'You' : TITLE_MAP[man] || 'Man';
+    const name = role === 'you' ? 'You' : TITLE_MAP[CURRENT_MAN] || 'Man';
+
     const meta = el('span', 'meta', name);
     const body = el('div', 'text');
     if (opts.typing){
