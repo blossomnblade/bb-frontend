@@ -79,8 +79,30 @@ sessionStorage.setItem('bb:man', CURRENT_MAN);
     return n;
   }
 
-  function scrollToEnd(){
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  /* ========= PATCH 2: robust auto-scroll ========= */
+function scrollToEnd(smooth = true) {
+  // Prefer the chat feed scroller if it exists
+  const scroller =
+    document.getElementById('feed') ||
+    document.querySelector('.feed');
+
+  const el = scroller || document.scrollingElement || document.documentElement || document.body;
+
+  const doScroll = (node) => {
+    const behavior = smooth ? 'smooth' : 'auto';
+    if (node && typeof node.scrollTo === 'function') {
+      node.scrollTo({ top: node.scrollHeight, behavior });
+    } else {
+      window.scrollTo({ top: document.body.scrollHeight, behavior });
+    }
+  };
+
+  // Scroll now, then again on the next frame in case the height grows
+  doScroll(el);
+  requestAnimationFrame(() => doScroll(el));
+}
+/* ========= /PATCH 2 ========= */
+
   }
 
   function addBubble(role, text, opts = {}){
@@ -98,7 +120,8 @@ sessionStorage.setItem('bb:man', CURRENT_MAN);
     wrap.appendChild(meta);
     wrap.appendChild(body);
     feed.appendChild(wrap);
-    scrollToEnd();
+    requestAnimationFrame(scrollToEnd);
+
     return wrap;
   }
 
