@@ -275,3 +275,21 @@
 
   boot();
 })();
+document.addEventListener('DOMContentLoaded', () => {
+  // Show the user's plan in the header
+  const plan = localStorage.getItem('bb_plan') || 'trial'; // 'trial' | 'day' | 'monthly'
+  const planBadge = document.getElementById('planBadge');
+  if (planBadge) {
+    planBadge.textContent = (plan === 'monthly') ? 'Monthly' : (plan === 'day' ? 'Day Pass' : 'Trial');
+  }
+
+  // Show "Main" button only for monthly plans
+  const mainBtn = document.querySelector('.mainBtn');
+  if (mainBtn) {
+    mainBtn.classList.toggle('hidden', plan !== 'monthly');
+  }
+
+  // Keep RED hidden unless you decide to show it on purpose
+  const red = document.getElementById('redBadge');
+  if (red) red.classList.add('hidden');
+});
