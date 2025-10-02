@@ -2,34 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Chat — Blossom & Blade</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chat — Blossom & Blade</title>
   <link rel="stylesheet" href="/styles/chat.css" />
 </head>
 <body>
-  <div id="app" class="app">
-    <div class="bg" id="bg"></div>
-    <header class="bar">
-      <div class="left">
-        <a class="home" href="/index.html" title="Back">←</a>
-        <div id="manName" class="man">Blade</div>
-        <span id="planBadge" class="plan">Trial</span>
-        <span id="redBadge" class="red" title="Type RED any time">RED</span>
-      </div>
-      <div class="right">
-        <a class="planlink" href="/pay.html">Plans</a>
-      </div>
-    </header>
+  <!-- persona background (always BEHIND) -->
+  <div class="bg" id="bg" aria-hidden="true"></div>
 
-    <main id="feed" class="feed" aria-live="polite"></main>
+  <header class="bar">
+    <div class="left">
+      <a class="home" href="/index.html" title="Back">‹</a>
+      <span id="manName" class="man">Blade</span>
+      <span id="planBadge" class="badge plan">Trial</span>
+      <span id="redBadge" class="badge red" title="Type RED any time">RED</span>
+    </div>
+    <div class="right">
+      <a class="planlink" href="/pay.html">Plans</a>
+    </div>
+  </header>
 
-    <footer class="composer">
-      <input id="input" type="text" maxlength="1000" placeholder="Say anything. Your fantasy, your rules." />
-      <button id="send" class="send">Send</button>
-    </footer>
+  <div class="stage" id="app">
+    <!-- LEFT: portrait -->
+    <aside class="portraitPanel" aria-label="Character portrait">
+      <img id="portrait" alt="Character portrait"/>
+    </aside>
+
+    <!-- RIGHT: chat -->
+    <main class="chatPanel" aria-label="Chat area">
+      <div class="chatGlass" aria-hidden="true"></div>
+      <div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+
+      <form id="composer" class="composer" autocomplete="off">
+        <input id="input" type="text" placeholder="Say something…" aria-label="Message" />
+        <button id="sendBtn" type="submit">Send</button>
+      </form>
+    </main>
   </div>
 
   <script src="/scripts/phrases.js"></script>
   <script src="/scripts/chat.js"></script>
+
+  <!-- Tiny helper to wire images without touching chat.js -->
+  <script>
+    (function () {
+      const qs = new URLSearchParams(location.search);
+      const man = (qs.get("man") || "blade").toLowerCase();
+      // Portrait (left)
+      const portrait = document.getElementById("portrait");
+      portrait.src = `/images/characters/${man}/${man}-chat.webp`;
+      portrait.alt = man.charAt(0).toUpperCase() + man.slice(1);
+
+      // Background (full)
+      const bg = document.getElementById("bg");
+      const bgTry = new Image();
+      bgTry.onload = () => { bg.style.backgroundImage = `url('/images/characters/${man}/${man}-bg.jpg')`; };
+      bgTry.onerror = () => { bg.style.backgroundImage = `url('/images/characters/${man}/bg_${man}.jpg')`; }; // fallback to your older naming
+      bgTry.src = `/images/characters/${man}/${man}-bg.jpg`;
+    })();
+  </script>
 </body>
 </html>
