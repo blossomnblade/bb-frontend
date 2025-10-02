@@ -1,13 +1,11 @@
 /* Blossom & Blade — chat runtime (lead-forward, memory, typing, image autodetect) */
 (() => {
-  // ---- Config --------------------------------------------------------------
   const API_BASE = "https://api.blossomnblade.com";
   const MAX_TURNS = 12;
   const FETCH_TIMEOUT_MS = 12000;
   const DELAY_MIN_MS = 2800;
   const DELAY_JITTER_MS = 700;
 
-  // ---- URL & age gate ------------------------------------------------------
   const qs = new URLSearchParams(location.search);
   const manParam = (qs.get("man") || "blade").toLowerCase();
   const ALLOWED = ["blade","viper","dylan","alexander","grayson","silas"];
@@ -19,7 +17,6 @@
     return;
   }
 
-  // ---- DOM -----------------------------------------------------------------
   const $ = (id) => document.getElementById(id);
   const feed = $("feed") || $("messages") || document.querySelector(".feed");
   const input = $("input") || $("message");
@@ -33,7 +30,6 @@
   if (manName) manName.textContent = LABEL[MAN];
   if (planBadge) planBadge.textContent = localStorage.getItem("bb.plan") || "Trial";
 
-  // ---- Image helpers (match your actual filenames) -------------------------
   function testImage(url){
     return new Promise((res, rej) => {
       const img = new Image();
@@ -72,11 +68,10 @@
     firstExisting(bgCandidatesFor(MAN)).then(url => { if (url) bg.style.backgroundImage = `url('${url}')`; });
   }
 
-  // ---- History & memory ----------------------------------------------------
   const KEY_HIST = `bb.chat.${MAN}.history`;
   const loadHist = () => { try { return JSON.parse(localStorage.getItem(KEY_HIST) || "[]"); } catch { return []; } };
   const saveHist = (h) => localStorage.setItem(KEY_HIST, JSON.stringify(h.slice(-MAX_TURNS)));
-  const hist = loadHist(); // <-- single declaration (fixes earlier crash)
+  const hist = loadHist(); // single declaration (fixes earlier crash)
 
   const KEY_MEM = `bb.mem.${MAN}`;
   const cap = s => (!s ? s : s.replace(/\b\w/g, m => m.toUpperCase()));
@@ -97,7 +92,6 @@
   function saveMem(m){ try { m.lastSeen = Date.now(); localStorage.setItem(KEY_MEM, JSON.stringify(m)); } catch {} }
   const MEM = loadMem();
 
-  // ---- Render helpers + typing ---------------------------------------------
   function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function scrollPageToBottom(){
     try { feed.scrollTop = feed.scrollHeight; } catch {}
@@ -124,7 +118,6 @@
     return () => { clearInterval(t); div.remove(); };
   }
 
-  // ---- First line (warm + persona-forward) ---------------------------------
   const PETS = ["sweetheart","love","gorgeous","trouble","angel","doll","beautiful","darling","hun"];
   function pet(){ return PETS[Math.floor(Math.random()*PETS.length)]; }
   function firstLine(man, mem){
@@ -149,38 +142,30 @@
     hist.slice(-10).forEach(m => addMsg(m.role === "user" ? "you" : "him", m.content));
   }
 
-  // ---- Safety quick actions (no magic word) --------------------------------
   if (redBadge) {
     redBadge.title = "Click to pause, soften, or switch";
     redBadge.onclick = () => addMsg("him", "Want to pause, soften, or switch personas?");
   }
 
-  // ---- Learn memory from her text ------------------------------------------
   function learnFrom(text){
     const t = text.trim();
-
-    // nickname
     let m = t.match(/\bcall me\s+([A-Za-z][\w'-]{1,20}(?:\s+[A-Za-z][\w'-]{1,20})?)/i)
           || t.match(/\bmy name is\s+([A-Za-z][\w'-]{1,20}(?:\s+[A-Za-z][\w'-]{1,20})?)/i)
           || t.match(/\bi['’]m\s+([A-Za-z][\w'-]{1,20}(?:\s+[A-Za-z][\w'-]{1,20})?)\b/i);
     if (m) MEM.nickname = cap(m[1]);
 
-    // vibe
     if (/\bsoft(er)?\b/i.test(t)) MEM.vibe = "soft";
     if (/\bsharp(er)?|rough(er)?|hard(er)?\b/i.test(t)) MEM.vibe = "sharper";
     if (/\bsupport(ive)?|comfort\b/i.test(t)) MEM.vibe = "supportive";
 
-    // hair
     const hairMap = { redhead:"red", ginger:"red", auburn:"red", blonde:"blonde", blond:"blonde", brunette:"brunette", brown:"brunette", black:"black", pink:"pink", blue:"blue", purple:"purple", silver:"silver" };
     const hairHit = t.match(/\b(my\s+hair\s+is|i['’]m\s+a|i['’]ve\s+got)\s+(redhead|ginger|auburn|blonde|blond|brunette|brown|black|pink|blue|purple|silver)\b/i);
     if (hairHit) MEM.hair = hairMap[hairHit[2].toLowerCase()] || hairHit[2].toLowerCase();
 
-    // eyes
     const eyeHit = t.match(/\b(my\s+eyes\s+are|my\s+eyes\s*[:\-]?)\s*(blue|green|brown|hazel|grey|gray|amber)\b/i)
                  || t.match(/\b(blue|green|brown|hazel|grey|gray|amber)\s+eyes\b/i);
     if (eyeHit) MEM.eyes = (eyeHit[2] || eyeHit[1]).toLowerCase().replace(/gray/,"grey");
 
-    // likes / boundaries
     const likeMatch = t.match(/\b(i\s+(really\s+)?(like|love|enjoy|am into)\s+)([^.!,;]{1,40})/i);
     if (likeMatch) {
       const item = likeMatch[4].trim().toLowerCase();
@@ -191,13 +176,11 @@
       const bound = b[2].trim().toLowerCase();
       if (bound && !MEM.boundaries.includes(bound)) MEM.boundaries.push(bound);
     }
-
     MEM.likes = MEM.likes.slice(0,20);
     MEM.boundaries = MEM.boundaries.slice(0,20);
     saveMem(MEM);
   }
 
-  // ---- Intent sensing (pause/softer/stop/switch/lead) ----------------------
   function detectIntent(text){
     const t = text.toLowerCase();
     if (/\b(pause|break|hold up|one sec|brb)\b/.test(t)) return "pause";
@@ -220,7 +203,6 @@
     }
   }
 
-  // ---- Persona-forward “lead” line (short, confident, a little filthy ok) --
   function leadLine(man, mem){
     const nick = mem.nickname ? ` ${mem.nickname}` : "";
     const lines = {
@@ -234,9 +216,7 @@
     return lines[Math.floor(Math.random()*lines.length)];
   }
 
-  // ---- API + fallback ------------------------------------------------------
   const sleep = (ms)=> new Promise(res=>setTimeout(res, ms));
-
   async function getAPIReply(userText, leadMode){
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -274,7 +254,6 @@
       return null;
     }
   }
-
   function pickFallback(){
     let line = leadLine(MAN, MEM);
     if (MEM.vibe === "soft") line = "Soft and steady. " + line;
@@ -282,7 +261,6 @@
     return line;
   }
 
-  // ---- Send ----------------------------------------------------------------
   if (sendBtn) {
     sendBtn.onclick = async () => {
       const userText = (input && input.value || "").trim();
