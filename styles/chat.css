@@ -1,20 +1,105 @@
+/* Blossom & Blade — chat layout (fixed portrait, no inner scroll, no RED badge) */
+
 :root{
-  --bg:#0b0b0d; --ink:#eee; --muted:#bdbdbd; --line:#232326; --card:#101013;
+  --bg:#0b0c10;
+  --panel:#111318;
+  --panel-2:#0c0e13;
+  --ink:#e8ecf1;
+  --ink-dim:#a9b0ba;
+  --pink:#ff2e86;
+  --chip:#262a33;
+  --bubble:#14161c;
+  --bubble-you:#1a1d25;
+  --border:rgba(255,255,255,.08);
 }
+
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-.app{min-height:100dvh;position:relative;overflow:hidden}
-.bg{position:absolute;inset:0;background:#0e0e12 center/cover no-repeat;filter:brightness(.6);z-index:0}
-.bar{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(12,12,14,.7);backdrop-filter:blur(6px);z-index:3;border-bottom:1px solid var(--line)}
-.home{margin-right:8px;color:#ddd}
-.man{font-weight:700;margin-right:8px}
-.plan{font-size:12px;padding:2px 6px;border:1px solid var(--line);border-radius:8px;margin-right:8px}
-.red{font-size:12px;padding:2px 6px;border:1px solid #a22;border-radius:8px;color:#f66}
-.feed{position:relative;z-index:2;padding:16px;display:flex;flex-direction:column;gap:8px;min-height:70dvh}
-.msg{max-width:720px;padding:10px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
-.msg.you{margin-left:auto;background:#1a1a22}
-.meta{opacity:.65;font-size:12px;margin-bottom:4px}
-.composer{position:sticky;bottom:0;display:flex;gap:8px;padding:10px;background:rgba(12,12,14,.7);backdrop-filter:blur(6px);border-top:1px solid var(--line);z-index:3}
-.composer input{flex:1;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#0e0e12;color:#fff}
-.send{padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:#191920;color:#fff}
-.small{font-size:12px;color:#bbb}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+  /* reserve space for the portrait on desktop */
+  padding-left:420px;
+}
+
+/* ===== Fixed Left Portrait (fed by chat.js via #bg) ===== */
+#bg{
+  position:fixed;
+  left:0; top:64px;               /* below header */
+  width:420px; height:calc(100vh - 64px);
+  background:#0b0c10 center/cover no-repeat;
+  border-right:1px solid var(--border);
+  z-index:0;
+  box-shadow:inset -40px 0 80px -40px rgba(0,0,0,.75);
+}
+
+/* ===== Header ===== */
+.bar{
+  position:sticky; top:0; z-index:2;
+  display:flex; align-items:center; justify-content:space-between;
+  height:64px; padding:12px 16px;
+  background:linear-gradient(180deg,#0f1117 0%, #0d0f14 100%);
+  border-bottom:1px solid var(--border);
+}
+.bar .left{display:flex; align-items:center; gap:12px}
+.bar .home{color:var(--ink); text-decoration:none; font-weight:600}
+.bar .man{font-weight:700}
+.bar .plan{background:var(--chip); padding:4px 8px; border-radius:999px; font-size:12px; color:var(--ink-dim)}
+.bar .red{display:none !important;} /* <- remove RED badge */
+.bar .planlink{color:var(--ink); text-decoration:none}
+
+/* ===== Feed ===== */
+#feed{
+  position:relative;
+  z-index:1;
+  padding:18px 16px 96px;
+  max-width:980px;
+  margin:0 auto;
+}
+.msg{
+  width:fit-content; max-width:min(760px, 90%);
+  margin:12px 0; padding:14px 16px;
+  background:var(--bubble);
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.msg.you{ margin-left:auto; background:var(--bubble-you); }
+.msg .meta{ display:block; font-size:12px; color:var(--ink-dim); margin-bottom:6px }
+.msg.typing{opacity:.85}
+.msg.typing .dots{display:inline-block; min-width:2ch}
+
+/* keep bubbles above any overlays */
+.msg, #feed{ position:relative; z-index:2 }
+
+/* ===== Composer ===== */
+.dock{
+  position:sticky; bottom:0; z-index:3;
+  background:linear-gradient(180deg, rgba(11,12,15,0) 0%, #0b0c0f 20%, #0b0c0f 100%);
+  padding:14px 12px 16px;
+  border-top:1px solid var(--border);
+}
+.inputRow{
+  display:flex; gap:10px; max-width:980px; margin:0 auto;
+}
+#input{
+  flex:1; padding:14px 16px;
+  border-radius:12px; border:1px solid var(--border);
+  background:#0f1218; color:var(--ink);
+  outline:none;
+}
+#send{
+  padding:12px 16px; border-radius:12px; border:1px solid transparent;
+  background:var(--pink); color:white; font-weight:700; cursor:pointer;
+}
+#send:disabled{opacity:.6; cursor:not-allowed}
+
+/* ===== Mobile: collapse portrait for space ===== */
+@media (max-width: 900px){
+  body{ padding-left:0 }
+  #bg{ display:none }
+  #feed{ padding:14px 12px 88px }
+  .bar{ padding-left:12px; padding-right:12px }
+}
