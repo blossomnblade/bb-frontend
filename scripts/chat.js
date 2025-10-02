@@ -1,369 +1,265 @@
-/* ========= PATCH 1: persona lock + display names ========= */
-const TITLE_MAP = {
-  blade: 'Blade',
-  alexander: 'Alexander',
-  dylan: 'Dylan',
-  viper: 'Viper',
-  grayson: 'Grayson',
-  silas: 'Silas'
-};
-
-// Lock the chosen man for this browser tab/session.
-// Priority: ?man= in URL → previous session value → 'blade'
-const _q = new URLSearchParams(location.search);
-let CURRENT_MAN = _q.get('man') || sessionStorage.getItem('bb:man') || 'blade';
-sessionStorage.setItem('bb:man', CURRENT_MAN);
-/* ========= /PATCH 1 ========= */
-
-/* Blossom & Blade — chat runtime (human cadence, typing, persona cards)
-   - Distinct voices wired from BBPhrases (phrases.js)
-   - Typing indicator with jitter
-   - Normal greetings (no consent lectures)
-   - Fixed left portrait set via #bg
-   - Graceful offline fallback if API is down
-*/
-// ----- lock the selected persona for this tab -----
-const q = new URLSearchParams(location.search);
-let CURRENT_MAN = q.get('man') || sessionStorage.getItem('bb:man') || 'blade';
-sessionStorage.setItem('bb:man', CURRENT_MAN);
-// From now on, ALWAYS use CURRENT_MAN (do not re-read from URL later)
+/* ==========================================================================
+   Blossom & Blade — chat.js (full rewrite)
+   - Persona is chosen from ?man=… once, then remembered per-tab (sessionStorage)
+   - Never flips to another man after first load
+   - Natural greeting with short typing/jitter
+   - Simple local phrase engine fallback (phrases.js if present), no consent lectures
+   - Left portrait auto-wires from /images/characters/<man>/<man>-chat.webp
+   - Plan badge + “Main” button visibility
+   ========================================================================== */
 
 (() => {
-  // ---------- DOM ----------
-  const qs = s => document.querySelector(s);
-  const feed = qs('#feed');
-  const input = qs('#input');
-  const sendBtn = qs('#send');
-  const manNameEl = qs('#manName');
-  const bgEl = qs('#bg');
-
-  // ---------- URL / Persona ----------
-  const url = new URL(location.href);
-  const man = (url.searchParams.get('man') || 'blade').toLowerCase();
+  /* ---------- Persona & display names ---------- */
+  const SUPPORTED_MEN = ['blade', 'alexander', 'dylan', 'viper', 'grayson', 'silas'];
 
   const TITLE_MAP = {
     blade: 'Blade',
-    viper: 'Viper',
-    dylan: 'Dylan',
     alexander: 'Alexander',
+    dylan: 'Dylan',
+    viper: 'Viper',
     grayson: 'Grayson',
-    silas: 'Silas'
+    silas: 'Silas',
   };
 
-  // Your uploaded image filenames (from /images/characters/*)
-  const PORTRAITS = {
-    alexander: { chat: '/images/characters/alexander/alexander-chat.webp', bg: '/images/characters/alexander/bg_alexander_boardroom.jpg' },
-    blade:     { chat: '/images/characters/blade/blade.webp',               bg: '/images/characters/blade/blade-woods.jpg' },
-    dylan:     { chat: '/images/characters/dylan/dylan-chat.webp',         bg: '/images/characters/dylan/dylan-garage.jpg' },
-    grayson:   { chat: '/images/characters/grayson/grayson-chat.webp',     bg: '/images/characters/grayson/grayson-bg.jpg' },
-    silas:     { chat: '/images/characters/silas/silas-chat.webp',         bg: '/images/characters/silas/bg_silas_stage.jpg' },
-    viper:     { chat: '/images/characters/viper/viper-chat.webp',         bg: '/images/characters/viper/viper-bg.jpg' }
+  // Optional: background hints for CSS (some themes use body[data-man] selectors)
+  const BG_HINT = {
+    blade: 'woods',
+    alexander: 'boardroom',
+    dylan: 'garage',
+    viper: 'city',
+    grayson: 'lounge',
+    silas: 'stage',
   };
 
-  // ---------- State ----------
+  function getManFromURLorSession() {
+    const q = new URLSearchParams(location.search);
+    const fromURL = (q.get('man') || '').toLowerCase();
+    const candidate = fromURL || (sessionStorage.getItem('bb:man') || 'blade').toLowerCase();
+    return SUPPORTED_MEN.includes(candidate) ? candidate : 'blade';
+  }
+
   const state = {
-    history: [],           // [{role:'user'|'assistant', content:'...'}]
-    typingTimer: null,
-    dotsTimer: null,
+    man: getManFromURLorSession(),
     personaCard: '',
-    nicknameGuess: null,   // e.g., "Red", "bookworm", etc.
-    apiBase: 'https://api.blossomnblade.com',  // backend base
-    netTimeoutMs: 12000
+    seed: 0,          // tiny convo memory for our fallback engine
   };
 
-  // ---------- Helpers ----------
-  function el(tag, cls, text){
+  // Canonicalize URL to freeze the chosen man & remember for this tab
+  try {
+    history.replaceState(null, '', `?man=${state.man}`);
+    sessionStorage.setItem('bb:man', state.man);
+  } catch {}
+
+  /* ---------- DOM helpers ---------- */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function el(tag, cls, text) {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
-    if (text) n.textContent = text;
+    if (text != null) n.textContent = text;
     return n;
   }
 
-  /* ========= PATCH 2: robust auto-scroll ========= */
-function scrollToEnd(smooth = true) {
-  // Prefer the chat feed scroller if it exists
-  const scroller =
-    document.getElementById('feed') ||
-    document.querySelector('.feed');
-
-  const el = scroller || document.scrollingElement || document.documentElement || document.body;
-
-  const doScroll = (node) => {
-    const behavior = smooth ? 'smooth' : 'auto';
-    if (node && typeof node.scrollTo === 'function') {
-      node.scrollTo({ top: node.scrollHeight, behavior });
-    } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior });
-    }
-  };
-
-  // Scroll now, then again on the next frame in case the height grows
-  doScroll(el);
-  requestAnimationFrame(() => doScroll(el));
-}
-/* ========= /PATCH 2 ========= */
-
+  function scrollToEnd() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
 
-  function addBubble(role, text, opts = {}){
-    const wrap = el('div', 'msg' + (role === 'you' ? ' you' : ''));
-    if (opts.typing) wrap.classList.add('typing');
-    const name = role === 'you' ? 'You' : TITLE_MAP[CURRENT_MAN] || 'Man';
+  function rnd(min, max) {
+    return Math.random() * (max - min) + min;
+  }
 
-    const meta = el('span', 'meta', name);
+  function jitterDelay(min = 900, max = 1900) {
+    return Math.round(rnd(min, max));
+  }
+
+  /* ---------- Chat UI: bubbles ---------- */
+  const feed = $('#feed') || $('.feed') || $('#chat-feed') || document.body;
+  const input = $('#composer') || $('input[type="text"]') || $('textarea');
+  const sendBtn = $('#sendBtn') || $('button[type="submit"]') || $('button.send');
+
+  function addBubble(role, text, opts = {}) {
+    const wrap = el('div', 'msg ' + (role === 'you' ? 'you' : 'man'));
+    const meta = el('span', 'meta', role === 'you' ? 'You' : TITLE_MAP[state.man] || 'Man');
     const body = el('div', 'text');
-    if (opts.typing){
-      body.innerHTML = `<span class="dots">…</span>`;
+
+    if (opts.typing) {
+      body.innerHTML = '<span class="dots"></span>'; // CSS animates .dots
+      wrap.classList.add('typing');
     } else {
       body.textContent = text;
     }
+
     wrap.appendChild(meta);
     wrap.appendChild(body);
     feed.appendChild(wrap);
-    requestAnimationFrame(scrollToEnd);
-
+    scrollToEnd();
     return wrap;
   }
 
-  function updateTypingDots(node){
-    if (!node) return;
-    const dotsEl = node.querySelector('.dots');
-    if (!dotsEl) return;
-    let i = 0;
-    state.dotsTimer && clearInterval(state.dotsTimer);
-    state.dotsTimer = setInterval(() => {
-      i = (i + 1) % 3;
-      dotsEl.textContent = '.'.repeat(i + 1);
-    }, 400);
-  }
-
-  function replaceTypingWithText(node, text){
+  function swapTypingToText(node, text) {
     if (!node) return;
     node.classList.remove('typing');
-    const body = node.querySelector('.text');
-    if (body) body.textContent = text;
-    state.dotsTimer && clearInterval(state.dotsTimer);
+    const t = node.querySelector('.text');
+    if (t) t.textContent = text;
     scrollToEnd();
   }
 
-  function jitter(minMs, maxMs){
-    return Math.floor(minMs + Math.random() * (maxMs - minMs));
+  /* ---------- Persona skin (portrait, labels, data attributes) ---------- */
+  function portraitPath(man) {
+    return `/images/characters/${man}/${man}-chat.webp`;
   }
 
-  function looksLikeSmallTalk(s){
-    const t = (s||'').toLowerCase();
-    return /(how (was|is) (your|ya) (night|day|morning)|what.*up|wyd|how are you)/.test(t);
+  function applySkin() {
+    // body[data-man] lets CSS theme per man if you’ve set that up
+    document.body.setAttribute('data-man', state.man);
+    document.title = `${TITLE_MAP[state.man] || 'Chat'} — Blossom & Blade`;
+
+    // Update header label if present
+    const headerName = $('#manName') || $('.manName') || $('header .name');
+    if (headerName) headerName.textContent = TITLE_MAP[state.man] || 'Man';
+
+    // Try to wire the portrait — we try a few common selectors
+    const portTargets = $$('img[data-portrait], #portrait, .portrait img, .left img');
+    const src = portraitPath(state.man);
+    portTargets.forEach((img) => {
+      img.src = src;
+      img.alt = TITLE_MAP[state.man] || 'Portrait';
+      img.setAttribute('loading', 'eager');
+      img.decoding = 'async';
+    });
+
+    // Hint for CSS backgrounds (optional)
+    document.body.style.setProperty('--bb-room', BG_HINT[state.man] || 'room');
   }
 
-  // Very soft “name catcher”: “call me ___”
-  function captureName(s){
-    const m = (s||'').match(/\b(call\s+me|my\s+name\s+is)\s+([a-z][a-z\-']{1,20})\b/i);
-    if (m) return m[2];
-    return null;
-  }
-
-  // ---------- Persona wiring from phrases.js ----------
-  const P = window.BBPhrases || {};
-  function personaFirstLine(){
-    if (P.firstLineFor) return P.firstLineFor(man);
-    return "hey.";
-  }
-  function personaSmallTalk(){
-    if (P.smallTalk) return P.smallTalk(man);
-    return "day was a blur—this is the part I was waiting on.";
-  }
-  function personaCard(){
-    if (P.systemPersonaCard) return P.systemPersonaCard(man);
-    return "";
-  }
-
-  // ---------- Header + Portrait ----------
-  function initHeader(){
-    manNameEl && (manNameEl.textContent = TITLE_MAP[man] || 'Chat');
-    const pack = PORTRAITS[man];
-    if (pack && bgEl){
-      bgEl.style.backgroundImage = `url('${pack.bg}')`;
-    }
-  }
-
-  // ---------- Greeting on load ----------
-  function greet(){
-    // Persona intro, then a second quick line (varies)
-    const opening = personaFirstLine();
-    addBubble('bot', opening);
-    state.history.push({ role: 'assistant', content: opening });
-
-    // A quick second tease/affirm (pull from persona lines if present)
-    try{
-      const persona = (P.PERSONAS && P.PERSONAS[man]);
-      const line = persona && persona.lines ? P.pick(`warm:${man}`, persona.lines) : P.pick('warm:global', (P.GLOBAL?.affirm||["mm—yes."]));
-      if (line){
-        addBubble('bot', line);
-        state.history.push({ role: 'assistant', content: line });
+  /* ---------- Fallback phrase engine (uses phrases.js if available) ---------- */
+  function chooseReply(userText) {
+    // If project ships a phrases.js global (BBPHRASES), prefer that
+    try {
+      if (window.BBPHRASES && window.BBPHRASES[state.man]) {
+        const arr = window.BBPHRASES[state.man];
+        return arr[(state.seed++) % arr.length] || 'Tell me more.';
       }
-    }catch(_){}
-  }
+    } catch {}
 
-  // ---------- Backend call with timeout + graceful fallback ----------
-  async function callAPI(userText){
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), state.netTimeoutMs);
-
-    const payload = {
-      man,
-      userText,
-      history: state.history,
-      mode: 'romance',
-      memory: {}, // can be extended later
-      pov: 'first-person',
-      signals: {},
-      personaCard: state.personaCard   // backend can use or ignore safely
+    // Minimal built-in flavor if phrases.js isn’t present
+    const bank = {
+      blade: [
+        'Close the door and tell me what you need.',
+        'I hear you. I move when you nod.',
+        'You came to be caught—run if you like; I always find you.',
+      ],
+      alexander: [
+        'Come here, love. I’ll take my time.',
+        'Yield with pride and I’ll worship you properly.',
+        'Velvet first, steel later.',
+      ],
+      dylan: [
+        'There you are. Helmet’s off—eyes on you.',
+        'Night’s ours. Say the word and hold tight.',
+        'I like fast. Faster if you ask nicely.',
+      ],
+      viper: [
+        'There you are.',
+        'Strong arms, soft voice—what are you hungry for?',
+        'Look at me and breathe. I’ll do the rest.',
+      ],
+      grayson: [
+        'You clean up trouble beautifully.',
+        'Tell me what’s burning and I’ll pour the good stuff.',
+        'I’m patient—until you ask me not to be.',
+      ],
+      silas: [
+        'Hey luv—front row or backstage?',
+        'Play me a want and I’ll riff you an answer.',
+        'C’mere, let me tune you properly.',
+      ],
     };
 
-    const url = `${state.apiBase}/api/chat`;
-    try{
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      });
-      clearTimeout(t);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      if (data && typeof data.reply === 'string' && data.reply.trim()){
-        return data.reply.trim();
-      }
-      throw new Error('Bad payload');
-    }catch(err){
-      clearTimeout(t);
-      // Fallback: local phrase-bank reply (keeps the show rolling)
-      return localFallback(userText);
-    }
+    const list = bank[state.man] || ['Tell me more.'];
+    return list[(state.seed++) % list.length];
   }
 
-  // Local “human-ish” fallback
-  function localFallback(userText){
-    // If she asked small talk, give small talk
-    if (looksLikeSmallTalk(userText)) {
-      return personaSmallTalk();
-    }
+  async function reply(userText) {
+    // Typing indicator
+    const typing = addBubble('man', '', { typing: true });
 
-    // If she gave a name
-    const gotName = captureName(userText);
-    if (gotName){
-      state.nicknameGuess = gotName[0].toUpperCase() + gotName.slice(1);
-      return `Noted, ${state.nicknameGuess}. Come closer.`;
-    }
+    // (Optional) If you later wire an API, do it here.
+    // For now we use a small delay + local phrase.
+    const delay = jitterDelay(1100, 2100);
+    await new Promise((r) => setTimeout(r, delay));
 
-    // Otherwise pick a persona line, and sprinkle with a short encourager
-    try{
-      const persona = (P.PERSONAS && P.PERSONAS[man]);
-      const line = persona && persona.lines ? P.pick(`line:${man}`, persona.lines) : "mm—come here.";
-      const bump = P.pick('enc', (P.GLOBAL?.encouragers||[]));
-      return bump ? `${line} ${bump}` : line;
-    }catch(_){
-      return "come here.";
-    }
+    const text = chooseReply(userText);
+    swapTypingToText(typing, text);
   }
 
-  // ---------- Send flow ----------
-  async function onSend(){
-    const text = (input.value || '').trim();
-    if (!text) return;
+  /* ---------- Greetings ---------- */
+  function greet() {
+    // Short hello, no lectures
+    const styles = [
+      'hey there.',
+      'there you are.',
+      'morning, gorgeous.',
+      'good to see you.',
+      'hi.',
+    ];
+    const open = styles[Math.floor(rnd(0, styles.length))];
 
-    // You bubble
-    addBubble('you', text);
-    state.history.push({ role: 'user', content: text });
-    input.value = '';
-    input.focus();
+    // Type a hair, then greet
+    const typing = addBubble('man', '', { typing: true });
+    setTimeout(() => swapTypingToText(typing, open), jitterDelay(800, 1400));
+  }
 
-    // Typing bubble
-    const typingNode = addBubble('bot', '', { typing:true });
-    updateTypingDots(typingNode);
+  /* ---------- Wire send box ---------- */
+  function wireComposer() {
+    if (!input) return;
 
-    // Jittered human pause
-    await new Promise(r => setTimeout(r, jitter(650, 1400)));
-
-    // Ask backend (or fallback)
-    const reply = await callAPI(text);
-
-    // Slight extra pause for realism if the reply is short
-    if (reply.length < 40){
-      await new Promise(r => setTimeout(r, jitter(300, 700)));
+    function send() {
+      const val = (input.value || '').trim();
+      if (!val) return;
+      addBubble('you', val);
+      input.value = '';
+      reply(val);
     }
 
-    // Replace typing with real text
-    replaceTypingWithText(typingNode, reply);
-    state.history.push({ role: 'assistant', content: reply });
-  }
-
-  // ---------- Wire UI ----------
-  function wire(){
-    sendBtn?.addEventListener('click', onSend);
-    input?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey){
-        e.preventDefault();
-        onSend();
-      }
-    });
-  }
-
-  // ---------- Boot ----------
-  function boot(){
-    initHeader();
-    state.personaCard = personaCard(); // to help the model keep voice
-    greet();
-    wire();
-    // Focus the composer on load
-    setTimeout(() => input && input.focus(), 150);
-  }
-
-  boot();
-})();
-document.addEventListener('DOMContentLoaded', () => {
-  // Show the user's plan in the header
-  const plan = localStorage.getItem('bb_plan') || 'trial'; // 'trial' | 'day' | 'monthly'
-  const planBadge = document.getElementById('planBadge');
-  if (planBadge) {
-    planBadge.textContent = (plan === 'monthly') ? 'Monthly' : (plan === 'day' ? 'Day Pass' : 'Trial');
-  }
-
-  // Show "Main" button only for monthly plans
-  const mainBtn = document.querySelector('.mainBtn');
-  if (mainBtn) {
-    mainBtn.classList.toggle('hidden', plan !== 'monthly');
-  }
-
-  // Keep RED hidden unless you decide to show it on purpose
-  const red = document.getElementById('redBadge');
-  if (red) red.classList.add('hidden');
-});
-/* ========= PATCH: stop form reload + keep the selected man ========= */
-document.addEventListener('DOMContentLoaded', () => {
-  const form  = document.getElementById('composer') || document.querySelector('form');
-  const input = document.getElementById('input')     || document.querySelector('textarea, input[type="text"]');
-  const send  = document.getElementById('send')      || document.querySelector('button[type="submit"], button.send');
-
-  if (form) form.setAttribute('action', '#');
-  if (send) send.setAttribute('type', 'button');
-
-  const triggerSend = () => { if (send) send.click(); };
-
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      triggerSend();
-    });
-  }
-
-  if (input) {
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        triggerSend();
+        send();
       }
     });
+    if (sendBtn) sendBtn.addEventListener('click', send);
   }
-});
-/* ========= /PATCH ========= */
+
+  /* ---------- Plan badge / Main button / RED badge toggle ---------- */
+  function wireHeaderBadges() {
+    const plan = localStorage.getItem('bb_plan') || 'trial';
+    const planBadge = $('#planBadge');
+    if (planBadge) {
+      planBadge.textContent =
+        plan === 'monthly' ? 'Monthly' : plan === 'day' ? 'Day Pass' : 'Trial';
+    }
+
+    // Only show “Main” button when on monthly plan (if your markup has one)
+    const mainBtn = $('.mainBtn');
+    if (mainBtn) {
+      mainBtn.classList.toggle('hidden', plan !== 'monthly');
+    }
+
+    // Hide RED unless you explicitly choose to show it
+    const red = $('#redBadge');
+    if (red) red.classList.add('hidden');
+  }
+
+  /* ---------- Boot ---------- */
+  function boot() {
+    applySkin();
+    wireComposer();
+    wireHeaderBadges();
+    greet();
+    scrollToEnd();
+  }
+
+  document.addEventListener('DOMContentLoaded', boot);
+})();
