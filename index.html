@@ -2,126 +2,131 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Blossom & Blade — Choose</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/styles/home.css" />
-  <!-- Minimal fallback styles so the page looks fine even without /styles/home.css -->
   <style>
-    :root { --bg:#0b0c0f; --ink:#eef1f5; --ink2:#aab2c0; --pill:#ff2f78; }
-    *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);
-      font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:1160px;margin:0 auto;padding:20px}
-    header{margin:8px 0 16px}
-    .brand{font-size:28px;font-weight:700;letter-spacing:.5px}
-    .banner{margin:10px 0;padding:10px 14px;border-radius:12px;background:#151821;color:var(--ink2)}
-    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-    .card{position:relative;border-radius:20px;background:#12141b;overflow:hidden;
-      box-shadow:0 10px 25px rgba(0,0,0,.35)}
-    .card .image{display:block;position:relative;min-height:260px}
-    .card img{display:block;width:100%;height:340px;object-fit:cover;
-      filter:saturate(.95) contrast(1.05) brightness(.9)}
-    .cta{position:absolute;left:14px;bottom:14px;background:var(--pill);color:#fff;
-      font-weight:700;padding:10px 14px;border-radius:16px}
-    .sub{position:absolute;right:14px;bottom:14px;background:rgba(0,0,0,.45);color:#dbe0ea;
-      padding:8px 12px;border-radius:14px;font-size:13px}
-    footer{margin:18px 0 8px;color:var(--ink2);font-size:13px}
-    .legal{opacity:.85}
+    /* tiny guard so empty cards don’t look broken while images load */
+    .card .pic{background:linear-gradient(180deg,#111,#1a1f29);display:block;aspect-ratio:1/1;border-radius:18px;overflow:hidden}
+    .card .pic img{width:100%;height:100%;object-fit:cover;display:block}
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <header>
-      <div class="brand">Blossom &amp; Blade</div>
-      <div class="banner">
-        <strong>Free 20-minute trial.</strong>
-        Day Pass <strong>$7.99</strong> (pick one) • Monthly <strong>$14.99</strong> (all six).
-        <em>$1 goes to Domestic Violence charity.</em>
-      </div>
-    </header>
+<body class="home">
+  <header class="top">
+    <h1>Blossom &amp; Blade</h1>
+    <p class="banner">
+      <strong>Free 20-minute trial.</strong>
+      Day Pass <b>$7.99</b> (pick one) • Monthly <b>$14.99</b> (all six).
+      <em>$1 goes to Domestic Violence charity.</em>
+    </p>
+  </header>
 
-    <main>
-      <div class="grid">
-        <!-- Blade -->
-        <div class="card">
-          <a class="image" href="/age.html?next=/chat.html?man=blade" title="Blade">
-            <img id="img-blade" alt="" />
-            <span class="cta">Chat now</span>
-            <span class="sub">Preview first — no sign-up</span>
-          </a>
-        </div>
-        <!-- Viper -->
-        <div class="card">
-          <a class="image" href="/age.html?next=/chat.html?man=viper" title="Viper">
-            <img id="img-viper" alt="" />
-            <span class="cta">Chat now</span>
-            <span class="sub">Preview first — no sign-up</span>
-          </a>
-        </div>
-        <!-- Dylan -->
-        <div class="card">
-          <a class="image" href="/age.html?next=/chat.html?man=dylan" title="Dylan">
-            <img id="img-dylan" alt="" />
-            <span class="cta">Chat now</span>
-            <span class="sub">Preview first — no sign-up</span>
-          </a>
-        </div>
-        <!-- Alexander -->
-        <div class="card">
-          <a class="image" href="/age.html?next=/chat.html?man=alexander" title="Alexander">
-            <img id="img-alexander" alt="" />
-            <span class="cta">Chat now</span>
-            <span class="sub">Preview first — no sign-up</span>
-          </a>
-        </div>
-        <!-- Grayson -->
-        <div class="card">
-          <a class="image" href="/age.html?next=/chat.html?man=grayson" title="Grayson">
-            <img id="img-grayson" alt="" />
-            <span class="cta">Chat now</span>
-            <span class="sub">Preview first — no sign-up</span>
-          </a>
-        </div>
-        <!-- Silas -->
-        <div class="card">
-          <a class="image" href="/age.html?next=/chat.html?man=silas" title="Silas">
-            <img id="img-silas" alt="" />
-            <span class="cta">Chat now</span>
-            <span class="sub">Preview first — no sign-up</span>
-          </a>
-        </div>
+  <main class="grid">
+    <!-- Each card only needs data-man. Images are auto-picked by JS. -->
+    <article class="card" data-man="blade">
+      <a class="pic" href="/age.html?next=/chat.html?man=blade" aria-label="Chat with Blade">
+        <img alt="Blade" loading="eager" />
+      </a>
+      <div class="cta">
+        <a class="primary" href="/age.html?next=/chat.html?man=blade">Chat now</a>
+        <a class="ghost" href="/chat.html?man=blade">Preview first — no sign-up</a>
       </div>
-    </main>
+    </article>
 
-    <footer>
-      <div class="banner legal">
-        Adults-only, consent-first fantasy romance. Trial is exactly 20 minutes; after that,
-        sending routes to Pay. Monthly memory persists while active; lapses reset memory.
+    <article class="card" data-man="viper">
+      <a class="pic" href="/age.html?next=/chat.html?man=viper" aria-label="Chat with Viper">
+        <img alt="Viper" loading="lazy" />
+      </a>
+      <div class="cta">
+        <a class="primary" href="/age.html?next=/chat.html?man=viper">Chat now</a>
+        <a class="ghost" href="/chat.html?man=viper">Preview first — no sign-up</a>
       </div>
-    </footer>
-  </div>
+    </article>
 
-  <!-- Tiny helper: auto-detect your existing WEBP/JPG card filenames -->
+    <article class="card" data-man="dylan">
+      <a class="pic" href="/age.html?next=/chat.html?man=dylan" aria-label="Chat with Dylan">
+        <img alt="Dylan" loading="lazy" />
+      </a>
+      <div class="cta">
+        <a class="primary" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
+        <a class="ghost" href="/chat.html?man=dylan">Preview first — no sign-up</a>
+      </div>
+    </article>
+
+    <article class="card" data-man="alexander">
+      <a class="pic" href="/age.html?next=/chat.html?man=alexander" aria-label="Chat with Alexander">
+        <img alt="Alexander" loading="lazy" />
+      </a>
+      <div class="cta">
+        <a class="primary" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
+        <a class="ghost" href="/chat.html?man=alexander">Preview first — no sign-up</a>
+      </div>
+    </article>
+
+    <article class="card" data-man="grayson">
+      <a class="pic" href="/age.html?next=/chat.html?man=grayson" aria-label="Chat with Grayson">
+        <img alt="Grayson" loading="lazy" />
+      </a>
+      <div class="cta">
+        <a class="primary" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
+        <a class="ghost" href="/chat.html?man=grayson">Preview first — no sign-up</a>
+      </div>
+    </article>
+
+    <article class="card" data-man="silas">
+      <a class="pic" href="/age.html?next=/chat.html?man=silas" aria-label="Chat with Silas">
+        <img alt="Silas" loading="lazy" />
+      </a>
+      <div class="cta">
+        <a class="primary" href="/age.html?next=/chat.html?man=silas">Chat now</a>
+        <a class="ghost" href="/chat.html?man=silas">Preview first — no sign-up</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="foot">
+    <p>Adults-only, consent-first fantasy romance. Trial is exactly 20 minutes; after that, sending routes to Pay. Monthly memory persists while active; lapses reset memory.</p>
+  </footer>
+
   <script>
-    const picks = (m) => [
-      `/images/characters/${m}/card.webp`,
-      `/images/characters/${m}/card.jpg`,
-      `/images/characters/${m}/${m}-card-on.webp`,
-      `/images/characters/${m}/${m}-card.webp`,
-      `/images/characters/${m}/${m}_card.webp`,
-      `/images/characters/${m}/${m}_card.jpg`
-    ];
-    function trySet(id, list){
-      const img = document.getElementById("img-"+id);
-      (function next(i){
-        if (i>=list.length) { img.style.background = "#151821"; return; }
-        const test = new Image();
-        test.onload = () => img.src = list[i];
-        test.onerror = () => next(i+1);
-        test.src = list[i] + "?v=" + Date.now(); // cache-bust
-      })(0);
+    // Pick the first image that actually exists per guy.
+    const extras = {
+      blade:     ["blade.webp","blade-woods.jpg"],
+      viper:     ["viper-card-on.webp"],
+      dylan:     ["dylan-card-on.webp"],
+      alexander: ["alexander-card-on.webp"],
+      grayson:   ["grayson-card-on.webp"],
+      silas:     ["silas-card-on.webp"],
+    };
+    function candidates(man){
+      const base = [
+        `${man}-card-on.webp`,
+        `${man}-card-on.jpg`,
+        `${man}-card.webp`,
+        `${man}-card.jpg`
+      ];
+      return (extras[man]||[]).concat(base).map(n => `/images/characters/${man}/${n}`);
     }
-    ["blade","viper","dylan","alexander","grayson","silas"].forEach(m => trySet(m, picks(m)));
+    function test(url){
+      return new Promise((ok,no) => {
+        const i = new Image();
+        i.onload = () => ok(url);
+        i.onerror = () => no(url);
+        i.src = url + (url.includes("?")?"&":"?") + "v="+Date.now();
+      });
+    }
+    async function firstExisting(list){
+      for (const u of list){ try { await test(u); return u; } catch {} }
+      return null;
+    }
+    (async () => {
+      for (const card of document.querySelectorAll(".card[data-man]")) {
+        const man = card.getAttribute("data-man");
+        const img = card.querySelector("img");
+        const url = await firstExisting(candidates(man));
+        if (url) img.src = url;
+      }
+    })();
   </script>
 </body>
 </html>
