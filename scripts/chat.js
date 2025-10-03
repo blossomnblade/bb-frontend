@@ -1,11 +1,5 @@
 /* ==========================================================================
-   Blossom & Blade — chat.js (clean rewrite)
-   - Persona chosen from ?man=… once, then remembered per tab (sessionStorage)
-   - Never flips to another man after first load
-   - Natural greeting with short typing/jitter (shared + persona-specific)
-   - Simple local phrase engine fallback (uses phrases.js if present)
-   - Left portrait auto-wires from /images/characters/<man>/<man>-chat.webp
-   - Plan badge + “Main” button visibility
+   Blossom & Blade — chat.js (clean, integrated)
    ========================================================================== */
 
 (() => {
@@ -31,7 +25,7 @@
     silas: 'stage',
   };
 
-  // Friendly callsigns (nicknames) to sprinkle in
+  // Friendly callsigns (nicknames) to sprinkle in (lightly)
   const CALLSIGNS = {
     blade:     ['rabbit', 'sweetheart', 'lil lamb'],
     alexander: ['love', 'darling', 'beautiful'],
@@ -54,7 +48,7 @@
     'come closer.',
   ];
 
-  // Persona-specific openers (what gives each guy his voice)
+  // Persona-specific openers (gives each guy his voice)
   const PERSONA_GREETS = {
     blade: [
       'hi, little rabbit.',
@@ -124,27 +118,24 @@
     return n;
   }
 
- function scrollToEnd(force = false){
-  // Prefer the messages box; fall back to the page
-  const box =
-    $('#feed') || $('.messages') || $('.feed') || $('#chat-feed') || null;
+  // Smooth autoscroll that respects user if they scrolled up
+  function scrollToEnd(force = false) {
+    const box = $('#feed') || $('.messages') || $('.feed') || $('#chat-feed') || null;
 
-  // only stick-to-bottom if the user is already near the bottom,
-  // unless we force it (first load, sending, or bot reply)
-  const nearBottom = box
-    ? (box.scrollTop + box.clientHeight) >= (box.scrollHeight - 120)
-    : (window.innerHeight + window.pageYOffset) >= (document.body.offsetHeight - 120);
+    const nearBottom = box
+      ? (box.scrollTop + box.clientHeight) >= (box.scrollHeight - 120)
+      : (window.innerHeight + window.pageYOffset) >= (document.body.offsetHeight - 120);
 
-  if (force || nearBottom){
-    if (box){
-      box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    if (force || nearBottom) {
+      if (box) {
+        box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
     }
   }
-}
 
-
+  /* ---------- Persona picking & state ---------- */
   function getManFromURLorSession() {
     const q = new URLSearchParams(location.search);
     const fromURL = (q.get('man') || '').toLowerCase();
@@ -153,12 +144,10 @@
   }
 
   const state = {
-  man: getManFromURLorSession(),
-  personaCard: '',
-  seed: 0,
-  lastNick: false,   // <— new flag to prevent back-to-back nicknames
-};
-
+    man: getManFromURLorSession(),
+    personaCard: '',
+    seed: 0,
+  };
 
   // Canonicalize URL & remember for this tab
   try {
@@ -182,11 +171,10 @@
     }
 
     wrap.appendChild(meta);
-    wrap.appendChild(body); 
+    wrap.appendChild(body);
     feed.appendChild(wrap);
-scrollToEnd(true);
-return wrap;
-
+    scrollToEnd(true);
+    return wrap;
   }
 
   function swapTypingToText(node, text) {
@@ -194,12 +182,36 @@ return wrap;
     node.classList.remove('typing');
     const t = node.querySelector('.text');
     if (t) t.textContent = text;
-    scrollToEnd(true); 
+    scrollToEnd(true);
   }
 
   /* ---------- Persona skin (portrait, labels, data attrs) ---------- */
   function portraitPath(man) {
     return `/images/characters/${man}/${man}-chat.webp`;
+  }
+
+  // Fallback loader for portrait: tries several common names & formats
+  function setPortraitWithFallback(man) {
+    const targets = $$('img[data-portrait], #portrait, .portrait img, .left img');
+    if (!targets.length) return;
+
+    const candidates = [
+      `/images/characters/${man}/${man}-chat.webp`,
+      `/images/characters/${man}/${man}-chat.jpg`,
+      `/images/characters/${man}/${man}.webp`,
+      `/images/characters/${man}/${man}.jpg`,
+    ];
+
+    function tryNext(img, i = 0) {
+      if (i >= candidates.length) return;
+      img.onerror = () => tryNext(img, i + 1);
+      img.src = candidates[i];
+      img.alt = TITLE_MAP[man] || 'Portrait';
+      img.setAttribute('loading', 'eager');
+      img.decoding = 'async';
+    }
+
+    targets.forEach(img => tryNext(img, 0));
   }
 
   function applySkin() {
@@ -209,19 +221,14 @@ return wrap;
     const headerName = $('#manName') || $('.manName') || $('header .name');
     if (headerName) headerName.textContent = TITLE_MAP[state.man] || 'Man';
 
-    const portTargets = $$('img[data-portrait], #portrait, .portrait img, .left img');
-    const src = portraitPath(state.man);
-    portTargets.forEach((img) => {
-      img.src = src;
-      img.alt = TITLE_MAP[state.man] || 'Portrait';
-      img.setAttribute('loading', 'eager');
-      img.decoding = 'async';
-    });
+    // Portrait with fallback
+    setPortraitWithFallback(state.man);
 
+    // Hint for CSS background
     document.body.style.setProperty('--bb-room', BG_HINT[state.man] || 'room');
   }
 
-  /* ---------- Fallback phrase engine (or phrases.js if present) ---------- */
+  /* ---------- Fallback phrase engine (uses phrases.js if present) ---------- */
   function chooseReply(userText) {
     try {
       if (window.BBPHRASES && window.BBPHRASES[state.man]) {
@@ -232,22 +239,21 @@ return wrap;
 
     const bank = {
       blade: [
-  'Say the word and I’m there.',
-  'Breathe. I’ve got you.',
-  'You’re safe with me—always.',
-  'Mine. Let me take care of you.',
-  'Say less, baby. I’ve got you.',
-],
-
+        'Say the word and I’m there.',
+        'Breathe. I’ve got you.',
+        'You’re safe with me—always.',
+        'Mine. Let me take care of you.',
+        'Say less, baby. I’ve got you.',
+      ],
       alexander: [
         'Come here, love. I’ll take my time.',
         'Come lay on my desk and I’ll worship you properly.',
-        'Cuffs first, Silk later.',
+        'Cuffs first, silk later.',
       ],
       dylan: [
         'There you are. Helmet’s off—eyes on you.',
         'Night’s ours. Say the word and hold tight.',
-        'I like fast. Faster than you're ready for, I'll go slow.',
+        'I like fast. If you want slow, I’ll go slow.',
       ],
       viper: [
         'There you are.',
@@ -255,9 +261,9 @@ return wrap;
         'Look at me and breathe. I’ll do the rest.',
       ],
       grayson: [
-        'You clean up beautifully, My little brat.',
+        'You clean up trouble beautifully.',
         'Tell me what’s burning and I’ll put out that fire.',
-        'I’m patient—but don't push me.',
+        'I’m patient—until you ask me not to be.',
       ],
       silas: [
         'Hey luv—front row or backstage?',
@@ -272,11 +278,8 @@ return wrap;
 
   async function reply(userText) {
     const typing = addBubble('man', '', { typing: true });
-
-    // (If you later wire an API, do it here instead of the timeout.)
     const delay = jitterDelay(1100, 2100);
     await new Promise((r) => setTimeout(r, delay));
-
     const text = sprinkleNick(chooseReply(userText));
     swapTypingToText(typing, text);
   }
@@ -381,20 +384,19 @@ return wrap;
     const red = $('#redBadge'); // hidden by default unless you choose otherwise
     if (red) red.classList.add('hidden');
   }
-function boot(){
-  applySkin();
-  wireComposer();
-  wireHeaderBadges();
-  greet();
-  scrollToEnd(true);
-}
 
- if (document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', boot, { once: true });
-} else {
-  boot();
-}
+  /* ---------- Boot ---------- */
+  function boot() {
+    applySkin();
+    wireComposer();
+    wireHeaderBadges();
+    greet();
+    scrollToEnd(true);
+  }
 
- 
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
 })();
-
