@@ -182,6 +182,7 @@
     }
 
     wrap.appendChild(meta);
+    wrap.appendChild(body); 
     feed.appendChild(wrap);
 scrollToEnd(true);
 return wrap;
@@ -380,6 +381,13 @@ return wrap;
     const red = $('#redBadge'); // hidden by default unless you choose otherwise
     if (red) red.classList.add('hidden');
   }
+function boot(){
+  applySkin();
+  wireComposer();
+  wireHeaderBadges();
+  greet();
+  scrollToEnd(true);
+}
 
  if (document.readyState === 'loading'){
   document.addEventListener('DOMContentLoaded', boot, { once: true });
