@@ -124,9 +124,26 @@
     return n;
   }
 
-  function scrollToEnd() {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+ function scrollToEnd(force = false){
+  // Prefer the messages box; fall back to the page
+  const box =
+    $('#feed') || $('.messages') || $('.feed') || $('#chat-feed') || null;
+
+  // only stick-to-bottom if the user is already near the bottom,
+  // unless we force it (first load, sending, or bot reply)
+  const nearBottom = box
+    ? (box.scrollTop + box.clientHeight) >= (box.scrollHeight - 120)
+    : (window.innerHeight + window.pageYOffset) >= (document.body.offsetHeight - 120);
+
+  if (force || nearBottom){
+    if (box){
+      box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
   }
+}
+
 
   function getManFromURLorSession() {
     const q = new URLSearchParams(location.search);
@@ -165,10 +182,10 @@
     }
 
     wrap.appendChild(meta);
-    wrap.appendChild(body);
     feed.appendChild(wrap);
-    scrollToEnd();
-    return wrap;
+scrollToEnd(true);
+return wrap;
+
   }
 
   function swapTypingToText(node, text) {
@@ -176,7 +193,7 @@
     node.classList.remove('typing');
     const t = node.querySelector('.text');
     if (t) t.textContent = text;
-    scrollToEnd();
+    scrollToEnd(true); 
   }
 
   /* ---------- Persona skin (portrait, labels, data attrs) ---------- */
