@@ -1,9 +1,9 @@
 /* ==========================================================================
-   Blossom & Blade — chat.js (full rewrite)
-   - Persona is chosen from ?man=… once, then remembered per-tab (sessionStorage)
+   Blossom & Blade — chat.js (clean rewrite)
+   - Persona chosen from ?man=… once, then remembered per tab (sessionStorage)
    - Never flips to another man after first load
-   - Natural greeting with short typing/jitter
-   - Simple local phrase engine fallback (phrases.js if present), no consent lectures
+   - Natural greeting with short typing/jitter (shared + persona-specific)
+   - Simple local phrase engine fallback (uses phrases.js if present)
    - Left portrait auto-wires from /images/characters/<man>/<man>-chat.webp
    - Plan badge + “Main” button visibility
    ========================================================================== */
@@ -20,27 +20,8 @@
     grayson: 'Grayson',
     silas: 'Silas',
   };
-  // Friendly callsigns (nicknames) + helpers
-  const CALLSIGNS = {
-    blade:     ['rabbit', 'sweetheart', 'pretty thing'],
-    alexander: ['love', 'darling', 'beautiful'],
-    dylan:     ['angel', 'babygirl', 'sweetheart'],
-    viper:     ['love', 'gorgeous', 'miu', 'baby'],
-    grayson:   ['darlin’', 'trouble', 'sweet thing'],
-    silas:     ['luv', 'darlin’', 'gorgeous'],
-  };
 
-  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-  function maybe(p=0.45){ return Math.random() < p; }
-  function sprinkleNick(text){
-    const list = CALLSIGNS[state.man] || [];
-    if (!list.length || !maybe()) return text;
-    const pre = pick(['hey', 'mm', '']);
-    const nick = pick(list);
-    return `${pre ? pre + ' ' : ''}${nick}, ${text}`.replace(/\s+/g,' ').trim();
-  }
-
-  // Optional: background hints for CSS (some themes use body[data-man] selectors)
+  // Optional: background hints for CSS (if your styles use body[data-man])
   const BG_HINT = {
     blade: 'woods',
     alexander: 'boardroom',
@@ -50,28 +31,91 @@
     silas: 'stage',
   };
 
-  function getManFromURLorSession() {
-    const q = new URLSearchParams(location.search);
-    const fromURL = (q.get('man') || '').toLowerCase();
-    const candidate = fromURL || (sessionStorage.getItem('bb:man') || 'blade').toLowerCase();
-    return SUPPORTED_MEN.includes(candidate) ? candidate : 'blade';
-  }
-
-  const state = {
-    man: getManFromURLorSession(),
-    personaCard: '',
-    seed: 0,          // tiny convo memory for our fallback engine
+  // Friendly callsigns (nicknames) to sprinkle in
+  const CALLSIGNS = {
+    blade:     ['rabbit', 'sweetheart', 'pretty thing'],
+    alexander: ['love', 'darling', 'beautiful'],
+    dylan:     ['angel', 'babygirl', 'sweetheart'],
+    viper:     ['love', 'gorgeous', 'miu', 'baby'],
+    grayson:   ['darlin’', 'trouble', 'sweet thing'],
+    silas:     ['luv', 'darlin’', 'gorgeous'],
   };
 
-  // Canonicalize URL to freeze the chosen man & remember for this tab
-  try {
-    history.replaceState(null, '', `?man=${state.man}`);
-    sessionStorage.setItem('bb:man', state.man);
-  } catch {}
+  // Shared, natural openers used by all characters
+  const SHARED_GREETS = [
+    'hey',
+    'hi',
+    'hey there.',
+    'there you are.',
+    'good to see you.',
+    'morning, gorgeous.',
+    'evening.',
+    'you made it.',
+    'come closer.',
+  ];
 
-  /* ---------- DOM helpers ---------- */
-  const $ = (sel, root = document) => root.querySelector(sel);
+  // Persona-specific openers (what gives each guy his voice)
+  const PERSONA_GREETS = {
+    blade: [
+      'hi, little rabbit.',
+      'found you again.',
+      'were you trying to get away?',
+      'come on—run.',
+      'I was already behind you.',
+      "don’t look back.",
+    ],
+    viper: [
+      'evening, little treasure.',
+      'late again? I was waiting.',
+      "you know I’d find you.",
+      'come be good for me.',
+      'I smelled your fear.',
+    ],
+    dylan: [
+      'hey, backpack.',
+      'hop on.',
+      'you sitting up front or back.',
+      'you coming with me or am I stealing you?',
+      'helmet on, angel.',
+    ],
+    alexander: [
+      'evening, amuri miu.',
+      'come here, Cori.',
+      'eyes on me, amore.',
+      "I have you—don’t worry.",
+      'closer, little one.',
+    ],
+    grayson: [
+      'checking in?',
+      'hey sassy.',
+      'eyes up, good girl.',
+      'that tone means you need orders.',
+      'on your knees.',
+    ],
+    silas: [
+      'alright, lass.',
+      'come curl in.',
+      'come sit with me.',
+      "I’ll tune you just right.",
+      "let’s get indecent.",
+    ],
+  };
+
+  /* ---------- Small helpers ---------- */
+  const $  = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const rnd = (min, max) => Math.random() * (max - min) + min;
+  const jitterDelay = (min = 900, max = 1900) => Math.round(rnd(min, max));
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const maybe = (p = 0.45) => Math.random() < p;
+
+  function sprinkleNick(text) {
+    const list = CALLSIGNS[state.man] || [];
+    if (!list.length || !maybe()) return text;
+    const pre = pick(['hey', 'mm', '']);
+    const nick = pick(list);
+    return `${pre ? pre + ' ' : ''}${nick}, ${text}`.replace(/\s+/g, ' ').trim();
+  }
 
   function el(tag, cls, text) {
     const n = document.createElement(tag);
@@ -84,25 +128,35 @@
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
 
-  function rnd(min, max) {
-    return Math.random() * (max - min) + min;
+  function getManFromURLorSession() {
+    const q = new URLSearchParams(location.search);
+    const fromURL = (q.get('man') || '').toLowerCase();
+    const candidate = fromURL || (sessionStorage.getItem('bb:man') || 'blade').toLowerCase();
+    return SUPPORTED_MEN.includes(candidate) ? candidate : 'blade';
   }
 
-  function jitterDelay(min = 900, max = 1900) {
-    return Math.round(rnd(min, max));
-  }
+  const state = {
+    man: getManFromURLorSession(),
+    personaCard: '',
+    seed: 0,
+  };
 
-  /* ---------- Chat UI: bubbles ---------- */
- const feed = $('#feed') || $('.feed') || $('#chat-feed') || document.body;
+  // Canonicalize URL & remember for this tab
+  try {
+    history.replaceState(null, '', `?man=${state.man}`);
+    sessionStorage.setItem('bb:man', state.man);
+  } catch {}
 
+  /* ---------- Chat feed & bubbles ---------- */
+  const feed = $('#feed') || $('.feed') || $('#chat-feed') || document.body;
 
   function addBubble(role, text, opts = {}) {
     const wrap = el('div', 'msg ' + (role === 'you' ? 'you' : 'man'));
-    const meta = el('span', 'meta', role === 'you' ? 'You' : TITLE_MAP[state.man] || 'Man');
+    const meta = el('span', 'meta', role === 'you' ? 'You' : (TITLE_MAP[state.man] || 'Man'));
     const body = el('div', 'text');
 
     if (opts.typing) {
-      body.innerHTML = '<span class="dots"></span>'; // CSS animates .dots
+      body.innerHTML = '<span class="dots"></span>';
       wrap.classList.add('typing');
     } else {
       body.textContent = text;
@@ -123,21 +177,18 @@
     scrollToEnd();
   }
 
-  /* ---------- Persona skin (portrait, labels, data attributes) ---------- */
+  /* ---------- Persona skin (portrait, labels, data attrs) ---------- */
   function portraitPath(man) {
     return `/images/characters/${man}/${man}-chat.webp`;
   }
 
   function applySkin() {
-    // body[data-man] lets CSS theme per man if you’ve set that up
     document.body.setAttribute('data-man', state.man);
     document.title = `${TITLE_MAP[state.man] || 'Chat'} — Blossom & Blade`;
 
-    // Update header label if present
     const headerName = $('#manName') || $('.manName') || $('header .name');
     if (headerName) headerName.textContent = TITLE_MAP[state.man] || 'Man';
 
-    // Try to wire the portrait — we try a few common selectors
     const portTargets = $$('img[data-portrait], #portrait, .portrait img, .left img');
     const src = portraitPath(state.man);
     portTargets.forEach((img) => {
@@ -147,13 +198,11 @@
       img.decoding = 'async';
     });
 
-    // Hint for CSS backgrounds (optional)
     document.body.style.setProperty('--bb-room', BG_HINT[state.man] || 'room');
   }
 
-  /* ---------- Fallback phrase engine (uses phrases.js if available) ---------- */
+  /* ---------- Fallback phrase engine (or phrases.js if present) ---------- */
   function chooseReply(userText) {
-    // If project ships a phrases.js global (BBPHRASES), prefer that
     try {
       if (window.BBPHRASES && window.BBPHRASES[state.man]) {
         const arr = window.BBPHRASES[state.man];
@@ -161,7 +210,6 @@
       }
     } catch {}
 
-    // Minimal built-in flavor if phrases.js isn’t present
     const bank = {
       blade: [
         'Close the door and tell me what you need.',
@@ -200,164 +248,114 @@
   }
 
   async function reply(userText) {
-    // Typing indicator
     const typing = addBubble('man', '', { typing: true });
 
-    // (Optional) If you later wire an API, do it here.
-    // For now we use a small delay + local phrase.
+    // (If you later wire an API, do it here instead of the timeout.)
     const delay = jitterDelay(1100, 2100);
     await new Promise((r) => setTimeout(r, delay));
 
-    const text = chooseReply(userText);
+    const text = sprinkleNick(chooseReply(userText));
     swapTypingToText(typing, text);
- // Persona-specific openers
-const PERSONA_GREETS = {
-  blade: [
-    'hi, little rabbit.',
-    'found you again.',
-    'were you trying to get away?',
-    'come on—run.',
-    'I was already behind you.',
-    "don't look back.",
-  ],
-  viper: [
-    'evening, little treasure.',
-    'late again? I was waiting.',
-    "you know I'd find you.",
-    'come be good for me.',
-    'I smelled your fear.',
-  ],
-  dylan: [
-    'hey, backpack.',
-    'hop on.',
-    'you sitting up front or back.',
-    'you coming with me or am I stealing you?',
-    'helmet on, angel.',
-  ],
-  alexander: [
-    'evening, amuri miu.',
-    'come here, Cori.',
-    'eyes on me, amore.',
-    "I have you—don't worry.",
-    'closer, little one.',
-  ],
-  grayson: [
-    'checking in?',
-    'hey sassy.',
-    'eyes up, good girl.',
-    'that tone means you need orders.',
-    'on your knees.',
-  ],
-  silas: [
-    'alright, lass.',
-    'come curl in.',
-    'come sit with me.',
-    "I'll tune you just right.",
-    "let's get indecent.",
-  ],
-};
+  }
 
-/* ---------- Greetings ---------- */
-function greet() {
-  // 70% persona flavor, 30% shared variety
-  const persona = PERSONA_GREETS[state.man] || [];
-  const pool =
-    Math.random() < 0.7
+  /* ---------- Greeting (fires once on load) ---------- */
+  function greet() {
+    // 70% persona flavor, 30% shared variety
+    const persona = PERSONA_GREETS[state.man] || [];
+    const pool = Math.random() < 0.7
       ? [...persona, ...SHARED_GREETS]
       : [...SHARED_GREETS, ...persona];
 
-  // light no-repeat per tab
-  const seenKey = `bb:greet:${state.man}`;
-  let ix = Number(sessionStorage.getItem(seenKey) || '-1');
-  ix = (ix + 1) % pool.length;
-  sessionStorage.setItem(seenKey, String(ix));
+    // light no-repeat per tab, per man
+    const seenKey = `bb:greet:${state.man}`;
+    let ix = Number(sessionStorage.getItem(seenKey) || '-1');
+    ix = (ix + 1) % pool.length;
+    sessionStorage.setItem(seenKey, String(ix));
 
-  const line = pool[ix];
-  const typing = addBubble('man', '', { typing: true });
-  setTimeout(() => swapTypingToText(typing, line), jitterDelay(800, 1400));
-}
-
-function findComposerEl() {
-  return (
-    $('#composer') ||
-    $('#message') ||
-    $('.composer input') ||
-    $('.composer textarea') ||
-    $('.chat-input input') ||
-    $('.chat-input textarea') ||
-    $('textarea[placeholder]') ||
-    $('input[placeholder]') ||
-    $('[contenteditable="true"]')
-  );
-}
-
-function readComposerText(el) {
-  if (!el) return '';
-  if (el.matches('[contenteditable="true"]')) return (el.textContent || '').trim();
-  return (el.value || '').trim();
-}
-
-function clearComposer(el) {
-  if (!el) return;
-  if (el.matches('[contenteditable="true"]')) el.textContent = '';
-  else el.value = '';
-}
-
-function wireComposer() {
-  const button =
-    $('#sendBtn') ||
-    $('button[type="submit"]') ||
-    $('button.send') ||
-    $('button:has(> .send)');
-
-  function send() {
-    const el = findComposerEl();
-    const val = readComposerText(el);
-    if (!val) return;
-    addBubble('you', val);
-    clearComposer(el);
-    reply(val);
+    const line = sprinkleNick(pool[ix]);
+    const typing = addBubble('man', '', { typing: true });
+    setTimeout(() => swapTypingToText(typing, line), jitterDelay(800, 1400));
   }
 
-  // Enter (no Shift) inside any input/textarea/contenteditable
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' || e.shiftKey) return;
-    const el = document.activeElement;
+  /* ---------- Composer wiring (Enter-to-send + button) ---------- */
+  function findComposerEl() {
+    return (
+      $('#composer') ||
+      $('#message') ||
+      $('.composer input') ||
+      $('.composer textarea') ||
+      $('.chat-input input') ||
+      $('.chat-input textarea') ||
+      $('textarea[placeholder]') ||
+      $('input[placeholder]') ||
+      $('[contenteditable="true"]')
+    );
+  }
+
+  function readComposerText(el) {
+    if (!el) return '';
+    if (el.matches('[contenteditable="true"]')) return (el.textContent || '').trim();
+    return (el.value || '').trim();
+  }
+
+  function clearComposer(el) {
     if (!el) return;
-    if (el.matches('input, textarea, [contenteditable="true"]')) {
-      if (el.id === 'composer' || el.closest('.composer, .chat-input, .input-row, form')) {
-        e.preventDefault();
-        send();
-      }
-    }
-  });
-
-  // Click on the visible Send button
-  if (button) {
-    button.addEventListener('click', (e) => {
-      e.preventDefault?.();
-      send();
-    });
+    if (el.matches('[contenteditable="true"]')) el.textContent = '';
+    else el.value = '';
   }
-}
 
-    /* ---------- Plan badge / Main button / RED badge toggle ---------- */
+  function wireComposer() {
+    const button =
+      $('#sendBtn') ||
+      $('button[type="submit"]') ||
+      $('button.send') ||
+      $('button:has(> .send)');
+
+    function send() {
+      const el = findComposerEl();
+      const val = readComposerText(el);
+      if (!val) return;
+      addBubble('you', val);
+      clearComposer(el);
+      reply(val);
+    }
+
+    // Enter (no Shift) inside any input/textarea/contenteditable that lives in the composer area
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.shiftKey) return;
+      const el = document.activeElement;
+      if (!el) return;
+      if (el.matches('input, textarea, [contenteditable="true"]')) {
+        if (el.id === 'composer' || el.closest('.composer, .chat-input, .input-row, form')) {
+          e.preventDefault();
+          send();
+        }
+      }
+    });
+
+    if (button) {
+      button.addEventListener('click', (e) => {
+        e.preventDefault?.();
+        send();
+      });
+    }
+  }
+
+  /* ---------- Plan badge / Main button / RED badge toggle ---------- */
   function wireHeaderBadges() {
     const plan = localStorage.getItem('bb_plan') || 'trial';
     const planBadge = $('#planBadge');
     if (planBadge) {
       planBadge.textContent =
-        plan === 'monthly' ? 'Monthly' : plan === 'day' ? 'Day Pass' : 'Trial';
+        plan === 'monthly' ? 'Monthly' : (plan === 'day' ? 'Day Pass' : 'Trial');
     }
 
-    // Only show “Main” button when on monthly plan (if your markup has one)
-    const mainBtn = $('.mainBtn');
+    const mainBtn = $('.mainBtn'); // only when on monthly
     if (mainBtn) {
       mainBtn.classList.toggle('hidden', plan !== 'monthly');
     }
 
-    // Hide RED unless you explicitly choose to show it
-    const red = $('#redBadge');
+    const red = $('#redBadge'); // hidden by default unless you choose otherwise
     if (red) red.classList.add('hidden');
   }
 
