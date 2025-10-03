@@ -212,3 +212,59 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   background:#ff2e8b; color:#fff; border:0; padding:10px 14px;
   border-radius:10px; font-weight:600; cursor:pointer;
 }
+/* --- Chat polish: bubbles, text, composer --- */
+
+/* Bubble text legibility */
+.messages .msg .text {
+  color: #e9ecf1;
+  line-height: 1.5;
+  letter-spacing: .2px;
+}
+
+/* Man bubble */
+.messages .msg.man {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(2px);
+}
+
+/* You bubble */
+.messages .msg.you {
+  background: rgba(255, 20, 147, 0.14);
+  border: 1px solid rgba(255, 20, 147, 0.25);
+}
+
+/* Composer bar */
+.composer {
+  position: sticky;
+  bottom: 0;
+  padding: 12px;
+  gap: 10px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+}
+
+/* Input */
+.composer #composer {
+  flex: 1;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+.composer #composer::placeholder { color: rgba(255,255,255,0.6); }
+.composer #composer:focus {
+  outline: none;
+  border-color: #ff3f9e;
+  box-shadow: 0 0 0 3px rgba(255,63,158,.15);
+}
+
+/* Send button */
+#sendBtn {
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 14px;
+}
