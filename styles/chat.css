@@ -174,3 +174,41 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   background:#ff2e8b; color:#fff; border:0; padding:10px 14px;
   border-radius:10px; font-weight:600; cursor:pointer;
 }
+/* Chat feed sizing & bubbles */
+#feed {
+  min-height: 240px;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+  padding: 12px 16px;
+}
+
+#feed .msg {
+  max-width: 720px;
+  margin: 10px 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.04);
+}
+#feed .msg.you {
+  background: rgba(255,46,139,.10);
+  border-color: rgba(255,46,139,.25);
+}
+#feed .msg .meta {
+  display:block; font-size:12px; opacity:.65; margin-bottom:4px;
+}
+
+.composer {
+  display:flex; gap:10px; align-items:center;
+  background: rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px; padding:8px 10px;
+}
+#composer {
+  flex:1; background:transparent; border:0; outline:0; color:#fff;
+  font-size:15px; padding:6px 8px;
+}
+#sendBtn {
+  background:#ff2e8b; color:#fff; border:0; padding:10px 14px;
+  border-radius:10px; font-weight:600; cursor:pointer;
+}
