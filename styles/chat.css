@@ -270,3 +270,20 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   padding: 0 18px;
   border-radius: 14px;
 }
+/* === Kill inner scroll; let the page scroll === */
+.chatPanel{
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+#feed,
+.messages{
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* keep the input bar sticky to the bottom of the viewport */
+.composer{
+  position: sticky;
+  bottom: 0;
+}
