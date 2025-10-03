@@ -381,14 +381,11 @@ return wrap;
     if (red) red.classList.add('hidden');
   }
 
-  /* ---------- Boot ---------- */
-  function boot() {
-    applySkin();
-    wireComposer();
-    wireHeaderBadges();
-    greet();
-    scrollToEnd();
-  }
+ if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', boot, { once: true });
+} else {
+  boot();
+}
 
   document.addEventListener('DOMContentLoaded', boot);
 })();
