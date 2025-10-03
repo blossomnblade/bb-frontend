@@ -387,5 +387,6 @@ return wrap;
   boot();
 }
 
-  document.addEventListener('DOMContentLoaded', boot);
+ 
 })();
+
