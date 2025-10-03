@@ -33,7 +33,7 @@
 
   // Friendly callsigns (nicknames) to sprinkle in
   const CALLSIGNS = {
-    blade:     ['rabbit', 'sweetheart', 'pretty thing'],
+    blade:     ['rabbit', 'sweetheart', 'lil lamb'],
     alexander: ['love', 'darling', 'beautiful'],
     dylan:     ['angel', 'babygirl', 'sweetheart'],
     viper:     ['love', 'gorgeous', 'miu', 'baby'],
@@ -136,10 +136,12 @@
   }
 
   const state = {
-    man: getManFromURLorSession(),
-    personaCard: '',
-    seed: 0,
-  };
+  man: getManFromURLorSession(),
+  personaCard: '',
+  seed: 0,
+  lastNick: false,   // <— new flag to prevent back-to-back nicknames
+};
+
 
   // Canonicalize URL & remember for this tab
   try {
@@ -212,33 +214,36 @@
 
     const bank = {
       blade: [
-        'Close the door and tell me what you need.',
-        'I hear you. I move when you nod.',
-        'You came to be caught—run if you like; I always find you.',
-      ],
+  'Say the word and I’m there.',
+  'Breathe. I’ve got you.',
+  'You’re safe with me—always.',
+  'Mine. Let me take care of you.',
+  'Say less, baby. I’ve got you.',
+],
+
       alexander: [
         'Come here, love. I’ll take my time.',
-        'Yield with pride and I’ll worship you properly.',
-        'Velvet first, steel later.',
+        'Come lay on my desk and I’ll worship you properly.',
+        'Cuffs first, Silk later.',
       ],
       dylan: [
         'There you are. Helmet’s off—eyes on you.',
         'Night’s ours. Say the word and hold tight.',
-        'I like fast. Faster if you ask nicely.',
+        'I like fast. Faster than you're ready for, I'll go slow.',
       ],
       viper: [
         'There you are.',
-        'Strong arms, soft voice—what are you hungry for?',
+        'Strong arms or soft voice—what are you hungry for?',
         'Look at me and breathe. I’ll do the rest.',
       ],
       grayson: [
-        'You clean up trouble beautifully.',
-        'Tell me what’s burning and I’ll pour the good stuff.',
-        'I’m patient—until you ask me not to be.',
+        'You clean up beautifully, My little brat.',
+        'Tell me what’s burning and I’ll put out that fire.',
+        'I’m patient—but don't push me.',
       ],
       silas: [
         'Hey luv—front row or backstage?',
-        'Play me a want and I’ll riff you an answer.',
+        'Play my strings and I’ll show you my answer.',
         'C’mere, let me tune you properly.',
       ],
     };
