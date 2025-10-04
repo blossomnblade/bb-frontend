@@ -6,11 +6,15 @@
   --ink: #e9e9f5;
   --ink-dim: #b7b9d6;
   --ink-faint: #8a8db0;
-  --you: #ff2a6d;
-  --you-ink: #0b0c12;
+  --you: linear-gradient(180deg, #ff2d6f, #ff165f); /* richer hot-pink gradient */
+  --you-ink: #ffffff;                               /* white text on the You bubble */
   --radius-lg: 16px;
   --radius-md: 12px;
   --radius-sm: 10px;
+  --pink-600: #ff2d6f;
+  --pink-700: #ff165f;
+  --bubble-you-border: var(--pink-600);
+
 }
 
 *{ box-sizing: border-box; }
@@ -89,23 +93,43 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   border: 1px solid var(--glass-border);
   box-shadow: 0 6px 14px rgba(0,0,0,.20);
 }
+/* Message UI: meta + text + per-side variants */
 .msg .meta{
-  display:block; margin-bottom:4px;
-  font-size: 12px; letter-spacing:.2px; color: var(--ink-faint);
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  letter-spacing: .2px;
+  color: var(--ink-faint);
 }
-.msg .text{ color:var(--ink); }
+
+.msg .text{
+  color: var(--ink);
+}
 
 /* man (left) vs you (right) */
-.msg.man{ align-self:flex-start; background: rgba(255,255,255,.05); }
-.msg.you{
-  align-self:flex-end;
-  background: var(--you);
-  border-color: #ff3b78;
- /* “You” label uses the same ink as the You bubble */
-.msg.you .meta{
-  color: var(--you-ink);
-  opacity: .9;        /* a touch stronger so it isn’t greyed out */
+.msg.man{
+  align-self: flex-start;
+  background: rgba(255,255,255,.05);
 }
+
+/* YOU bubble styling */
+.msg.you{
+  align-self: flex-end;
+  background: var(--you);
+  color: var(--you-ink);
+  border-color: var(--bubble-you-border);
+  box-shadow: 0 8px 26px rgba(255,45,111,.18);
+}
+
+.msg.you .text{
+  color: var(--you-ink);
+}
+
+.msg.you .meta{
+  color: rgba(255,255,255,.85);
+  opacity: 1;
+}
+
 
 /* typing dots animation */
 .msg.typing .text,
