@@ -28,15 +28,7 @@ h1{font-size:32px;margin:24px 0 8px}
 nav a{color:#ddd}
 /* default site background for home/pay pages */
 #bg{
-  position: fixed;
-  inset: 0;
-  background-image: url('/images/bg/default.webp'); /* your file */
-  background-size: cover;
-  background-position: 50% 50%;
-  opacity: .22;                 /* tweak to taste */
-  z-index: 0;
-  pointer-events: none;
-}
+ 
 /* Full-page background image sits *behind* content */
 #bg{
   position: fixed;
@@ -49,3 +41,10 @@ nav a{color:#ddd}
 
 /* Make sure main containers paint above even if a stacking context appears */
 .wrap, .plans { position: relative; }
+/* global tiny lift already added; these do per-man nudges */
+.card[data-man="blade"]     .pic img { filter: brightness(1.06) contrast(1.08) saturate(1.04); }
+.card[data-man="alexander"] .pic img { filter: brightness(1.05) contrast(1.10) saturate(1.08); }
+.card[data-man="dylan"]     .pic img { filter: brightness(1.06) contrast(1.06) saturate(1.05); }
+.card[data-man="viper"]     .pic img { filter: brightness(1.10) contrast(1.10) saturate(1.02); }
+.card[data-man="grayson"]   .pic img { filter: brightness(1.04) contrast(1.12) saturate(1.02); }
+.card[data-man="silas"]     .pic img { filter: brightness(1.08) contrast(1.09) saturate(1.06); }
