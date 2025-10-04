@@ -295,7 +295,7 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   --bubble-man-bg:    rgba(255,255,255,.06);
   --bubble-you-bg:    rgba(255, 45, 134, .14);
   --bubble-text:      #f7f7fb;
-  --meta-color:       rgba(255,255,255,.86);
+  --meta-color:       rgba(255,255,255,.96);
   --input-bg:         rgba(14,16,22,.92);
   --placeholder:      rgba(255,255,255,.56);
   --send:             #ff2d86;
