@@ -6,78 +6,31 @@
   <title>Chat — Blossom & Blade</title>
   <link rel="stylesheet" href="/styles/chat.css" />
 </head>
-<body>
-  <!-- always-behind background -->
-  <div id="bg" aria-hidden="true"></div>
+<body class="chat">
+  <div id="bg"></div>
 
-  <!-- top bar -->
-  <header class="bar">
-    <div class="left">
-      <a class="home" href="/index.html" title="Back">←</a>
-      <span id="manName" class="man">Blade</span>
-      <span id="planBadge" class="badge plan">Trial</span>
-      <span id="redBadge" class="badge red hidden">RED</span>
-    </div>
-    <div class="right">
-      <a class="mainBtn hidden" href="/index.html" title="Choose">Main</a>
-      <a class="planlink" href="/pay.html">Plans</a>
-    </div>
+  <header class="topbar">
+    <a class="brand" href="/index.html">Blossom & Blade —</a>
+    <nav class="right"><a class="plans" href="/pay.html">Plans</a></nav>
   </header>
 
-  <!-- 2-column stage -->
-  <div class="stage" id="app">
-    <!-- LEFT: portrait -->
-    <aside class="portraitPanel" aria-label="Character portrait">
-      <img id="portrait" data-portrait alt="Character portrait" />
+  <main class="wrap">
+    <aside class="portraitPanel">
+      <img id="portrait" alt="Character portrait" loading="eager">
     </aside>
 
-    <!-- RIGHT: chat area -->
-    <main class="chatPanel" aria-label="Chat area">
-      <div class="chatGlass" aria-hidden="true"></div>
+    <section class="chatPanel">
+      <div class="chatGlass"></div>
+      <div id="feed" class="feed"></div>
 
-      <!-- messages feed (ID MUST be 'feed' for chat.js) -->
-      <div id="feed" class="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
-
-      <!-- composer (IDs MUST be composer / sendBtn for Enter + click) -->
-      <div class="composer" autocomplete="off" action="#">
-        <input id="composer" type="text" placeholder="Say something…" aria-label="Message" />
+      <div class="composer" id="composer">
+        <input id="input" type="text" placeholder="Say something…" autocomplete="off" />
         <button id="sendBtn" type="button">Send</button>
       </div>
-    </main>
-  </div>
+    </section>
+  </main>
 
-  <!-- phrase bank (optional, but if present chat.js will use it) -->
-  <script src="/scripts/phrases.js"></script>
-  <!-- runtime -->
   <script src="/scripts/chat.js"></script>
-
-  <!-- tiny helper: set the full-page background image based on man -->
-  <script>
-    (function () {
-      const m = (new URLSearchParams(location.search).get('man') || 'blade').toLowerCase();
-      const base = `/images/characters/${m}/`;
-      const bg = document.getElementById('bg');
-
-      // try a few common names you already have in /images
-      const candidates = [
-        `${base}${m}-bg.jpg`,
-        `${base}${m}-bg.webp`,
-        `${base}bg_${m}.jpg`,
-        `${base}bg_${m}.webp`,
-        `${base}${m}-woods.jpg`,
-        `${base}${m}-garage.jpg`,
-        `${base}${m}-boardroom.jpg`,
-        `${base}${m}-stage.jpg`
-      ];
-
-      (function tryOne(i=0){
-        if (i >= candidates.length) return;
-        const img = new Image();
-        img.onload = () => bg.style.backgroundImage = `url('${candidates[i]}')`;
-        img.onerror = () => tryOne(i+1);
-        img.src = candidates[i];
-      })();
-    })();
-  </script>
 </body>
+
 </html>
