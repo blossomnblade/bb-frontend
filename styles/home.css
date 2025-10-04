@@ -26,3 +26,14 @@ h1{font-size:32px;margin:24px 0 8px}
 .cta{margin:16px 0}
 .hint{color:#bdbdbd;font-size:14px}
 nav a{color:#ddd}
+/* default site background for home/pay pages */
+#bg{
+  position: fixed;
+  inset: 0;
+  background-image: url('/images/bg/default.webp'); /* your file */
+  background-size: cover;
+  background-position: 50% 50%;
+  opacity: .22;                 /* tweak to taste */
+  z-index: 0;
+  pointer-events: none;
+}
