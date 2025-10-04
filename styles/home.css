@@ -26,18 +26,17 @@ h1{font-size:32px;margin:24px 0 8px}
 .cta{margin:16px 0}
 .hint{color:#bdbdbd;font-size:14px}
 nav a{color:#ddd}
-/* default site background for home/pay pages */
-#bg{
  
-/* Full-page background image sits *behind* content */
+/* default site background for home/pay pages */
 #bg{
   position: fixed;
   inset: 0;
   background: url('/images/bg/default.webp') center / cover no-repeat;
-  opacity: .16;           /* tweak to taste */
+  opacity: .16;           /* adjust if you want stronger/weaker */
   pointer-events: none;
-  z-index: -1;            /* <-- key line: push behind the cards */
+  z-index: -1;            /* sits behind the cards */
 }
+
 
 /* Make sure main containers paint above even if a stacking context appears */
 .wrap, .plans { position: relative; }
