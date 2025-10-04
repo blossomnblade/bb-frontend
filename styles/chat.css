@@ -26,13 +26,16 @@ body{
   font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* full-page background image, always behind */
+/* Full-page background, always behind */
 #bg{
-  position: fixed; inset:0;
-  background-size: cover; background-position: 50% 50%;
-  opacity: .45;
-  z-index: 0; pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: #000 url('/images/bg/default.webp') center / cover no-repeat;
+  z-index: -1;           /* behind the UI */
+  pointer-events: none;  /* ignore clicks */
+  opacity: .28;          /* tweak to taste */
 }
+
 
 /* ==== Header ============================================================= */
 header.bar{
