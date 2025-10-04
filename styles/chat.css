@@ -303,14 +303,28 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   --send-glow:        rgba(255,45,134,.35);
 }
 
-/* Right-side chat panel */
+/* Lay out the right panel so the composer lives at the bottom */
 .chatPanel{
-  background: rgba(8,10,14,var(--panel-alpha));
-  backdrop-filter: blur(8px) saturate(118%);
-  -webkit-backdrop-filter: blur(8px) saturate(118%);
-  border: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
-.chatPanel{
+
+/* Messages area expands; keeps composer pressed to the bottom */
+.messages{ 
+  flex: 1; 
+  overflow-y: auto; 
+}
+
+/* Ensure the faint glass overlay is BEHIND everything */
+.chatPanel > *{ position: relative; z-index: 1; }
+.chatPanel .chatGlass{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
   background: rgba(8,10,14,var(--panel-alpha));
   backdrop-filter: blur(8px) saturate(118%);
   -webkit-backdrop-filter: blur(8px) saturate(118%);
