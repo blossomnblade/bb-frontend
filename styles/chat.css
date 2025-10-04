@@ -183,184 +183,96 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   padding: 12px 16px;
 }
 
-#feed .msg {
+/* ===== FEED (bubbles) =========================================== */
+
+#feed .msg{
   max-width: 720px;
   margin: 10px 0;
   padding: 12px 14px;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,.06);
   background: rgba(255,255,255,.04);
+  box-shadow: 0 6px 14px rgba(0,0,0,.20);
 }
-#feed .msg.you {
+
+/* "You" bubble tint */
+#feed .msg.you{
   background: rgba(255,46,139,.10);
   border-color: rgba(255,46,139,.25);
 }
-#feed .msg .meta {
-  display:block; font-size:12px; opacity:.65; margin-bottom:4px;
+
+/* meta (name / timestamp) */
+#feed .msg .meta{
+  display: block;
+  font-size: 12px;
+  opacity: .65;
+  margin-bottom: 4px;
 }
 
-.composer {
-  display:flex; gap:10px; align-items:center;
-  background: rgba(0,0,0,.35);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:12px; padding:8px 10px;
-}
-#composer {
-  flex:1; background:transparent; border:0; outline:0; color:#fff;
-  font-size:15px; padding:6px 8px;
-}
-#sendBtn {
-  background:#ff2e8b; color:#fff; border:0; padding:10px 14px;
-  border-radius:10px; font-weight:600; cursor:pointer;
-}
-/* --- Chat polish: bubbles, text, composer --- */
-
-/* Bubble text legibility */
-.messages .msg .text {
-  color: #e9ecf1;
-  line-height: 1.5;
-  letter-spacing: .2px;
+/* Make the “You” label match the You bubble ink */
+#feed .msg.you .meta{
+  color: var(--you-ink, #fff);
+  opacity: .95;
 }
 
-/* Man bubble */
-.messages .msg.man {
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.16);
-  backdrop-filter: blur(2px);
-}
+/* bubble text (keeps your theme var) */
+#feed .msg .text{ color: var(--bubble-text); }
 
-/* You bubble */
-.messages .msg.you {
-  background: rgba(255, 20, 147, 0.22);
-  border: 1px solid rgba(255, 20, 147, 0.40);
-}
-
-/* Composer bar */
-.composer {
-  position: sticky;
-  bottom: 0;
-  padding: 12px;
-  gap: 10px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-}
-
-/* Input */
-.composer #composer {
-  flex: 1;
-  height: 48px;
-  padding: 0 14px;
-  border-radius: 14px;
-  /* lighter “glass” */
-  background: rgba(255,255,255,.10);
-  border: 1px solid rgba(255,255,255,.10);
-  color: #fff;
-}
-.composer #composer::placeholder { color: rgba(255,255,255,.55); }
-.composer #composer:focus {
-  outline: none;
-  border-color: #ff3f9e;
-  box-shadow: 0 0 0 3px rgba(255,63,158,.15);
-}
-
-
-/* Send button */
-#sendBtn {
-  height: 48px;
-  padding: 0 18px;
-  border-radius: 14px;
-}
-/* === Kill inner scroll; let the page scroll === */
+/* ===== CHAT PANEL (right side container) ======================== */
+/* lighter, no blur, so the wallpaper detail shows through */
 .chatPanel{
-  overflow: visible !important;
-  max-height: none !important;
-}
-
-#feed,
-.messages{
-  max-height: none !important;
-  overflow: visible !important;
-}
-
-/* keep the input bar sticky to the bottom of the viewport */
-.composer{
-  position: sticky;
-  bottom: 0;
-}
-/* === GLOBAL POP/CONTRAST FOR ALL MEN (drop at end of styles/chat.css) === */
-:root{
-  --panel-alpha:      .62;                         /* 0.55–0.70 good range */
-  --glass-top-tint:   rgba(255, 80, 150, .10);     /* faint color bloom */
-  --glass-bottom-a:   .30;                         /* panel depth */
-  --bubble-man-bg:    rgba(255,255,255,.06);
-  --bubble-you-bg:    rgba(255, 45, 134, .14);
-  --bubble-text:      #f7f7fb;
-  --meta-color:       rgba(255,255,255,.96);
-  --input-bg:         rgba(14,16,22,.92);
-  --placeholder:      rgba(255,255,255,.56);
-  --send:             #ff2d86;
-  --send-glow:        rgba(255,45,134,.35);
-}
-
-/* Right-side chat panel — no wallpaper blur */
-.chatPanel{
-  background: rgba(8,10,14,var(--panel-alpha));
-  border: 1px solid rgba(255,255,255,.08);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  border-radius: 16px;
-  /* kill any background blur */
+  background: rgba(8,10,14,.28);
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(255,255,255,.08);
 }
 
-/* Soft glass paint inside the panel only (no gray wash) */
+/* faint inner glass sweep (very subtle) */
 .chatPanel .chatGlass{
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
   background:
-    radial-gradient(1100px 420px at 50% 0%, var(--glass-top-tint), rgba(0,0,0,0)),
-    linear-gradient(180deg, rgba(12,12,16,var(--glass-bottom-a)), rgba(12,12,16,calc(var(--glass-bottom-a) - .08)));
-}
-/* make sure real content paints above the glass layer */
-.chatPanel > *{ position: relative; z-index: 1; }
-
-/* Messages area grows so the composer stays pinned at the bottom */
-.messages{
-  flex: 1;
-  overflow-y: auto;
+    radial-gradient(1100px 420px at 50% 0%, rgba(255,255,255,.06), rgba(0,0,0,0)),
+    linear-gradient(180deg, rgba(12,12,16,.07), rgba(12,12,16,.03));
+  opacity: 1;
+  pointer-events: none;
 }
 
-/* Message bubbles & text */
-.msg{
-  background: var(--bubble-man-bg);
-  border-radius: 14px;
-}
-.msg.you{
-  align-self: flex-end;
-  background: var(--bubble-you-bg);
-  /* optional accent edge to match theme; safe to remove if undesired */
-  border-color: #ff3b78;
-}
-.msg .text{ color: var(--bubble-text); }
-.msg .meta{ color: var(--meta-color); }
+/* ===== COMPOSER (input row) ==================================== */
 
-/* “You” label uses the same ink as the You bubble and is a touch stronger */
-.msg.you .meta{
-  color: var(--you-ink);
-  opacity: .9;
-}
-
-/* Composer row (input + button on one line, at bottom) */
 .composer{
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  padding: 18px;
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+/* Kill native white input chrome; keep it themed */
+#composer{
+  flex: 1;
+  background: transparent !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+  color: #fff;
+  font-size: 15px;
+  padding: 6px 8px;
+}
+#composer::placeholder{
+  color: var(--placeholder, rgba(255,255,255,.55));
+}
+
+/* Send button themed glow */
+#sendBtn{
+  height: 48px;
+  padding: 0 16px;
+  background: var(--send, #ff2d86);
+  box-shadow: 0 0 10px var(--send-glow, rgba(255,46,139,.35));
+}
+
 }
 .composer input{
   flex: 1;
