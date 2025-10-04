@@ -37,3 +37,15 @@ nav a{color:#ddd}
   z-index: 0;
   pointer-events: none;
 }
+/* Full-page background image sits *behind* content */
+#bg{
+  position: fixed;
+  inset: 0;
+  background: url('/images/bg/default.webp') center / cover no-repeat;
+  opacity: .16;           /* tweak to taste */
+  pointer-events: none;
+  z-index: -1;            /* <-- key line: push behind the cards */
+}
+
+/* Make sure main containers paint above even if a stacking context appears */
+.wrap, .plans { position: relative; }
