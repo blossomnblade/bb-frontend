@@ -418,3 +418,77 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
 }
+/* ===== Depth & Elevation pass (drop at end of styles/chat.css) ===== */
+:root{
+  --elev-1: 0 6px 20px rgba(0,0,0,.35);
+  --elev-2: 0 10px 30px rgba(0,0,0,.50);
+  --edge-hi: inset 0 1px 0 rgba(255,255,255,.06);
+  --edge-lo: inset 0 -1px 0 rgba(0,0,0,.35);
+}
+
+/* Chat panel gets a little lift and crisp edge */
+.chatPanel{
+  box-shadow: var(--elev-2), var(--edge-lo);
+  border: 1px solid rgba(255,255,255,.05);
+}
+
+/* Keep your glass tint, just add a faint inner falloff for depth */
+.chatPanel .chatGlass{
+  box-shadow: inset 0 20px 60px rgba(0,0,0,.12);
+}
+
+/* Message bubbles: soft shadow + slight inner highlight */
+.msg{
+  box-shadow: 0 4px 14px rgba(0,0,0,.45), var(--edge-hi);
+  transform: translateZ(0);
+}
+.msg.you{
+  /* a hair stronger so your replies pop against the panel */
+  box-shadow: 0 6px 18px rgba(0,0,0,.5), var(--edge-hi);
+}
+
+/* Composer bar: same material as panel, small elevation */
+.composer{
+  box-shadow: var(--elev-1), var(--edge-lo);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px;
+}
+
+/* Input keeps your non-blur look, add a subtle inner light + focus ring */
+.composer input{
+  box-shadow: inset 0 6px 22px rgba(0,0,0,.20), var(--edge-hi);
+  transition: box-shadow .18s ease, outline-color .18s ease;
+}
+.composer input:focus{
+  /* uses your existing --send accent for the ring */
+  outline: 2px solid var(--send);
+  outline-offset: 0; /* matches your current style */
+}
+
+/* Send button—same elevation language */
+#sendBtn{
+  box-shadow: var(--elev-1);
+}
+
+/* Portrait: slightly deeper drop shadow for card-like feel */
+.portraitPanel img{
+  filter: drop-shadow(0 18px 36px rgba(0,0,0,.60));
+}
+
+/* Gentle hover lift where it makes sense */
+.msg,
+.chatPanel,
+.composer,
+.portraitPanel img,
+#sendBtn{
+  transition: transform .18s ease, box-shadow .18s ease, filter .2s ease;
+}
+@media (hover:hover) and (pointer:fine){
+  .msg:hover{ transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,.55), var(--edge-hi); }
+  .portraitPanel img:hover{ transform: translateY(-2px); }
+}
+
+/* Respect reduced-motion users */
+@media (prefers-reduced-motion: reduce){
+  .msg, .chatPanel, .composer, .portraitPanel img, #sendBtn{ transition: none !important; }
+}
