@@ -287,3 +287,61 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   position: sticky;
   bottom: 0;
 }
+/* === GLOBAL POP/CONTRAST FOR ALL MEN (drop at end of styles/chat.css) === */
+:root{
+  --panel-alpha:      .62;                         /* 0.55–0.70 good range */
+  --glass-top-tint:   rgba(255, 80, 150, .10);     /* faint color bloom */
+  --glass-bottom-a:   .30;                         /* panel depth */
+  --bubble-man-bg:    rgba(255,255,255,.06);
+  --bubble-you-bg:    rgba(255, 45, 134, .14);
+  --bubble-text:      #f7f7fb;
+  --meta-color:       rgba(255,255,255,.86);
+  --input-bg:         rgba(14,16,22,.92);
+  --placeholder:      rgba(255,255,255,.56);
+  --send:             #ff2d86;
+  --send-glow:        rgba(255,45,134,.35);
+}
+
+/* Right-side chat panel */
+.chatPanel{
+  background: rgba(8,10,14,var(--panel-alpha));
+  backdrop-filter: blur(8px) saturate(118%);
+  -webkit-backdrop-filter: blur(8px) saturate(118%);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+/* The faint “glass” overlay inside the panel (no gray wash) */
+.chatPanel .chatGlass{
+  background:
+    radial-gradient(1100px 420px at 50% 0%, var(--glass-top-tint), rgba(0,0,0,0)),
+    linear-gradient(180deg, rgba(12,12,16,var(--glass-bottom-a)), rgba(12,12,16,calc(var(--glass-bottom-a) - .08)));
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* Message bubbles & text */
+.msg{
+  background: var(--bubble-man-bg);
+  border-radius: 14px;
+}
+.msg.you{ background: var(--bubble-you-bg); }
+
+.msg .text{ color: var(--bubble-text); }
+.msg .meta{ color: var(--meta-color); }
+
+/* Composer */
+.composer input{
+  background: var(--input-bg);
+  color: #fff;
+}
+.composer input::placeholder{ color: var(--placeholder); }
+
+#sendBtn{
+  background: var(--send);
+  box-shadow: 0 0 10px var(--send-glow);
+}
+
+/* Give portraits a subtle lift from the page */
+.portraitPanel img{
+  filter: drop-shadow(0 12px 24px rgba(0,0,0,.55));
+}
