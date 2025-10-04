@@ -303,41 +303,36 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   --send-glow:        rgba(255,45,134,.35);
 }
 
-/* Lay out the right panel so the composer lives at the bottom */
+/* Right-side chat panel — no wallpaper blur */
 .chatPanel{
+  background: rgba(8,10,14,var(--panel-alpha));
+  border: 1px solid rgba(255,255,255,.08);
   display: flex;
   flex-direction: column;
   position: relative;
+  border-radius: 16px;
+  /* kill any background blur */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-/* Messages area expands; keeps composer pressed to the bottom */
-.messages{ 
-  flex: 1; 
-  overflow-y: auto; 
-}
-
-/* Ensure the faint glass overlay is BEHIND everything */
-.chatPanel > *{ position: relative; z-index: 1; }
+/* Soft glass paint inside the panel only (no gray wash) */
 .chatPanel .chatGlass{
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-}
-
-  background: rgba(8,10,14,var(--panel-alpha));
-  backdrop-filter: blur(8px) saturate(118%);
-  -webkit-backdrop-filter: blur(8px) saturate(118%);
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-/* The faint “glass” overlay inside the panel (no gray wash) */
-.chatPanel .chatGlass{
   background:
     radial-gradient(1100px 420px at 50% 0%, var(--glass-top-tint), rgba(0,0,0,0)),
     linear-gradient(180deg, rgba(12,12,16,var(--glass-bottom-a)), rgba(12,12,16,calc(var(--glass-bottom-a) - .08)));
-  opacity: 1;
-  pointer-events: none;
+}
+/* make sure real content paints above the glass layer */
+.chatPanel > *{ position: relative; z-index: 1; }
+
+/* Messages area grows so the composer stays pinned at the bottom */
+.messages{
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* Message bubbles & text */
@@ -345,11 +340,55 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
   background: var(--bubble-man-bg);
   border-radius: 14px;
 }
-.msg.you{ background: var(--bubble-you-bg); }
+.msg.you{
+  align-self: flex-end;
+  background: var(--bubble-you-bg);
+  /* optional accent edge to match theme; safe to remove if undesired */
+  border-color: #ff3b78;
+}
+.msg .text{ color: var(--bubble-text); }
+.msg .meta{ color: var(--meta-color); }
 
-.msg.you .meta{ color: var(--bubble-text); opacity: .9; }
-.msg.you .text{  color: var(--bubble-text); }
+/* “You” label uses the same ink as the You bubble and is a touch stronger */
+.msg.you .meta{
+  color: var(--you-ink);
+  opacity: .9;
+}
 
+/* Composer row (input + button on one line, at bottom) */
+.composer{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 18px;
+}
+.composer input{
+  flex: 1;
+  height: 48px;
+  padding: 0 16px;
+  background: var(--input-bg);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  outline: none;
+  box-shadow: inset 0 6px 22px rgba(0,0,0,.22);
+  /* NO blur leaking to wallpaper */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.composer input::placeholder{ color: var(--placeholder); }
+
+/* Send button matches theme */
+#sendBtn{
+  height: 48px;
+  padding: 0 16px;
+  background: var(--send);
+  color: #fff;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 0 10px var(--send-glow);
+  cursor: pointer;
+}
 
 /* Composer — back to the old style (no backdrop blur on the input) */
 /* Composer — themed input (no wallpaper blur) */
