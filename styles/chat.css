@@ -243,23 +243,30 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
 /* bubble text (keeps your theme var) */
 #feed .msg .text{ color: var(--bubble-text); }
 
-/* ===== CHAT PANEL (right side container) ======================== */
-/* lighter, no blur, so the wallpaper detail shows through */
+/* ===== CHAT PANEL (right side container) =================== */
 .chatPanel{
+  position: relative;                  /* <-- add this */
   background: rgba(8,10,14,.28);
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border: 1px solid rgba(255,255,255,.08);
 }
 
-/* faint inner glass sweep (very subtle) */
+/* glass tint should live *behind* content */
 .chatPanel .chatGlass{
+  position: absolute;                  /* <-- new */
+  inset: 0;                            /* <-- new */
+  z-index: 0;                          /* <-- new */
   background:
     radial-gradient(1100px 420px at 50% 0%, rgba(255,255,255,.06), rgba(0,0,0,0)),
     linear-gradient(180deg, rgba(12,12,16,.07), rgba(12,12,16,.03));
   opacity: 1;
   pointer-events: none;
 }
+
+/* keep messages & input above the glass */
+#feed, .composer { position: relative; z-index: 1; }
+
 
 /* ===== COMPOSER (input row) ==================================== */
 
