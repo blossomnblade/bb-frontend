@@ -1,559 +1,195 @@
-/* ==== Base =============================================================== */
+/* ==== Theme tokens ======================================================= */
 :root{
   --bg: #0a0b12;
   --glass: rgba(18,20,34,.28);
   --glass-border: #262842;
+
   --ink: #e9e9f5;
   --ink-dim: #b7b9d6;
   --ink-faint: #8a8db0;
-  --you: linear-gradient(180deg, #ff2d6f, #ff165f); /* richer hot-pink gradient */
-  --you-ink: #ffffff;                               /* white text on the You bubble */
+
+  --you: linear-gradient(180deg, #ff2d6f, #ff165f);
+  --you-ink: #fff;
+
   --radius-lg: 16px;
   --radius-md: 12px;
-  --radius-sm: 10px;
-  --pink-600: #ff2d6f;
-  --pink-700: #ff165f;
-  --bubble-you-border: var(--pink-600);
 
-}
+  --send: #ff2d86;
+  --send-glow: rgba(255,46,139,.35);
+  --input-bg: rgba(14,16,22,.10);
+  --placeholder: rgba(255,255,255,.55);
+  --bubble-text: var(--ink);
 
-*{ box-sizing: border-box; }
-html,body{ height:100%; }
-body{
-  margin:0;
-  background: var(--bg);
-  color: var(--ink);
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
-}
-
-/* Chat only: the background element exists, but JS decides the image */
-#bg{
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  /* no background here */
-}
-
-/* ==== Header ============================================================= */
-header.bar{
-  position: sticky; top:0; z-index: 5;
-  display:flex; justify-content: space-between; align-items:center;
-  padding: 14px 22px;
-  background: linear-gradient(to bottom, rgba(10,11,18,.9), rgba(10,11,18,.6));
-  border-bottom: 1px solid var(--glass-border);
-  backdrop-filter: saturate(120%) blur(8px);
-}
-header .left, header .right{ display:flex; gap:12px; align-items:center; }
-header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
-#manName{ font-weight:700; }
-.badge{ font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--glass-border); color:var(--ink-faint); }
-.badge.red{ color:#f66; border-color:#533; }
-.hidden{ display:none !important; }
-
-/* ==== Stage (two columns) =============================================== */
-.stage{
-  position: relative;
-  z-index: 1;
-  display:grid; grid-template-columns: 380px 1fr; gap:24px;
-  max-width: 1200px; margin: 24px auto; padding: 0 24px 24px;
-}
-
-/* Portrait panel */
-.portraitPanel img{
-  width:100%; height:auto; aspect-ratio: 3/4; object-fit: cover;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 24px rgba(0,0,0,.35);
-}
-
-/* Chat panel (glass card) */
-.chatPanel{
-  position: relative;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
-  backdrop-filter: blur(14px) saturate(120%);
-  padding: 18px 18px 86px;   /* bottom space for composer */
-  min-height: 60vh;
-}
-
-/* optional overlay – keep it but non-blocking */
-.chatGlass{ position:absolute; inset:0; pointer-events:none; }
-
-/* Messages feed */
-.messages{
-  display:flex; flex-direction: column; gap:12px;
-}
-
-/* Bubbles */
-.msg{
-  max-width: 72ch;
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 6px 14px rgba(0,0,0,.20);
-}
-/* Message UI: meta + text + per-side variants */
-.msg .meta{
-  display: block;
-  margin-bottom: 4px;
-  font-size: 12px;
-  letter-spacing: .2px;
-  color: var(--ink-faint);
-}
-
-.msg .text{
-  color: var(--ink);
-}
-
-/* man (left) vs you (right) */
-.msg.man{
-  align-self: flex-start;
-  background: rgba(255,255,255,.05);
-}
-
-/* YOU bubble styling */
-.msg.you{
-  align-self: flex-end;
-  background: var(--you);
-  color: var(--you-ink);
-  border-color: var(--bubble-you-border);
-  box-shadow: 0 8px 26px rgba(255,45,111,.18);
-}
-
-.msg.you .text{
-  color: var(--you-ink);
-}
-
-.msg.you .meta{
-  color: rgba(255,255,255,.85);
-  opacity: 1;
-}
-
-/* typing dots animation */
-.msg.typing .text,
-.msg.typing .dots{ display:inline-block; }
-.dots{
-  width: 26px; height: 10px; position: relative;
-}
-.dots::before, .dots::after, .dots span{
-  content:""; position:absolute; top:0; width:6px; height:6px; border-radius:50%;
-  background: currentColor; opacity:.65; animation: bump 1.2s infinite ease-in-out;
-}
-.dots span{ left:10px; animation-delay: .12s; }
-.dots::before{ left:0; }
-.dots::after{ left:20px; animation-delay: .24s; }
-@keyframes bump {
-  0%, 60%, 100%{ transform: translateY(0); }
-  30%{ transform: translateY(-4px); }
-}
-
-/* Composer (bottom bar) */
-.composer{
-  position: sticky; bottom: 18px; left:0;
-  display:flex; gap:12px; align-items:center;
-  margin-top: 16px; padding-top: 10px;
-  background: linear-gradient(to top, rgba(10,11,18,.85) 0%, rgba(10,11,18,0) 100%);
-}
-#composer{
-  flex:1; height: 44px; padding: 0 14px;
-  background: rgba(255,255,255,.06);
-  color: var(--ink);
-  border:1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  outline:none;
-}
-#composer::placeholder{ color: var(--ink-faint); }
-#composer:focus{ border-color:#5a5ee6; box-shadow: 0 0 0 3px rgba(90,94,230,.25); }
-
-#sendBtn{
-  height: 44px; padding: 0 18px;
-  border: 0; border-radius: var(--radius-md);
-  background: var(--you);
-  color: var(--you-ink); font-weight: 700;
-  cursor: pointer;
-}
-#sendBtn:hover{ filter: brightness(1.06); transform: translateY(-1px); }
-#sendBtn:active{ transform: translateY(0); }
-/* ===== Chat look polish ===== */
-#feed { font-size: 16px; line-height: 1.45; }
-#feed .msg { 
-  max-width: 720px; margin: 10px 0; padding: 12px 14px;
-  border-radius: 14px; border: 1px solid rgba(255,255,255,.06);
-  background: rgba(255,255,255,.04);
-}
-#feed .msg.you { background: rgba(255, 46, 139, .10); border-color: rgba(255,46,139,.25); }
-#feed .msg .meta { display:block; font-size:12px; opacity:.65; margin-bottom:4px; }
-
-.composer, .chat-input {
-  display:flex; gap:10px; align-items:center;
-  background: rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08);
-  border-radius:12px; padding:8px 10px;
-}
-#composer {
-  flex:1; background:transparent; border:0; outline:0; color:#fff;
-  font-size:15px; padding:6px 8px;
-}
-#sendBtn, .composer button.send {
-  background:#ff2e8b; color:#fff; border:0; padding:10px 14px;
-  border-radius:10px; font-weight:600; cursor:pointer;
-}
-/* Chat feed sizing & bubbles */
-#feed {
-  min-height: 240px;
-  max-height: calc(100vh - 280px);
-  overflow-y: auto;
-  padding: 12px 16px;
-}
-
-/* ===== FEED (bubbles) =========================================== */
-
-#feed .msg{
-  max-width: 720px;
-  margin: 10px 0;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.06);
-  background: rgba(255,255,255,.04);
-  box-shadow: 0 6px 14px rgba(0,0,0,.20);
-}
-
-/* "You" bubble tint */
-#feed .msg.you{
-  background: rgba(255,46,139,.10);
-  border-color: rgba(255,46,139,.25);
-}
-
-/* meta (name / timestamp) */
-#feed .msg .meta{
-  display: block;
-  font-size: 12px;
-  opacity: .65;
-  margin-bottom: 4px;
-}
-
-/* Make the “You” label match the You bubble ink */
-#feed .msg.you .meta{
-  color: var(--you-ink, #fff);
-  opacity: .95;
-}
-
-/* bubble text (keeps your theme var) */
-#feed .msg .text{ color: var(--bubble-text); }
-
-/* ===== CHAT PANEL (right side container) =================== */
-.chatPanel{
-  position: relative;                  /* <-- add this */
-  background: rgba(8,10,14,.28);
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-/* glass tint should live *behind* content */
-.chatPanel .chatGlass{
-  position: relative;           /* was absolute */
-  z-index: 1;                   /* was 0 */
-  background:
-    radial-gradient(1100px 420px at 50% 0%, rgba(255,255,255,.06), rgba(0,0,0,0)),
-    linear-gradient(180deg, rgba(12,12,16,.07), rgba(12,12,16,.03));
-  opacity: 1;
-  pointer-events: none;
-}
-#chatWallpaper{
-  position: absolute;
-  inset: 0;
-  background: var(--wall, none) center / cover no-repeat;
-  background-image: var(--wall, url('/images/bg/default.webp'));
-  background-position: 50% 50%;
-  background-size: cover;
-  background-repeat: no-repeat;
- 
-  opacity: .18;
-  pointer-events: none;
-  z-index: 0;                   /* behind glass + content */
-  background-color: rgba(255,0,0,.20);  /* TEMP: debug tint */
-}
-
-/* keep messages & input above the glass */
-#feed, .composer { position: relative; z-index: 2; }
-
-
-/* ===== COMPOSER (input row) ==================================== */
-
-.composer{
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  background: rgba(0,0,0,.35);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 12px;
-  padding: 8px 10px;
-}
-
-/* Kill native white input chrome; keep it themed */
-#composer{
-  flex: 1;
-  background: transparent !important;
-  border: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-appearance: none;
-  appearance: none;
-  color: #fff;
-  font-size: 15px;
-  padding: 6px 8px;
-}
-#composer::placeholder{
-  color: var(--placeholder, rgba(255,255,255,.55));
-}
-
-/* Send button themed glow */
-#sendBtn{
-  height: 48px;
-  padding: 0 16px;
-  background: var(--send, #ff2d86);
-  box-shadow: 0 0 10px var(--send-glow, rgba(255,46,139,.35));
-}
-
-.composer input{
-  flex: 1;
-  height: 48px;
-  padding: 0 16px;
-  background: var(--input-bg);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 14px;
-  outline: none;
-  box-shadow: inset 0 6px 22px rgba(0,0,0,.22);
-  /* NO blur leaking to wallpaper */
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-.composer input::placeholder{ color: var(--placeholder); }
-
-/* Send button matches theme */
-#sendBtn{
-  height: 48px;
-  padding: 0 16px;
-  background: var(--send);
-  color: #fff;
-  border: 0;
-  border-radius: 14px;
-  box-shadow: 0 0 10px var(--send-glow);
-  cursor: pointer;
-}
-
-/* Composer — back to the old style (no backdrop blur on the input) */
-/* Composer — themed input (no wallpaper blur) */
-.composer input{
-  flex: 1;
-  height: 48px;
-  padding: 0 16px;
-  background: var(--input-bg);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 14px;
-  outline: none;
-  box-shadow: inset 0 6px 22px rgba(0,0,0,.22);
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-.composer input::placeholder{
-  color: var(--placeholder);
-}
-
-/* Send button matches theme */
-#sendBtn{
-  height: 48px;
-  padding: 0 16px;
-  background: var(--send);
-  color: #fff;
-  border: 0;
-  border-radius: 12px;
-  box-shadow: 0 0 10px var(--send-glow);
-  cursor: pointer;
-}
-
-
-.composer input::placeholder{
-  color: var(--placeholder);
-}
-
-#sendBtn{
-  background: var(--send);
-  box-shadow: 0 0 10px var(--send-glow);
-}
-
-/* persona-colored focus ring */
-.composer input:focus{
-  outline: none;
-  border-color: var(--you);
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--you) 40%, transparent),
-    inset 0 6px 22px rgba(0,0,0,.22);
-}
-
-/* Send button */
-#sendBtn{
-  background: var(--send);
-  box-shadow: 0 0 10px var(--send-glow);
-}
-
-
-/* Give portraits a subtle lift from the page */
-.portraitPanel img{
-  filter: drop-shadow(0 12px 24px rgba(0,0,0,.55));
-}
-/* --- Composer hard override (wins everything) --- */
-
-/* Panel layout: messages fill space, composer stays at bottom */
-.chatPanel{ display:flex; flex-direction:column; }
-.messages{ flex:1 1 auto; min-height:0; }
-
-/* Composer row */
-.composer{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  padding:18px;
-}
-
-/* Input (use the element's ID so we beat other selectors) */
-#composer{
-  flex:1;
-  height:48px;
-  padding:0 16px;
-  background: var(--input-bg);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  outline:none;
-  box-shadow: inset 0 6px 22px rgba(0,0,0,.22);
-  /* make absolutely sure no blur leaks through */
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  appearance:none;
-  -webkit-appearance:none;
-}
-
-/* Placeholder color */
-#composer::placeholder{ color:var(--placeholder); }
-
-/* Send button themed */
-#sendBtn{
-  height:48px;
-  padding:0 16px;
-  background: var(--send);
-  color:#fff;
-  border:0;
-  border-radius:14px;
-  box-shadow:0 0 10px var(--send-glow);
-  cursor:pointer;
-  appearance:none;
-  -webkit-appearance:none;
-}
-
-/* Make sure the panel itself never blurs the wallpaper */
-.chatPanel{
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-}
-/* ===== Depth & Elevation pass (drop at end of styles/chat.css) ===== */
-:root{
+  /* elevation helpers */
   --elev-1: 0 6px 20px rgba(0,0,0,.35);
   --elev-2: 0 10px 30px rgba(0,0,0,.50);
   --edge-hi: inset 0 1px 0 rgba(255,255,255,.06);
   --edge-lo: inset 0 -1px 0 rgba(0,0,0,.35);
 }
 
-/* Chat panel gets a little lift and crisp edge */
-.chatPanel{
-  box-shadow: var(--elev-2), var(--edge-lo);
-  border: 1px solid rgba(255,255,255,.05);
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
 }
 
-/* Keep your glass tint, just add a faint inner falloff for depth */
-.chatPanel .chatGlass{
-  box-shadow: inset 0 20px 60px rgba(0,0,0,.12);
+/* ==== Header ============================================================= */
+.topbar{
+  position: sticky; top:0; z-index: 5;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 22px;
+  background: linear-gradient(to bottom, rgba(10,11,18,.9), rgba(10,11,18,.6));
+  border-bottom:1px solid var(--glass-border);
+  backdrop-filter:saturate(120%) blur(8px);
+}
+.topbar .brand, .topbar .right a{
+  color:var(--ink-dim); text-decoration:none; font-weight:600;
 }
 
-/* Message bubbles: soft shadow + slight inner highlight */
-.msg{
-  box-shadow: 0 4px 14px rgba(0,0,0,.45), var(--edge-hi);
-  transform: translateZ(0);
-}
-.msg.you{
-  /* a hair stronger so your replies pop against the panel */
-  box-shadow: 0 6px 18px rgba(0,0,0,.5), var(--edge-hi);
+/* ==== Layout ============================================================= */
+.stage{
+  display:grid; grid-template-columns: 360px 1fr; gap:24px;
+  max-width:1200px; margin:24px auto; padding:0 24px 24px;
 }
 
-/* Composer bar: same material as panel, small elevation */
-.composer{
-  box-shadow: var(--elev-1), var(--edge-lo);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 12px;
-}
-
-/* Input keeps your non-blur look, add a subtle inner light + focus ring */
-.composer input{
-  box-shadow: inset 0 6px 22px rgba(0,0,0,.20), var(--edge-hi);
-  transition: box-shadow .18s ease, outline-color .18s ease;
-}
-.composer input:focus{
-  /* uses your existing --send accent for the ring */
-  outline: 2px solid var(--send);
-  outline-offset: 0; /* matches your current style */
-}
-
-/* Send button—same elevation language */
-#sendBtn{
-  box-shadow: var(--elev-1);
-}
-
-/* Portrait: slightly deeper drop shadow for card-like feel */
 .portraitPanel img{
+  width:100%; height:auto; aspect-ratio:3/4; object-fit:cover;
+  border-radius:var(--radius-lg);
+  border:1px solid var(--glass-border);
   filter: drop-shadow(0 18px 36px rgba(0,0,0,.60));
 }
 
-/* Gentle hover lift where it makes sense */
-.msg,
-.chatPanel,
-.composer,
-.portraitPanel img,
-#sendBtn{
-  transition: transform .18s ease, box-shadow .18s ease, filter .2s ease;
-}
-@media (hover:hover) and (pointer:fine){
-  .msg:hover{ transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,.55), var(--edge-hi); }
-  .portraitPanel img:hover{ transform: translateY(-2px); }
+/* Chat panel card */
+.chatPanel{
+  position:relative;
+  display:flex; flex-direction:column;
+  min-height:60vh;
+  border-radius:var(--radius-lg);
+  border:1px solid rgba(255,255,255,.05);
+  background: var(--glass);
+  backdrop-filter:none !important;             /* never blur the wallpaper */
+  -webkit-backdrop-filter:none !important;
+  box-shadow: var(--elev-2), var(--edge-lo);
+  padding:18px;
 }
 
-/* Respect reduced-motion users */
-@media (prefers-reduced-motion: reduce){
-  .msg, .chatPanel, .composer, .portraitPanel img, #sendBtn{ transition: none !important; }
-}
-/* ---------- Per-man lightening: adjust just this guy ---------- */
-/* Change viper -> blade / grayson / silas / dylan / alexander as needed */
-body[data-man="viper"]{
-  /* soften the panel wash */
-  --panel-alpha: .08;                 /* was .10 – smaller = lighter */
-  --glass-top-tint: rgba(160,210,255,.04);
-  --glass-bottom-a: .03;
-
-  /* make bubbles & input a touch brighter/clearer */
-  --bubble-man-bg: rgba(255,255,255,.06);
-  --bubble-you-bg: rgba(255,46,139,.10);
-  --input-bg: rgba(14,16,22,.10);
-}
-/* Wallpaper layer lives behind messages + input */
+/* Wallpaper sits behind everything inside the panel */
 #chatWallpaper{
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: center / cover no-repeat;  /* image is set by JS */
-  opacity: .22;                          /* tweak to taste */
-  pointer-events: none;                   /* never swallow clicks */
+  position:absolute; inset:0;
+  z-index:0;                                    /* bottom */
+  background: center / cover no-repeat;
+  /* JS sets background-image to a character JPG; keep a safe default: */
+  background-image: url('/images/bg/default.webp');
+  opacity:.22;
+  pointer-events:none;
+}
+
+/* Subtle glass sweep for depth (non-blocking) */
+.chatPanel .chatGlass{
+  position:absolute; inset:0;
+  z-index:1;                                    /* above wallpaper */
+  pointer-events:none;
+  background:
+    radial-gradient(1100px 420px at 50% 0%, rgba(255,255,255,.06), rgba(0,0,0,0)),
+    linear-gradient(180deg, rgba(12,12,16,.07), rgba(12,12,16,.03));
+  box-shadow: inset 0 20px 60px rgba(0,0,0,.12);
+  opacity:.9;
+}
+
+/* Feed (messages) lives above the tint */
+#feed{
+  position:relative; z-index:2;
+  min-height:240px;
+  max-height:calc(100vh - 280px);
+  overflow-y:auto;
+  padding:12px 16px;
+  font-size:16px; line-height:1.45;
+}
+
+/* Bubbles */
+.msg{
+  max-width:720px;
+  margin:10px 0;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.04);
+  color:var(--bubble-text);
+  box-shadow: 0 6px 14px rgba(0,0,0,.20), var(--edge-hi);
+  transform: translateZ(0);
+}
+.msg .meta{
+  display:block; font-size:12px; opacity:.65; margin-bottom:4px;
+}
+.msg.man{
+  align-self:flex-start; background: rgba(255,255,255,.05);
+}
+.msg.you{
+  align-self:flex-end;
+  background: var(--you); color: var(--you-ink);
+  border-color: rgba(255,46,139,.25);
+  box-shadow: 0 6px 18px rgba(0,0,0,.5), var(--edge-hi);
+}
+.msg.you .meta{ color:var(--you-ink); opacity:.95; }
+
+/* typing indicator */
+.msg.typing .text, .msg.typing .dots{ display:inline-block; }
+.dots{ width:26px; height:10px; position:relative; }
+.dots::before, .dots::after, .dots span{
+  content:""; position:absolute; top:0; width:6px; height:6px; border-radius:50%;
+  background: currentColor; opacity:.65; animation: bump 1.2s infinite ease-in-out;
+}
+.dots span{ left:10px; animation-delay:.12s }
+.dots::before{ left:0 }
+.dots::after{ left:20px; animation-delay:.24s }
+@keyframes bump { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
+
+/* Composer row (sticks to bottom of panel flow) */
+.composer{
+  position:relative; z-index:2;
+  display:flex; gap:12px; align-items:center;
+  margin-top:auto; padding-top:10px;
+  background: linear-gradient(to top, rgba(10,11,18,.85) 0%, rgba(10,11,18,0) 100%);
+  box-shadow: var(--elev-1), var(--edge-lo);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  padding:12px;
+}
+
+#composer{
+  flex:1; height:48px; padding:0 16px;
+  background: var(--input-bg);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  outline:none;
+  box-shadow: inset 0 6px 22px rgba(0,0,0,.22);
+  appearance:none; -webkit-appearance:none;
+}
+#composer::placeholder{ color:var(--placeholder) }
+#composer:focus{
+  outline:2px solid var(--send);
+  box-shadow: inset 0 6px 22px rgba(0,0,0,.22);
+}
+
+#sendBtn{
+  height:48px; padding:0 16px;
+  background: var(--send);
+  color:#fff; border:0; border-radius:14px; cursor:pointer;
+  box-shadow:0 0 10px var(--send-glow);
+}
+#sendBtn:hover{ filter:brightness(1.06); transform: translateY(-1px) }
+#sendBtn:active{ transform:none }
+
+/* Per-man lightening example (tune per character as needed) */
+body[data-man="viper"]{
+  --input-bg: rgba(14,16,22,.12);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .msg, .chatPanel, .composer, .portraitPanel img, #sendBtn{ transition:none !important; }
 }
