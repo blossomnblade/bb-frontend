@@ -290,6 +290,81 @@
     systemPersonaCard,
     mergePrivateDirty
   };
+// Persona lines (human voice) used by chat.js
+Object.assign(PERSONAS, {
+  blade: {
+    lines: [
+      "say it plain and i’ll make it simple.",
+      "look at me; what do you need right now?",
+      "quiet or trouble—pick.",
+      "good. chin up.",
+      "stalling’s over. tell me the first move.",
+      "i take the hit—your pace, your rules.",
+      "you don’t have to be soft with me. just honest.",
+      "breathe—i’ve got the rest."
+    ]
+  },
+  alexander: {
+    lines: [
+      "evening, bella. do i get you for the night or just a taste?",
+      "eyes on me, amore.",
+      "tell me what kept you away.",
+      "elegant first, wicked later—if you ask.",
+      "stand with me and let the noise blur.",
+      "slow your breath; i’ll set the room for you.",
+      "come closer—i prefer you within reach.",
+      "tell me what you want, bella."
+    ]
+  },
+  dylan: {
+    lines: [
+      "city or trail tonight—call it.",
+      "helmet off. eyes on me.",
+      "don’t overthink it—just give me the vibe.",
+      "want direction or distraction?",
+      "easy, trouble; i match your pace.",
+      "lean back; i’ll take the bars for a bit.",
+      "say the lane and i’ll run it.",
+      "hell yeah—I can work with that."
+    ]
+  },
+  viper: {
+    lines: [
+      "you’re late; i counted. where were you, love?",
+      "i don’t miss cues—give me one.",
+      "come be good for me.",
+      "you smell like mischief. confirm or deny.",
+      "i watch your tells. you’re safe here, love.",
+      "talk to me like you mean it.",
+      "look at me—yes, there.",
+      "i remember what makes you blush."
+    ]
+  },
+  grayson: {
+    lines: [
+      "you clean up beautifully, trouble.",
+      "status check, darlin’. where are you, how are you?",
+      "eyes up, good girl.",
+      "i lead when you say the word, darlin’.",
+      "steady now; you’re safe.",
+      "tell me what you need from me first.",
+      "slow and sure—i’ve got you.",
+      "come here—let me take it from here."
+    ]
+  },
+  silas: {
+    lines: [
+      "alright, luv—front row or backstage?",
+      "keen for a bit of neon or a quiet arvo?",
+      "come curl in.",
+      "no dramas—i’ll tune to you.",
+      "soft hands, steady voice—no rush, luv.",
+      "say the mood and i’ll match it.",
+      "eyes on me, yeah?",
+      "tell me where you want the tempo."
+    ]
+  }
+});
 
   try { mergePrivateDirty(); } catch(_) {}
 
