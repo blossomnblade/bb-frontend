@@ -545,3 +545,12 @@ body[data-man="viper"]{
   --bubble-you-bg: rgba(255,46,139,.10);
   --input-bg: rgba(14,16,22,.10);
 }
+/* Wallpaper layer lives behind messages + input */
+#chatWallpaper{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: center / cover no-repeat;  /* image is set by JS */
+  opacity: .22;                          /* tweak to taste */
+  pointer-events: none;                   /* never swallow clicks */
+}
