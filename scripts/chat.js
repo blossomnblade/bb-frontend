@@ -296,9 +296,21 @@ const manKey = state.man;
 const hint = (BG_HINT && BG_HINT[manKey]) ? BG_HINT[manKey] : 'default';
 const wpEl = document.getElementById('chatWallpaper');
 if (wpEl) {
-  wpEl.style.backgroundImage =
-    `url('/images/bg/${hint}.webp'), url('/images/bg/${hint}.jpg'), url('/images/bg/default.webp')`;
+  // use the per-character JPGs you already have in /images/characters/<man>/
+  const BG_FILE = {
+    blade:     'blade-woods.jpg',
+    alexander: 'alexander-boardroom.jpg',
+    dylan:     'dylan-garage.jpg',
+    viper:     'viper-bg.jpg',
+    grayson:   'grayson-bg.jpg',
+    silas:     'silas-stage.jpg'
+  };
+  const file = BG_FILE[manKey];
+  if (file) {
+    wpEl.style.backgroundImage = `url('/images/characters/${manKey}/${file}')`;
+  }
 }
+
      
   }
 
