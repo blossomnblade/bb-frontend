@@ -232,3 +232,24 @@ body{
 }
 #sendBtn:hover{ filter:brightness(1.06); transform: translateY(-1px); }
 #sendBtn:active{ transform: translateY(0); }
+/* --- keep the left portrait above any glass/overlays --- */
+.portraitPanel{ position: relative; z-index: 3; }
+
+/* give him a bit more punch */
+.portraitPanel img{
+  filter: brightness(1.18) contrast(1.18) saturate(1.06)
+          drop-shadow(0 26px 64px rgba(0,0,0,.58));
+}
+
+/* optionally lift the room a touch more */
+#chatWallpaper{ opacity: .78; }           /* was lower earlier */
+.chatGlass{
+  background:
+    radial-gradient(1100px 420px at 55% 0%,
+      rgba(255,255,255,.08), rgba(0,0,0,0)),   /* was .10 */
+    linear-gradient(180deg,
+      rgba(10,12,18,.55) 0%,
+      rgba(10,12,18,.18) 28%,
+      rgba(10,12,18,.18) 78%,
+      rgba(10,12,18,.55) 100%);
+}
