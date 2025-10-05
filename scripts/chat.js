@@ -293,10 +293,13 @@
     document.body.style.setProperty('--bb-room', BG_HINT[state.man] || 'room');
    // set per-man wallpaper image behind the glass
 const manKey = state.man;
-const hint   = (BG_HINT && BG_HINT[manKey]) ? BG_HINT[manKey] : 'default';
-const wpEl   = document.getElementById('chatWallpaper');
-if (wpEl) wpEl.style.backgroundImage = `url('/images/bg/${hint}.webp')`;
-  
+const hint = (BG_HINT && BG_HINT[manKey]) ? BG_HINT[manKey] : 'default';
+const wpEl = document.getElementById('chatWallpaper');
+if (wpEl) {
+  wpEl.style.backgroundImage =
+    `url('/images/bg/${hint}.webp'), url('/images/bg/${hint}.jpg'), url('/images/bg/default.webp')`;
+}
+     
   }
 
   /* ---------- Phrase fallback (kept very light & confident) ---------- */
