@@ -254,18 +254,26 @@ header .home{ color:var(--ink-dim); text-decoration:none; font-weight:600; }
 
 /* glass tint should live *behind* content */
 .chatPanel .chatGlass{
-  position: absolute;                  /* <-- new */
-  inset: 0;                            /* <-- new */
-  z-index: 0;                          /* <-- new */
+  position: relative;           /* was absolute */
+  z-index: 1;                   /* was 0 */
   background:
     radial-gradient(1100px 420px at 50% 0%, rgba(255,255,255,.06), rgba(0,0,0,0)),
     linear-gradient(180deg, rgba(12,12,16,.07), rgba(12,12,16,.03));
   opacity: 1;
   pointer-events: none;
 }
+#chatWallpaper{
+  position: absolute;
+  inset: 0;
+  background: var(--wall, none) center / cover no-repeat;
+  opacity: .18;
+  pointer-events: none;
+  z-index: 0;                   /* behind glass + content */
+}
+
 
 /* keep messages & input above the glass */
-#feed, .composer { position: relative; z-index: 1; }
+#feed, .composer { position: relative; z-index: 2; }
 
 
 /* ===== COMPOSER (input row) ==================================== */
