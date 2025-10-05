@@ -12,27 +12,25 @@
     <nav class="right"><a class="plans" href="/pay.html">Plans</a></nav>
   </header>
 
-  <main class="wrap stage">
+  <main class="wrap">
     <aside class="portraitPanel">
       <img id="portrait" alt="Character portrait" loading="eager">
     </aside>
 
     <section class="chatPanel">
-      <!-- wallpaper sits behind content -->
-      <div id="chatWallpaper" aria-hidden="true"></div>
-      <!-- subtle glass falloff (non-interactive) -->
-      <div class="chatGlass" aria-hidden="true"></div>
+      <div id="chatWallpaper"></div>
+      <div class="chatGlass"></div>
 
-      <div id="feed" class="messages"></div>
+      <div id="feed" class="feed"></div>
 
       <div class="composer">
-        <input id="composer" type="text" placeholder="Say something…" autocomplete="off" />
+        <input id="input" type="text" placeholder="Say something…" autocomplete="off" />
         <button id="sendBtn" type="button">Send</button>
       </div>
     </section>
   </main>
 
-  <!-- phrases first, then chat -->
+  <!-- phrases first (optional), then chat -->
   <script src="/scripts/phrases.js"></script>
   <script src="/scripts/chat.js"></script>
 </body>
