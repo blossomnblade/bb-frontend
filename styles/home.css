@@ -68,3 +68,24 @@ h1{ font-size:32px; margin:24px 0 8px }
   .card.face.viper .pic,     .card[data-man="viper"]     .pic{ background-image:url('/images/characters/viper/viper-card-on.webp') !important; }
   .card.face.silas .pic,     .card[data-man="silas"]     .pic{ background-image:url('/images/characters/silas/silas-card-on.webp') !important; }
 }
+/* === Choose-page CTA buttons (cards) ===================== */
+.cta{
+  margin:16px 0;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.cta a{
+  display:inline-block;
+  background:var(--button);
+  border:1px solid var(--line);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  text-decoration:none;
+}
+.cta a.ghost{ background:transparent }
+@media (max-width:480px){
+  .cta a{ width:100%; text-align:center; }
+}
