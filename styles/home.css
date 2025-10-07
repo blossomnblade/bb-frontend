@@ -14,13 +14,14 @@ h1{font-size:32px;margin:24px 0 8px}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:20px 0 10px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;display:block}
 .card:hover{outline:1px solid #333}
-.face{height:180px;border-radius:12px;background:#1a1a1e; margin-bottom:10px; background-size:cover;background-position:center}
-.face.blade{background-image:url('/images/characters/blade/card.jpg')}
-.face.viper{background-image:url('/images/characters/viper/card.jpg')}
-.face.dylan{background-image:url('/images/characters/dylan/card.jpg')}
-.face.alexander{background-image:url('/images/characters/alexander/card.jpg')}
-.face.grayson{background-image:url('/images/characters/grayson/card.jpg')}
-.face.silas{background-image:url('/images/characters/silas/card.jpg')}
+.face{height:180px;border-radius:12px;background:#1a1a1e; margin-bottom:10px; background-size:cover;background-position:center;background-repeat:no-repeat;}
+.face.blade{     background-image:url('/images/characters/blade/blade-card.webp'); }
+.face.alexander{ background-image:url('/images/characters/alexander/alexander-card-on.webp'); }
+.face.dylan{     background-image:url('/images/characters/dylan/dylan-card-on.webp'); }
+.face.grayson{   background-image:url('/images/characters/grayson/grayson-card-on.webp'); }
+.face.viper{     background-image:url('/images/characters/viper/viper-card-on.webp'); }
+.face.silas{     background-image:url('/images/characters/silas/silas-card-on.webp'); }
+
 .button{display:inline-block;background:var(--button);border:1px solid var(--line);color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer}
 .button.ghost{background:transparent}
 .cta{margin:16px 0}
