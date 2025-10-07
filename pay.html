@@ -46,9 +46,26 @@
     }
     .support strong{color:#c4f0ff}
     .support .mini{font-size:12px;opacity:.85}
+    /* Paywall wallpaper */
+#pageWallpaper{
+  position: fixed;
+  inset: 0;
+  z-index: 0;                       /* behind everything */
+  background: center / cover no-repeat;
+  background-image: url('/images/bg/bg-paywall.webp');
+  opacity: .26;                     /* tweak: .20–.35 */
+  pointer-events: none;
+  filter: brightness(1.06) contrast(1.02);
+}
+
+/* Make sure real content sits above the wallpaper */
+header, .wrap, .card, footer { position: relative; z-index: 1; }
+
   </style>
 </head>
-<body>
+
+ <body class="pay">
+  <div id="pageWallpaper" aria-hidden="true"></div> 
   <div class="wrap">
     <header class="top">
       <a class="brand" href="/index.html">Blossom &amp; Blade</a>
