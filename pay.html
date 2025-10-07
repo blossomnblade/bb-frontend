@@ -2,122 +2,193 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Choose Your Plan — Blossom & Blade</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="/styles/home.css" />
+  <title>Plans — Blossom & Blade</title>
+  <link rel="icon" href="/favicon.ico" />
   <style>
-    .plans{max-width:820px;margin:32px auto;display:grid;gap:16px}
-    .plan-card{border:1px solid #333;border-radius:16px;padding:20px;background:#0f0f11}
-    .plan-card h2{margin:0 0 6px}
-    .sub{opacity:.8}
-    .primary{outline:2px solid #555}
+    :root{
+      --bg:#0b0c14; --glass:rgba(18,20,34,.32); --ink:#ececf7; --dim:#b7b9d6;
+      --edge:#262842; --brand1:#ff2d6f; --brand2:#ff165f; --ok:#28c173;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,Inter,Arial}
+    a{color:inherit}
+    .wrap{max-width:1000px;margin:32px auto;padding:0 20px}
+    header.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+    .brand{font-weight:800;letter-spacing:.4px;text-decoration:none;
+      background:linear-gradient(90deg,var(--brand1),var(--brand2));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .card{position:relative;border:1px solid var(--edge);border-radius:16px;background:var(--glass);
+      padding:18px;backdrop-filter:saturate(120%) blur(10px);box-shadow:0 10px 28px rgba(0,0,0,.35)}
+    .card h2{margin:0 0 6px 0}
+    .price{font-size:28px;font-weight:800;margin:8px 0}
+    .note{color:var(--dim);font-size:13px}
+    .radio{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
+    .hidden{display:none}
+    .choose-man{margin-top:8px}
+    select, input[type="text"]{width:100%;height:44px;border-radius:12px;border:1px solid var(--edge);background:rgba(255,255,255,.06);color:#fff;padding:0 12px}
+    .checks{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+    .checks label{display:flex;gap:10px;align-items:flex-start}
+    .checks input{margin-top:3px}
+    .buy{display:flex;gap:12px;margin-top:18px}
+    .btn{height:48px;padding:0 18px;border-radius:12px;border:0;cursor:pointer;font-weight:800}
+    .btn.primary{background:linear-gradient(180deg,var(--brand1),var(--brand2));color:#fff}
+    .btn.primary:disabled{opacity:.5;cursor:not-allowed}
+    .btn.ghost{background:transparent;border:1px solid var(--edge);color:var(--ink)}
+    .fine{color:var(--dim);font-size:12px;margin-top:6px}
+    .hr{height:1px;background:rgba(255,255,255,.06);margin:16px 0}
+
+    /* Crisis/support strip */
+    .support{
+      position:fixed;left:16px;bottom:16px;z-index:50;
+      background:rgba(15,16,24,.85);border:1px solid var(--edge);border-radius:12px;
+      padding:10px 12px;backdrop-filter:saturate(120%) blur(6px);font-size:13px;color:#e9f7ff
+    }
+    .support strong{color:#c4f0ff}
+    .support .mini{font-size:12px;opacity:.85}
   </style>
 </head>
 <body>
-  <body>
-  <div id="bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="/index.html">Blossom &amp; Blade</a>
+      <nav><a href="/index.html" class="btn ghost">Main</a></nav>
+    </header>
 
-  <main class="wrap">
-    …
-  </main>
-</body>
+    <div class="grid">
+      <!-- Day Pass -->
+      <section class="card" id="dayCard">
+        <div class="radio">
+          <input type="radio" name="plan" id="plan_day" value="day" checked />
+          <label for="plan_day"><h2 style="margin:0">Day Pass — 24 hours</h2></label>
+        </div>
+        <div class="price">$7.99</div>
+        <p class="note">Pick one man for 24 hours. No auto-renew. Instant access.</p>
 
-  <main class="wrap">
-    <h1>Pick your access</h1>
-    <div class="plans">
-      <div class="plan-card">
-        <h2>Day Pass — $7.99</h2>
-        <div class="sub">One man (your choice), 24 hours.</div>
-        <div class="cta"><button data-plan="daypass" class="button ghost">Continue</button></div>
-      </div>
-      <div class="plan-card primary">
-        <h2>Monthly — $14.99</h2>
-        <div class="sub">All six unlocked • $1 to Domestic Violence charity • Memory continuity</div>
-        <div class="cta"><button data-plan="monthly" class="button">Continue</button></div>
-      </div>
+        <div class="choose-man">
+          <label for="manSelect">Who do you want today?</label>
+          <select id="manSelect">
+            <option value="blade">Blade</option>
+            <option value="viper">Viper</option>
+            <option value="alexander">Alexander</option>
+            <option value="dylan">Dylan</option>
+            <option value="grayson">Grayson</option>
+            <option value="silas">Silas</option>
+          </select>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="checks">
+          <label><input type="checkbox" id="age_ok" /> I confirm I am 18+.</label>
+          <label><input type="checkbox" id="terms_ok" /> I agree to the <a href="/terms.html" target="_blank">Terms</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a>.</label>
+          <label><input type="checkbox" id="content_ok" /> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
+        </div>
+
+        <div class="buy">
+          <button class="btn primary" id="pay_day" disabled>Pay $7.99</button>
+          <button class="btn ghost" id="to_monthly">See Monthly</button>
+        </div>
+        <div class="fine">After payment: no extra prompts—straight to your room.</div>
+      </section>
+
+      <!-- Monthly -->
+      <section class="card" id="monthCard">
+        <div class="radio">
+          <input type="radio" name="plan" id="plan_month" value="monthly" />
+          <label for="plan_month"><h2 style="margin:0">Monthly — All 6 men</h2></label>
+        </div>
+        <div class="price">$14.99</div>
+        <p class="note">$1 is donated to DV support. Swap men anytime. Optional auto-renew.</p>
+
+        <label class="hidden" id="renewRow"><input type="checkbox" id="renew_ok" /> Auto-renew monthly (you can turn this off anytime).</label>
+
+        <div class="hr"></div>
+
+        <div class="checks">
+          <label><input type="checkbox" id="age_ok_m" /> I confirm I am 18+.</label>
+          <label><input type="checkbox" id="terms_ok_m" /> I agree to the <a href="/terms.html" target="_blank">Terms</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a>.</label>
+          <label><input type="checkbox" id="content_ok_m" /> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
+          <label class="hidden" id="renewRow2"><input type="checkbox" id="renew_ok2" /> Auto-renew monthly (you can turn this off anytime).</label>
+        </div>
+
+        <div class="buy">
+          <button class="btn primary" id="pay_month" disabled>Pay $14.99</button>
+          <button class="btn ghost" id="to_day">See Day Pass</button>
+        </div>
+        <div class="fine">$1 from each month supports domestic violence resources.</div>
+      </section>
     </div>
-    <p class="hint">$1 of every Monthly supports a Domestic Violence charity.</p>
-  </main>
 
-  <script>
-    const API_BASE="https://api.blossomnblade.com";
-    document.querySelectorAll("button[data-plan]").forEach(btn=>{
-      btn.onclick = async ()=>{
-        const plan = btn.getAttribute("data-plan");
-        try{
-          const res = await fetch(API_BASE + "/api/checkout",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({plan})
-          });
-          const data = await res.json();
-          if (data && data.redirect) { location.href = data.redirect; return; }
-          alert("Checkout link not ready yet. We’ll hook this up soon.");
-        }catch(e){
-          alert("Checkout server not live yet. That’s normal right now.");
-        }
-      };
-    });
-  </script>
-  <!-- === BEGIN: BB checkout (paste just above </body>) =================== -->
-<section id="bb-checkout" style="max-width:840px;margin:32px auto;padding:20px;border-radius:14px;background:#121317;border:1px solid #23262d">
-  <h2 style="margin:0 0 12px">Choose your access</h2>
-  <p style="opacity:.8;margin:0 0 16px">No auto-billing unless you check “Renew monthly”.</p>
-
-  <label style="display:flex;align-items:center;gap:.6rem;margin:.5rem 0 1rem">
-    <input id="bb-renew" type="checkbox">
-    <span>Renew monthly (auto-billing)</span>
-  </label>
-
-  <div style="display:flex;gap:12px;flex-wrap:wrap">
-    <button id="bb-buy-monthly" style="padding:.8rem 1.2rem;border-radius:10px;background:#ff2d7a;border:0;color:white;font-weight:700">
-      Get monthly
-    </button>
-    <button id="bb-buy-day" style="padding:.8rem 1.2rem;border-radius:10px;background:#2b2f36;border:1px solid #3b4049;color:white">
-      Day Pass — $7.99
-    </button>
+    <p class="fine" style="margin-top:18px">
+      We do not store card data here. Your plan status is kept locally so you go straight to chat after purchase.
+    </p>
   </div>
 
-  <p style="opacity:.7;margin-top:12px;font-size:.9rem">
-    You’ll get instant access after payment. Adults-only, fantasy chat.
-  </p>
-</section>
+  <!-- Crisis / Support strip -->
+  <div class="support">
+    <strong>Need support?</strong> 988 Suicide &amp; Crisis Lifeline — call or text <strong>988</strong> (US).<br>
+    <span class="mini">If you’re in immediate danger, call 911.</span>
+  </div>
 
-<script>
-/* Replace these three URLs with your processor product links.
-   You can use:
-   - CCBill FlexForms product links (or dynamic pricing URLs you sign on your server)
-   - Segpay subscription/product links
-   - Epoch buy links
-   Keep the ?custom1= part—we append the selected man so the postback can grant the right access for a Day Pass.
-*/
-const LINKS = {
-  monthly_one_time : 'https://PROCESSOR.example/buy?product=MONTHLY_ONETIME',   // no rebill
-  monthly_recurring: 'https://PROCESSOR.example/buy?product=MONTHLY_RECUR',     // auto-renew
-  day_pass         : 'https://PROCESSOR.example/buy?product=DAY_PASS'           // 24 hours
-};
+  <script>
+    // --- helpers ---
+    const $ = sel => document.querySelector(sel);
+    const allOK = ids => ids.every(id => $(id)?.checked);
 
-// Helper: get current man from URL, default blade
-function currentMan() {
-  const q = new URLSearchParams(location.search);
-  return (q.get('man') || 'blade').toLowerCase();
-}
-// Append ?custom1=<man> (or change to custom field your processor uses)
-function withMan(url) {
-  const sep = url.includes('?') ? '&' : '?';
-  return url + sep + 'custom1=' + encodeURIComponent(currentMan());
-}
+    // radio behavior (show/hide renew box for monthly)
+    function updateMode() {
+      const monthly = $('#plan_month').checked;
+      $('#renewRow').classList.toggle('hidden', !monthly);
+      $('#renewRow2').classList.toggle('hidden', !monthly);
+    }
+    updateMode();
+    document.querySelectorAll('input[name="plan"]').forEach(r => r.addEventListener('change', updateMode));
 
-document.getElementById('bb-buy-monthly').addEventListener('click', () => {
-  const renew = document.getElementById('bb-renew').checked;
-  const url = renew ? LINKS.monthly_recurring : LINKS.monthly_one_time;
-  location.href = withMan(url);
-});
-document.getElementById('bb-buy-day').addEventListener('click', () => {
-  location.href = withMan(LINKS.day_pass);
-});
-</script>
-<!-- === END: BB checkout ================================================ -->
+    // enable/disable buttons
+    function tickDay() {
+      $('#pay_day').disabled = !allOK(['#age_ok','#terms_ok','#content_ok']);
+    }
+    function tickMonth() {
+      $('#pay_month').disabled = !allOK(['#age_ok_m','#terms_ok_m','#content_ok_m']);
+    }
+    ['#age_ok','#terms_ok','#content_ok'].forEach(id => $(id).addEventListener('change', tickDay));
+    ['#age_ok_m','#terms_ok_m','#content_ok_m'].forEach(id => $(id).addEventListener('change', tickMonth));
+    tickDay(); tickMonth();
 
+    // nav between cards
+    $('#to_monthly').addEventListener('click', () => { $('#plan_month').checked = true; updateMode(); window.scrollTo({top:0,behavior:'smooth'}); });
+    $('#to_day').addEventListener('click', () => { $('#plan_day').checked = true; updateMode(); window.scrollTo({top:0,behavior:'smooth'}); });
+
+    // --- fake checkout (swap with your processor later) ---
+    function persistAndGo(plan, opts = {}) {
+      try {
+        localStorage.setItem('bb_plan', plan);              // 'day' | 'monthly'
+        localStorage.setItem('bb_renew', opts.renew ? '1' : '0');
+        // set access window
+        const now = Date.now();
+        const until = plan === 'day' ? now + 24*60*60*1000 : now + 30*24*60*60*1000;
+        localStorage.setItem('bb_until', String(until));
+        if (plan === 'day' && opts.man) localStorage.setItem('bb_day_man', opts.man);
+      } catch {}
+      // straight to chat, no extra prompts
+      const next = plan === 'day'
+        ? `/chat.html?man=${encodeURIComponent(opts.man || 'blade')}`
+        : `/index.html`; // monthly: let her pick any man on main
+      location.href = next;
+    }
+
+    $('#pay_day').addEventListener('click', () => {
+      const man = $('#manSelect').value || 'blade';
+      // TODO swap with real processor callback
+      persistAndGo('day', { man, renew:false });
+    });
+
+    $('#pay_month').addEventListener('click', () => {
+      const renew = $('#renew_ok').checked || $('#renew_ok2').checked;
+      // TODO swap with real processor callback
+      persistAndGo('monthly', { renew });
+    });
+  </script>
 </body>
 </html>
