@@ -22,29 +22,48 @@ h1{font-size:32px;margin:24px 0 8px}
 .face.viper{     background-image:url('/images/characters/viper/viper-card-on.webp'); }
 .face.silas{     background-image:url('/images/characters/silas/silas-card-on.webp'); }
 /* ---- Mobile card images (phones) -------------------------------------- */
-@media (max-width: 900px){
-  /* paint the image on the .pic wrapper and hide the <img> */
+/* ---- Mobile card images (phones) ----------------------------------- */
+@media (max-width:1100px){
+
+  /* paint on the wrapper and hide any inline <img> */
   .card .pic{
-    height: 180px;                 /* match your .face height */
-    border-radius: 12px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    /* subtle edge so there’s a little background around the photo */
-    padding: 6px;
-    background-color: rgba(255,255,255,.04);
+    height:180px;                 /* match your .face height */
+    border-radius:12px;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    padding:6px;                  /* subtle edge */
+    background-color:rgba(255,255,255,.04);
   }
-  .card .pic img{ display:none; }
+  .card .pic img{ display:none !important; }
 
-  /* per-man image mapping */
-  .card[data-man="blade"]     .pic{ background-image:url('/images/characters/blade/blade-card.webp'); }
-  .card[data-man="alexander"] .pic{ background-image:url('/images/characters/alexander/alexander-card-on.webp'); }
-  .card[data-man="dylan"]     .pic{ background-image:url('/images/characters/dylan/dylan-card-on.webp'); }
-  .card[data-man="grayson"]   .pic{ background-image:url('/images/characters/grayson/grayson-card-on.webp'); }
-  .card[data-man="viper"]     .pic{ background-image:url('/images/characters/viper/viper-card-on.webp'); }
-  .card[data-man="silas"]     .pic{ background-image:url('/images/characters/silas/silas-card-on.webp'); }
+  /* per-man mapping — class OR data attribute */
+  .card.face.blade .pic,
+  .card[data-man="blade"] .pic{
+    background-image:url('/images/characters/blade/blade-card.webp') !important;
+  }
+  .card.face.alexander .pic,
+  .card[data-man="alexander"] .pic{
+    background-image:url('/images/characters/alexander/alexander-card-on.webp') !important;
+  }
+  .card.face.dylan .pic,
+  .card[data-man="dylan"] .pic{
+    background-image:url('/images/characters/dylan/dylan-card-on.webp') !important;
+  }
+  .card.face.grayson .pic,
+  .card[data-man="grayson"] .pic{
+    background-image:url('/images/characters/grayson/grayson-card-on.webp') !important;
+  }
+  .card.face.viper .pic,
+  .card[data-man="viper"] .pic{
+    background-image:url('/images/characters/viper/viper-card-on.webp') !important;
+  }
+  .card.face.silas .pic,
+  .card[data-man="silas"] .pic{
+    background-image:url('/images/characters/silas/silas-card-on.webp') !important;
+  }
 }
+
 
 .button{display:inline-block;background:var(--button);border:1px solid var(--line);color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer}
 .button.ghost{background:transparent}
