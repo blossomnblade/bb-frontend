@@ -32,7 +32,7 @@ nav a{color:#ddd}
   position: fixed;
   inset: 0;
   background: url('/images/bg/default.webp') center / cover no-repeat;
-  opacity: .16;           /* adjust if you want stronger/weaker */
+  opacity: .32;           /* adjust if you want stronger/weaker */
   pointer-events: none;
   z-index: -1;            /* sits behind the cards */
 }
