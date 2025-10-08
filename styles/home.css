@@ -69,3 +69,8 @@ h1{ font-size:32px; margin:24px 0 8px }
 }
 .cta a.ghost{ background:transparent }
 @media (max-width:480px){ .cta a{ width:100%; text-align:center } }
+/* Phones: cards must show only the face <img> */
+@media (max-width: 900px){
+  .card .pic{ background: none !important; }
+  .card .pic img{ display: block !important; }
+}
