@@ -4,28 +4,24 @@
   <meta charset="utf-8" />
   <title>Blossom & Blade — Choose</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- bump the version when you change home.css -->
+  <!-- bump the version so browsers grab the fresh CSS -->
   <link rel="stylesheet" href="/styles/home.css?v=14">
-
-  <style>
-    /* tiny guard so empty cards don’t look broken while images load */
-    .card .pic{background:linear-gradient(180deg,#111,#1a1f29);display:block;aspect-ratio:1/1;border-radius:18px;overflow:hidden}
-    .card .pic img{width:100%;height:100%;object-fit:cover;display:block}
-  </style>
 </head>
 <body class="home">
   <div id="bg" aria-hidden="true"></div>
 
   <header class="top">
-    <h1>Blossom &amp; Blade</h1>
-    <p class="banner">
-      <strong>Free 20-minute trial.</strong>
-      Day Pass <b>$7.99</b> (pick one) • Monthly <b>$14.99</b> (all six).
-      <em>$1 goes to Domestic Violence charity.</em>
-    </p>
+    <div class="wrap">
+      <h1>Blossom &amp; Blade</h1>
+      <p class="banner">
+        <strong>Free 20-minute trial.</strong>
+        Day Pass <b>$7.99</b> (pick one) • Monthly <b>$14.99</b> (all six).
+        <em>$1 goes to Domestic Violence charity.</em>
+      </p>
+    </div>
   </header>
 
-  <main class="grid">
+  <main class="grid wrap">
     <!-- Blade -->
     <article class="card" data-man="blade">
       <a class="pic" href="/age.html?next=/chat.html?man=blade" aria-label="Chat with Blade">
@@ -94,7 +90,12 @@
   </main>
 
   <footer class="foot">
-    <p>Adults-only, consent-first fantasy romance. Trial is exactly 20 minutes; after that, sending routes to Pay. Monthly memory persists while active; lapses reset memory.</p>
+    <div class="wrap">
+      <p>
+        Adults-only, consent-first fantasy romance. Trial is exactly 20 minutes; after that, sending routes to Pay.
+        Monthly memory persists while active; lapses reset memory.
+      </p>
+    </div>
   </footer>
 </body>
 </html>
