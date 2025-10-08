@@ -3,62 +3,56 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Adults 18+ — Blossom & Blade</title>
-  <link rel="stylesheet" href="/styles/home.css?v=19" />
+  <title>Adults 18+ — Blossom &amp; Blade</title>
+  <!-- bump to refresh phones -->
+  <link rel="stylesheet" href="/styles/home.css?v=24" />
   <style>
-    .gate { max-width: 820px; margin: 12px auto; }
-    .gate h1 { margin: 0 0 8px; }
-    .gate p  { color: var(--ink); margin: 8px 0; }
-    .block { background: rgba(255,255,255,.02); border:1px solid var(--line); border-radius: 16px; padding:16px; margin:14px 0; }
-    .checks { display:grid; gap:12px; }
-    .row-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
-    details{ border:1px dashed var(--line); border-radius:12px; padding:12px; }
-    details > summary{ cursor:pointer; font-weight:700; margin:-12px; padding:12px; list-style:none; }
-    .muted{ color: var(--muted); font-size: 14px; }
+    /* tiny helpers so we don't touch your global CSS */
+    .gate { max-width: 960px; margin: 0 auto 48px; }
+    .panel {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .checks { display:grid; gap:10px; margin:12px 0 14px; }
+    .rules { margin-top: 10px; }
+    .rules h3 { margin: 10px 0 6px; }
+    .rules ul { margin: 6px 0 6px 20px; }
+    .footer-note { margin-top: 12px; color: var(--muted); }
+    .btnRow { margin-top: 12px; }
+    .btn[aria-disabled="true"]{ opacity:.5; pointer-events:none; }
   </style>
 </head>
-<body>
+<body class="age">
   <div class="container gate">
     <header class="site-header">
       <div class="brand">Blossom &amp; Blade</div>
       <div class="header-actions">
-        <a class="btn" href="/">Main</a>
         <a class="btn" href="/pay.html">Plans</a>
       </div>
     </header>
 
-    <main>
-      <h1>Adults 18+ &amp; Consent</h1>
-      <p class="muted">One-time check on this device. After this, you won’t see it again.</p>
+    <main class="panel">
+      <p><strong>AI-only, fantasy-forward.</strong> No human-to-human dating here. This is private roleplay with AI characters only. It’s entertainment and may be imperfect.</p>
 
-      <section class="block">
-        <p><strong>AI-only, fantasy-forward.</strong> No human-to-human chat or dating here. This is private roleplay with AI characters only. It’s entertainment and may be imperfect.</p>
-
-        <div class="checks">
-          <label><input type="checkbox" id="ck18"> I confirm I am <strong>18+</strong> (or older where I live).</label>
-          <label><input type="checkbox" id="ckTerms"> I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</label>
-          <label><input type="checkbox" id="ckRules"> I understand and accept the House Rules below.</label>
-          <label><input type="checkbox" id="ckRefund"> I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.</label>
-        </div>
-      </section>
-
-      <section class="block">
-        <details open>
-          <summary>House Rules (what’s allowed vs banned)</summary>
-          <ul>
-            <li><strong>Allowed:</strong> consensual adult fantasies; adult “Daddy/Mommy” roleplay (explicitly adult), possessive/jealous BF vibes, rough talk, kink negotiation.</li>
-            <li><strong>Banned (hard NO):</strong> minors or implied minors; bestiality; non-consensual harm; trafficking; domestic-violence play; scat; necrophilia; doxxing/real-world threats; illegal activity.</li>
-            <li>Breaks trigger review; repeat violations may lead to temporary or permanent bans.</li>
-          </ul>
-          <p class="muted">We keep chats private to you and our system. Limited internal review may occur for safety, fraud, or law compliance. $1 from each purchase supports domestic-violence resources.</p>
-        </details>
-      </section>
-
-      <div class="row-actions">
-        <a id="btnGo" class="btn" href="#">Continue</a>
+      <div class="checks">
+        <label><input type="checkbox" id="a18"> I confirm I am <strong>18+</strong> (or older in my location).</label>
+        <label><input type="checkbox" id="aTerms"> I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</label>
+        <label><input type="checkbox" id="aRules"> I understand and accept the <strong>House Rules</strong> below.</label>
+        <label><input type="checkbox" id="aRefund"> I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.</label>
       </div>
 
-      <p class="muted">You can pause or change vibe anytime using in-chat controls.</p>
+      <div class="rules panel">
+        <h3>House Rules (what’s allowed vs banned)</h3>
+        <p><strong>Allowed:</strong> consensual adult fantasies; adult “Daddy/Mommy” roleplay (explicitly adult); possessive/jealous BF vibes; rough talk; kink negotiation.</p>
+        <p><strong>Banned (hard NO):</strong> minors or implied minors; bestiality; non-consensual harm; trafficking; domestic-violence play; scat; necrophilia; doxxing or real-world threats; illegal activity.</p>
+        <p class="footer-note">We keep chats private to you and our system. Limited internal review may occur for safety, fraud, or law compliance. $1 from each purchase supports domestic-violence resources.</p>
+      </div>
+
+      <div class="btnRow">
+        <a id="go" class="btn" href="#" aria-disabled="true">Continue</a>
+      </div>
     </main>
 
     <footer class="footer">
@@ -69,43 +63,28 @@
   <script>
     (function(){
       const qs = new URLSearchParams(location.search);
-      const nextRaw = qs.get('next') || '/';
-      const next = (nextRaw.startsWith('http')) ? '/' : nextRaw;
+      const next = qs.get('next') || '/chat.html?man=blade';
 
-      // Skip if already consented
-      try{
-        if (localStorage.getItem('bb18') === '1' &&
-            localStorage.getItem('bbTerms') === '1' &&
-            localStorage.getItem('bbRules') === '1' &&
-            localStorage.getItem('bbRefund') === '1') {
-          location.replace(next);
-          return;
-        }
-      }catch(e){}
+      const boxes = ['a18','aTerms','aRules','aRefund'].map(id=>document.getElementById(id));
+      const btn = document.getElementById('go');
 
-      const $ = (id)=>document.getElementById(id);
-      const btn = $('btnGo');
+      function refresh(){
+        const all = boxes.every(b => b && b.checked);
+        btn.setAttribute('aria-disabled', all ? 'false' : 'true');
+      }
+      boxes.forEach(b => b.addEventListener('change', refresh));
+      refresh();
 
       btn.addEventListener('click', function(e){
-        e.preventDefault();
-        const ok18     = $('ck18').checked;
-        const okTerms  = $('ckTerms').checked;
-        const okRules  = $('ckRules').checked;
-        const okRefund = $('ckRefund').checked;
-
-        if(!ok18 || !okTerms || !okRules || !okRefund){
-          alert('Please confirm 18+, accept Terms/Privacy & House Rules, and acknowledge no refunds after 24 hours.');
-          return;
-        }
-
-        try{
-          localStorage.setItem('bb18', '1');
-          localStorage.setItem('bbTerms', '1');
-          localStorage.setItem('bbRules', '1');
-          localStorage.setItem('bbRefund', '1');             // required legal consent
+        if (btn.getAttribute('aria-disabled') === 'true'){ e.preventDefault(); return; }
+        try {
+          // set once so they don't see the gate again on this device
+          localStorage.setItem('bb18','1');
+          localStorage.setItem('bbTerms','1');
+          localStorage.setItem('bbRules','1');
+          localStorage.setItem('bbRefund','1');
           localStorage.setItem('bbConsentAt', new Date().toISOString());
-        }catch(e){}
-
+        } catch(e){}
         location.href = next;
       });
     })();
