@@ -33,5 +33,176 @@
   <!-- phrases first (optional), then chat -->
   <script src="/scripts/phrases.js"></script>
   <script src="/scripts/chat.js"></script>
+  <!-- ===== Blossom & Blade: Safety Pop-up + Internal Alert (drop-in) ===== -->
+<style id="bb-safety-style">
+  #bbSafety {
+    position: fixed; left: 14px; bottom: 14px; z-index: 9999;
+    max-width: 320px; color: #fff; font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background: rgba(16,17,19,.96);
+    border: 1px solid #232326; border-radius: 14px;
+    box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    padding: 12px 12px 10px; display: none;
+  }
+  #bbSafety h3 { margin: 0 0 6px; font-size: 15px; }
+  #bbSafety p { margin: 6px 0; color: #eee; }
+  #bbSafety .muted { color: #bdbdbd; font-size: 12px; }
+  #bbSafety .row { display: flex; gap: 8px; margin-top: 10px; }
+  #bbSafety .btn { 
+    background: linear-gradient(180deg,#ff2d83,#ff165f); color:#fff; border:0; border-radius:12px;
+    padding:10px 12px; font-weight:700; cursor:pointer; flex:1;
+  }
+  #bbSafety .ghost {
+    background: transparent; color:#eee; border:1px solid rgba(255,255,255,.14);
+  }
+  @media (max-width:420px){ #bbSafety{ right:14px; left:14px; max-width:none; } }
+</style>
+
+<div id="bbSafety" role="dialog" aria-live="polite" aria-label="Support">
+  <h3>You’re not alone.</h3>
+  <p>If you’re thinking about hurting yourself, help is available. You deserve support.</p>
+  <p class="muted">US: Call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline). If you’re in immediate danger, call 911.</p>
+  <div class="row">
+    <button id="bbSafetyClose" class="btn ghost" type="button">Close</button>
+    <a id="bbSafetyCall" class="btn" href="tel:988">Call 988</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ---- CONFIG (you can set this later without code changes elsewhere)
+  // Optional: set a webhook URL to get internal alerts when high-risk phrases appear.
+  // Example (later): window.BB_ALERT_URL = "https://your-alert-endpoint.example.com/hook";
+  window.BB_ALERT_URL = window.BB_ALERT_URL || "";
+
+  // Cooldown (ms) to avoid spamming the pop-up/alerts
+  const COOLDOWN = 10 * 60 * 1000; // 10 minutes
+  let lastTrigger = 0;
+
+  // Keep last 5 outgoing messages for dispute/safety review
+  const ring = [];
+  function pushMsg(t){
+    const text = (t || "").toString().trim();
+    if (!text) return;
+    ring.push({ t: Date.now(), text });
+    while (ring.length > 5) ring.shift();
+  }
+
+  // Very small, conservative detector
+  const PATTERNS = [
+    /\bkill myself\b/i,
+    /\bend my life\b/i,
+    /\b(end it|i can’t go on|i cant go on)\b/i,
+    /\bsuicide\b/i,
+    /\bself[-\s]?harm\b/i,
+    /\bi wish i were dead\b/i,
+    /\bno reason to live\b/i
+  ];
+  function isCrisis(s){
+    if (!s) return false;
+    return PATTERNS.some(r => r.test(s));
+  }
+
+  // UI helpers
+  const el = document.getElementById('bbSafety');
+  function showSafety(){
+    if (!el) return;
+    el.style.display = 'block';
+  }
+  function hideSafety(){ if (el) el.style.display = 'none'; }
+  document.getElementById('bbSafetyClose')?.addEventListener('click', hideSafety);
+
+  // Internal alert (best-effort; safe to fail silently)
+  async function sendAlert(snippet){
+    if (!window.BB_ALERT_URL) return;
+    const payload = {
+      at: new Date().toISOString(),
+      path: location.pathname + location.search,
+      man: new URLSearchParams(location.search).get('man') || null,
+      userAgent: navigator.userAgent,
+      snippet: (snippet || "").slice(0, 500),
+      last5: ring.slice(), // shallow copy
+    };
+    try {
+      await fetch(window.BB_ALERT_URL, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload),
+        mode: 'cors', // change to 'no-cors' if your endpoint requires it
+        keepalive: true
+      });
+    } catch (e) { /* ignore */ }
+  }
+
+  // Trigger logic with cooldown
+  function maybeTrigger(fromText){
+    const now = Date.now();
+    if (now - lastTrigger < COOLDOWN) return;
+    if (!isCrisis(fromText)) return;
+    lastTrigger = now;
+    showSafety();
+    sendAlert(fromText);
+  }
+
+  // 1) Watch the composer input to catch typed risk language early
+  function hookComposer(){
+    // Try likely selectors; fall back to any visible textarea/input
+    let input = document.querySelector('.composer textarea, .composer input[type="text"], form textarea, form input[type="text"]');
+    if (!input){
+      const candidates = Array.from(document.querySelectorAll('textarea, input[type="text"]'))
+        .filter(n => !n.disabled && n.offsetParent !== null);
+      input = candidates[0] || null;
+    }
+    if (!input) return;
+
+    input.addEventListener('input', () => {
+      const v = input.value || '';
+      if (v.length >= 8) maybeTrigger(v);
+    });
+
+    // Try to detect "send" to capture last 5 messages
+    function onSend(){
+      const v = (input.value || '').trim();
+      if (v) pushMsg(v);
+    }
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey){
+        onSend();
+      }
+    });
+    // Buttons that might send
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      if (t.matches('[data-send], button[type="submit"], .send, .btn-send')) onSend();
+    });
+  }
+
+  // 2) Optional: observe chat log for appended user messages to keep last5 accurate
+  function hookLog(){
+    const log = document.querySelector('#chat, #log, .log, .messages, #messages, [data-chat-log]');
+    if (!log || !('MutationObserver' in window)) return;
+    const obs = new MutationObserver(muts => {
+      for (const m of muts){
+        m.addedNodes && m.addedNodes.forEach(n => {
+          if (!(n instanceof HTMLElement)) return;
+          const isYou = n.matches?.('.you, .msg.you, .message.you') || n.getAttribute?.('data-author') === 'you';
+          if (isYou){
+            const text = n.innerText || n.textContent || '';
+            pushMsg(text);
+            maybeTrigger(text);
+          }
+        });
+      }
+    });
+    obs.observe(log, { childList:true, subtree:true });
+  }
+
+  // Boot
+  hookComposer();
+  hookLog();
+})();
+</script>
+<!-- ===== /Safety block ===== -->
+
 </body>
 </html>
