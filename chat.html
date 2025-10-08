@@ -387,6 +387,74 @@
 })();
 </script>
 <!-- ===== /Phrases drop-in ===== -->
+<!-- ===== BB: Mobile-only Chat Portrait (matches landing card) ===== -->
+<style>
+  /* Hidden by default (desktop & tablets) */
+  .bb-chat-header{ display:none; }
+
+  /* Show only on small screens */
+  @media (max-width: 768px){
+    .bb-chat-header{
+      display:flex; align-items:center; gap:12px;
+      padding:10px 12px; margin:6px 12px 8px;
+      background: rgba(255,255,255,.03); border:1px solid var(--line);
+      border-radius:14px;
+    }
+    .bb-portrait{
+      position:relative; width:72px; flex:0 0 72px; overflow:hidden; background:#000; border-radius:12px;
+    }
+    .bb-portrait::before{ content:""; display:block; padding-top:125%; } /* 4:5 */
+    .bb-portrait > img{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+    }
+    .bb-name{ font-weight:700; font-size:16px; color:var(--ink); }
+  }
+</style>
+
+<div id="bbChatHeader" class="bb-chat-header">
+  <div class="bb-portrait"><img id="bbChatPortrait" alt=""></div>
+  <div class="bb-name" id="bbChatName"></div>
+</div>
+
+<script>
+(function(){
+  const qs = new URLSearchParams(location.search);
+  const man = (qs.get('man') || 'blade').toLowerCase();
+  const title = man.charAt(0).toUpperCase() + man.slice(1);
+  const v = '23'; // bump if you swap art
+
+  // Keep your per-man chat background hook intact
+  try { document.body.setAttribute('data-man', man); } catch(e){}
+
+  const base = `/images/characters/${man}/${man}`;
+  const candidates = [
+    `${base}-card-on.webp?v=${v}`,
+    `${base}-card.webp?v=${v}`,
+    `${base}.webp?v=${v}`,
+    `/images/bg/default.webp?v=${v}`
+  ];
+
+  const img = document.getElementById('bbChatPortrait');
+  const name = document.getElementById('bbChatName');
+  name.textContent = title;
+
+  function loadNext(){
+    const src = candidates.shift();
+    if (!src) return;
+    img.onerror = loadNext;
+    img.src = src;
+  }
+  loadNext();
+
+  // Place header just above the chat log if present
+  const spots = ['#messages','.messages','#log','.log','#chat','[data-chat-log]','main'];
+  let anchor = null;
+  for (const sel of spots){ const el = document.querySelector(sel); if (el){ anchor = el; break; } }
+  const hdr = document.getElementById('bbChatHeader');
+  if (anchor && anchor.parentNode){ anchor.parentNode.insertBefore(hdr, anchor); }
+})();
+</script>
+<!-- ===== /Mobile-only Chat Portrait ===== -->
 
 </body>
 </html>
