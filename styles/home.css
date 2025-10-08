@@ -1,59 +1,233 @@
+/* home.css — v17
+   Globals + landing, unified button styles, dark form controls (no white boxes),
+   and landing BG kill-switch. Chat page visuals remain in styles/chat.css. */
+
+/* ===== Theme tokens ===== */
 :root{
-  --bg:#0b0b0d; --ink:#eee; --muted:#bdbdbd; --line:#232326;
-  --accent:#ff2d83;             /* unified pink for buttons/badges */
-  --card:#101113; --button:#1a1b1f;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --bg:#0b0b0d;
+  --ink:#eee;
+  --muted:#bdbdbd;
+  --line:#232326;
+  --accent:#ff2d83;          /* unified pink */
+  --card:#101113;
+  --button:#1a1b1f;          /* dark button base */
+  --radius:14px;
+  --shadow:0 10px 30px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.03) inset;
+  --btn-grad:linear-gradient(180deg,#ff2d83,#ff165f);
+  --focus:0 0 0 3px rgba(255,45,131,.35);
 }
 
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
-a{color:#fff;text-decoration:none}
-
-/* Site wallpaper (chalkboard) – NOT per-man images */
-#bg{
-  position:fixed; inset:0;
-  background:url('/images/bg/default.webp') center/cover no-repeat;
-  opacity:.34; filter:brightness(1.12) contrast(1.06) saturate(1.14);
-  pointer-events:none; z-index:-1;
+/* ===== Base ===== */
+* { box-sizing:border-box; }
+html,body { height:100%; }
+html { -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
 }
 
-/* Header + banner + plans button */
-.wrap{max-width:1200px;margin:0 auto;padding:16px}
-h1{font-size:32px;margin:24px 0 8px}
-.banner{opacity:.95;margin:0 0 12px}
-.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
-.top .right{display:flex;gap:10px}
-.btn{display:inline-block;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--button);cursor:pointer}
-.btn.primary{background:linear-gradient(180deg,#ff2d83,#ff165f);color:#fff}
+a{ color:var(--ink); text-decoration:none; }
+img{ max-width:100%; display:block; }
 
-/* Announcement band (centered) */
+.container{
+  width:min(1200px, 92vw);
+  margin:0 auto;
+  padding:20px 0 56px;
+}
+
+/* ===== Header with Plans button ===== */
+.site-header{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; padding:18px 0;
+}
+.brand{
+  font-weight:700; letter-spacing:.3px; font-size:20px;
+}
+.header-actions{ display:flex; align-items:center; gap:10px; }
+
+/* ===== Announcement band ===== */
 .announce{
-  max-width:1200px;margin:8px auto 20px;padding:10px 14px;
-  border:1px solid var(--line);border-radius:12px;
-  background:rgba(255,255,255,.03);text-align:center;color:#ddd
+  margin:8px 0 20px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  text-align:center;
+  color:var(--muted);
 }
 
-/* Card grid */
+/* ===== Card grid (landing) ===== */
 .grid{
-  max-width:1200px;margin:0 auto 32px;
-  display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
 }
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
-.card:hover{outline:1px solid #333}
+@media (max-width:900px){
+  .grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:560px){
+  .grid{ grid-template-columns:1fr; }
+}
 
-/* Face image ONLY — never paint per-man CSS backgrounds */
-.pic{display:block;aspect-ratio:1/1;border-radius:18px;overflow:hidden}
-.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.card .pic{
+  position:relative;
+  aspect-ratio: 4/5;
+  background:#000;            /* safety base */
+}
+.card .pic img{
+  width:100%; height:100%; object-fit:cover;
+}
+.card .body{
+  padding:14px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
 
-/* CTAs under cards */
-.cta{margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap}
-.cta .ghost{background:transparent;border:1px solid var(--line);color:#ddd}
-
-/* Footer */
-.foot{border-top:1px solid var(--line);margin-top:24px;padding:12px 16px;text-align:center;color:#bdbdbd}
-
-/* --- SAFETY GUARD (kill-switch) ---------------------------------- */
-/* These two lines permanently disable any old “per-man” background rules
-   that might still be cached on phones. */
+/* ===== Landing BG kill-switch (prevents any cached per-man BG on landing) ===== */
 .card .pic{ background-image:none !important; }
 .card .pic img{ display:block !important; }
+
+/* ===== Buttons (ALL buttons & button-like links unified) ===== */
+button,
+.btn,
+a.btn,
+input[type="submit"],
+input[type="button"]{
+  -webkit-appearance:none; appearance:none;
+  background:var(--btn-grad);
+  color:#fff;
+  border:0;
+  border-radius:var(--radius);
+  padding:12px 16px;
+  font-weight:700;
+  letter-spacing:.2px;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+  transition: transform .04s ease, filter .15s ease, opacity .15s ease;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+}
+button:hover,
+.btn:hover,
+a.btn:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover{
+  filter:saturate(1.06) brightness(1.02);
+}
+button:active,
+.btn:active,
+a.btn:active,
+input[type="submit"]:active,
+input[type="button"]:active{
+  transform: translateY(1px) scale(.997);
+}
+button:focus-visible,
+.btn:focus-visible,
+a.btn:focus-visible,
+input[type="submit"]:focus-visible,
+input[type="button"]:focus-visible{
+  outline:none; box-shadow:var(--focus);
+}
+button[disabled],
+.btn[disabled],
+input[disabled]{
+  opacity:.55; cursor:not-allowed;
+}
+
+/* Secondary/ghost buttons that STILL use pink text/outline */
+.btn-ghost{
+  background:transparent;
+  color:var(--ink);
+  border:1px solid rgba(255,255,255,.12);
+}
+.btn-ghost:hover{ background:rgba(255,255,255,.03); }
+
+/* ===== Form controls (dark; no white boxes) ===== */
+
+/* Text inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea{
+  -webkit-appearance:none; appearance:none;
+  background:var(--button);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:12px 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+}
+input:focus-visible,
+textarea:focus-visible{
+  outline:none; box-shadow:var(--focus);
+}
+
+/* Selects — kill native light theme look */
+select{
+  -webkit-appearance:none; appearance:none;
+  background:var(--button);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:12px 40px 12px 12px;
+  line-height:1.2;
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.06)),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+  background-repeat:no-repeat,no-repeat;
+  background-position: 0 0, right 12px center;
+  background-size: auto, 18px 18px;
+}
+select:focus-visible{ outline:none; box-shadow:var(--focus); }
+select::-ms-expand{ display:none; } /* old Edge */
+
+/* Checkboxes / radios — use pink accent */
+input[type="checkbox"],
+input[type="radio"]{
+  width:18px; height:18px;
+  accent-color: var(--accent);
+  cursor:pointer;
+}
+label{ color:var(--ink); }
+
+/* Helper rows inside cards or forms */
+.row{ display:flex; gap:10px; flex-wrap:wrap; }
+.spacer{ height:12px; }
+
+/* ===== Paywall containers (generic look, not structure) ===== */
+.plan{
+  background: rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.price{ font-size:28px; font-weight:800; }
+
+/* ===== Footer / support strip (if used) ===== */
+.footer{
+  margin-top:40px;
+  border-top:1px solid var(--line);
+  padding:18px 0;
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* ===== Utilities ===== */
+.hidden{ display:none !important; }
+.center{ text-align:center; }
+.right{ text-align:right; }
+
+/* Make tap targets comfy */
+@media (hover:none){
+  button, .btn, a.btn, input[type="submit"], input[type="button"]{ padding:14px 18px; }
+  select, input, textarea{ padding:14px 14px; }
+}
