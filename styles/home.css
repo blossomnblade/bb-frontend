@@ -1,76 +1,58 @@
 :root{
-  --bg:#0b0b0d; --ink:#eee; --muted:#bdbdbd; --line:#232326; --accent:#e66;
-  --card:#0f0f11; --button:#1b1b1f;
+  --bg:#0b0b0d; --ink:#eee; --muted:#bdbdbd; --line:#232326;
+  --accent:#ff2d83;             /* pink used on buttons and highlights */
+  --card:#101113; --button:#1a1b1f;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
+
 *{ box-sizing:border-box }
 html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink) }
 a{ color:#fff; text-decoration:none }
 
-.wrap{ max-width:1100px; margin:0 auto; padding:16px }
-h1{ font-size:32px; margin:24px 0 8px }
-.tag{ opacity:.9; margin:0 0 16px }
-
-.top-banner,.foot{
-  background:#121216; border-bottom:1px solid var(--line);
-  padding:10px 16px; text-align:center;
-}
-.foot{ border-top:1px solid var(--line); border-bottom:none; margin-top:32px }
-
-.grid{
-  display:grid; gap:16px;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  margin:20px 0 10px;
-}
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  display:block;
-}
-.card:hover{ outline:1px solid #333 }
-
-/* ===== Image area — ONLY the <img>, no background fallbacks ===== */
-.card .pic{
-  display:block;
-  border-radius:12px;
-  overflow:hidden;
-  background:none;         /* no gradient / wallpaper behind the photo */
-  margin-bottom:10px;
-}
-.card .pic img{
-  display:block;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-/* Site wallpaper (behind everything) */
+/* Site wallpaper (chalkboard) – NOT per-man images */
 #bg{
   position:fixed; inset:0;
-  background:url('/images/bg/default.webp') center / cover no-repeat;
-  opacity:.34;
-  filter:brightness(1.12) contrast(1.06) saturate(1.14);
+  background:url('/images/bg/default.webp') center/cover no-repeat;
+  opacity:.34; filter:brightness(1.12) contrast(1.06) saturate(1.14);
   pointer-events:none; z-index:-1;
 }
 
-/* CTA buttons */
-.cta{ margin:16px 0; display:flex; gap:10px; flex-wrap:wrap }
-.cta a{
-  display:inline-block;
-  background:var(--button);
-  border:1px solid var(--line);
-  color:#fff;
-  padding:10px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  text-decoration:none;
+/* Header & top banner */
+.wrap{ max-width:1200px; margin:0 auto; padding:16px }
+h1{ font-size:32px; margin:24px 0 8px }
+.banner{ opacity:.95; margin:0 0 16px }
+.top{ display:flex; justify-content:space-between; align-items:end; gap:16px }
+.top .right{ display:flex; gap:10px }
+.btn{ display:inline-block; padding:10px 14px; border-radius:12px;
+      border:1px solid var(--line); background:var(--button); cursor:pointer }
+.btn.primary{ background:linear-gradient(180deg,#ff2d83,#ff165f); color:#fff; }
+
+/* Announcement band */
+.announce{
+  max-width:1200px; margin:8px auto 20px; padding:10px 14px;
+  border:1px solid var(--line); border-radius:12px;
+  background:rgba(255,255,255,.03); text-align:center; color:#ddd;
 }
-.cta a.ghost{ background:transparent }
-@media (max-width:480px){ .cta a{ width:100%; text-align:center } }
-/* Phones: cards must show only the face <img> */
-@media (max-width: 900px){
-  .card .pic{ background: none !important; }
-  .card .pic img{ display: block !important; }
+
+/* Card grid */
+.grid{
+  max-width:1200px; margin:0 auto 32px;
+  display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
 }
+
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:16px;
+  padding:12px;
+}
+.card:hover{ outline:1px solid #333 }
+
+/* Face image ONLY — no CSS backgrounds at all */
+.pic{ display:block; aspect-ratio:1/1; border-radius:18px; overflow:hidden }
+.pic img{ width:100%; height:100%; object-fit:cover; display:block }
+
+/* CTA buttons below each card */
+.cta{ margin:16px 0 0; display:flex; gap:10px; flex-wrap:wrap }
+.cta .ghost{ background:transparent }
+
+/* Footer */
+.foot{ border-top:1px solid var(--line); margin-top:24px; padding:12px 16px; text-align:center; color:#bdbdbd }
