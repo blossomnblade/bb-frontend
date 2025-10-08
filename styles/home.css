@@ -1,6 +1,6 @@
-/* home.css — v17
-   Globals + landing, unified button styles, dark form controls (no white boxes),
-   and landing BG kill-switch. Chat page visuals remain in styles/chat.css. */
+/* home.css — v18
+   Default wallpaper on landing + unified buttons + dark form controls.
+   Chat backgrounds remain in styles/chat.css only. */
 
 /* ===== Theme tokens ===== */
 :root{
@@ -8,9 +8,9 @@
   --ink:#eee;
   --muted:#bdbdbd;
   --line:#232326;
-  --accent:#ff2d83;          /* unified pink */
+  --accent:#ff2d83;
   --card:#101113;
-  --button:#1a1b1f;          /* dark button base */
+  --button:#1a1b1f;
   --radius:14px;
   --shadow:0 10px 30px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.03) inset;
   --btn-grad:linear-gradient(180deg,#ff2d83,#ff165f);
@@ -21,11 +21,23 @@
 * { box-sizing:border-box; }
 html,body { height:100%; }
 html { -webkit-text-size-adjust:100%; }
+
+/* Default site wallpaper for non-chat pages */
 body{
   margin:0;
-  background:var(--bg);
   color:var(--ink);
   font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background-color:var(--bg);
+  background-image:url("/images/bg/default.webp");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+}
+
+/* Optional: paywall-specific wallpaper hook (no HTML changes yet) */
+body.paywall{
+  background-image:url("/images/bg/bg-paywall.webp");
 }
 
 a{ color:var(--ink); text-decoration:none; }
@@ -42,9 +54,7 @@ img{ max-width:100%; display:block; }
   display:flex; align-items:center; justify-content:space-between;
   gap:16px; padding:18px 0;
 }
-.brand{
-  font-weight:700; letter-spacing:.3px; font-size:20px;
-}
+.brand{ font-weight:700; letter-spacing:.3px; font-size:20px; }
 .header-actions{ display:flex; align-items:center; gap:10px; }
 
 /* ===== Announcement band ===== */
@@ -64,12 +74,8 @@ img{ max-width:100%; display:block; }
   grid-template-columns:repeat(3,1fr);
   gap:18px;
 }
-@media (max-width:900px){
-  .grid{ grid-template-columns:repeat(2,1fr); }
-}
-@media (max-width:560px){
-  .grid{ grid-template-columns:1fr; }
-}
+@media (max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .grid{ grid-template-columns:1fr; } }
 
 .card{
   background:var(--card);
@@ -81,7 +87,7 @@ img{ max-width:100%; display:block; }
 .card .pic{
   position:relative;
   aspect-ratio: 4/5;
-  background:#000;            /* safety base */
+  background:#000; /* safety base */
 }
 .card .pic img{
   width:100%; height:100%; object-fit:cover;
@@ -95,7 +101,7 @@ img{ max-width:100%; display:block; }
 .card .pic{ background-image:none !important; }
 .card .pic img{ display:block !important; }
 
-/* ===== Buttons (ALL buttons & button-like links unified) ===== */
+/* ===== Buttons (unified) ===== */
 button,
 .btn,
 a.btn,
@@ -137,11 +143,9 @@ input[type="button"]:focus-visible{
 }
 button[disabled],
 .btn[disabled],
-input[disabled]{
-  opacity:.55; cursor:not-allowed;
-}
+input[disabled]{ opacity:.55; cursor:not-allowed; }
 
-/* Secondary/ghost buttons that STILL use pink text/outline */
+/* Ghost buttons still dark, not white */
 .btn-ghost{
   background:transparent;
   color:var(--ink);
@@ -150,8 +154,6 @@ input[disabled]{
 .btn-ghost:hover{ background:rgba(255,255,255,.03); }
 
 /* ===== Form controls (dark; no white boxes) ===== */
-
-/* Text inputs */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -166,11 +168,9 @@ textarea{
   box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
 }
 input:focus-visible,
-textarea:focus-visible{
-  outline:none; box-shadow:var(--focus);
-}
+textarea:focus-visible{ outline:none; box-shadow:var(--focus); }
 
-/* Selects — kill native light theme look */
+/* Selects */
 select{
   -webkit-appearance:none; appearance:none;
   background:var(--button);
@@ -187,7 +187,7 @@ select{
   background-size: auto, 18px 18px;
 }
 select:focus-visible{ outline:none; box-shadow:var(--focus); }
-select::-ms-expand{ display:none; } /* old Edge */
+select::-ms-expand{ display:none; }
 
 /* Checkboxes / radios — use pink accent */
 input[type="checkbox"],
@@ -198,11 +198,11 @@ input[type="radio"]{
 }
 label{ color:var(--ink); }
 
-/* Helper rows inside cards or forms */
+/* Helper rows */
 .row{ display:flex; gap:10px; flex-wrap:wrap; }
 .spacer{ height:12px; }
 
-/* ===== Paywall containers (generic look, not structure) ===== */
+/* Paywall containers (look only) */
 .plan{
   background: rgba(255,255,255,.02);
   border:1px solid var(--line);
@@ -212,7 +212,7 @@ label{ color:var(--ink); }
 }
 .price{ font-size:28px; font-weight:800; }
 
-/* ===== Footer / support strip (if used) ===== */
+/* Footer / support strip */
 .footer{
   margin-top:40px;
   border-top:1px solid var(--line);
@@ -221,12 +221,12 @@ label{ color:var(--ink); }
   font-size:14px;
 }
 
-/* ===== Utilities ===== */
+/* Utilities */
 .hidden{ display:none !important; }
 .center{ text-align:center; }
 .right{ text-align:right; }
 
-/* Make tap targets comfy */
+/* Mobile tap targets */
 @media (hover:none){
   button, .btn, a.btn, input[type="submit"], input[type="button"]{ padding:14px 18px; }
   select, input, textarea{ padding:14px 14px; }
