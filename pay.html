@@ -4,30 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Plans — Blossom & Blade</title>
-
-  <!-- Paywall page uses the pinks/dark theme; v19 to beat caches -->
   <link rel="stylesheet" href="/styles/home.css?v=19" />
-
-  <!-- Local layout helper for the two panels -->
   <style>
-    .plans-grid{
-      display:grid; gap:24px;
-      grid-template-columns:1fr;
-    }
-    @media (min-width: 900px){
-      .plans-grid{ grid-template-columns: 1fr 1fr; }
-    }
+    .plans-grid{ display:grid; gap:24px; grid-template-columns:1fr; }
+    @media (min-width: 900px){ .plans-grid{ grid-template-columns: 1fr 1fr; } }
     .plan h2{ margin:0 0 8px; }
     .plan .price{ margin:8px 0 14px; }
     .checks{ display:grid; gap:10px; margin:12px 0 16px; }
     .row-actions{ display:flex; gap:10px; flex-wrap:wrap; }
-    .tiny-contact{
-      margin-top:10px; text-align:center; font-size:12px; color:var(--muted); opacity:.9;
-    }
+    .tiny-contact{ margin-top:10px; text-align:center; font-size:12px; color:var(--muted); opacity:.9; }
   </style>
 </head>
-
-<!-- paywall wallpaper hook lives in home.css -->
 <body class="paywall">
   <div class="container">
     <header class="site-header">
@@ -38,7 +25,6 @@
     </header>
 
     <main class="plans-grid">
-      <!-- Day Pass -->
       <section class="plan" aria-labelledby="daypass-title">
         <h2 id="daypass-title">Day Pass — 24 hours</h2>
         <div class="price">$7.99</div>
@@ -70,7 +56,6 @@
         </p>
       </section>
 
-      <!-- Monthly -->
       <section id="monthly" class="plan" aria-labelledby="monthly-title">
         <h2 id="monthly-title">Monthly — All 6 men</h2>
         <div class="price">$14.99</div>
@@ -100,8 +85,6 @@
     </footer>
   </div>
 
-  <!-- Minimal wiring: route Day Pass through your existing age gate to the chosen man.
-       Monthly button is a placeholder until we wire the processor. -->
   <script>
     (function(){
       const sel = document.getElementById('manSelect');
@@ -113,9 +96,9 @@
         btnDay.href = `/age.html?next=/chat.html?man=${encodeURIComponent(man)}`;
       }
       setDayLink();
-      if (sel) sel.addEventListener('change', setDayLink);
+      sel?.addEventListener('change', setDayLink);
 
-      // Placeholder monthly route (we’ll replace with processor URL later)
+      // Placeholder route for monthly until processor is wired
       btnMonthly.href = '/age.html?next=/chat.html?man=blade';
     })();
   </script>
