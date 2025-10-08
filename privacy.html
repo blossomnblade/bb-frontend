@@ -3,122 +3,86 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Privacy Policy — Blossom & Blade</title>
-  <link rel="stylesheet" href="/styles/home.css?v=19" />
+  <title>Privacy Policy — Blossom &amp; Blade</title>
+  <link rel="stylesheet" href="/styles/home.css?v=26" />
   <style>
-    .legal { max-width: 920px; margin: 0 auto 60px; }
-    .legal h1 { margin: 0 0 6px; }
-    .legal time { color: var(--muted); font-size: 14px; }
-    .legal h2 { margin: 24px 0 8px; }
-    .legal p { margin: 10px 0; color: var(--ink); }
-    .legal ul { margin: 8px 0 12px 18px; color: var(--ink); }
-    .legal li { margin: 6px 0; }
-    .legal a { text-decoration: underline; }
-    .section { background: rgba(255,255,255,.02); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin: 16px 0; }
-    .muted { color: var(--muted); }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+    .legal.container{max-width:980px;margin:0 auto;padding:24px}
+    .legal h1{margin:8px 0 12px}
+    .legal h2{margin:22px 0 8px}
+    .legal p,.legal li{line-height:1.55}
+    .legal .muted{color:var(--muted)}
   </style>
 </head>
-<body>
+<body class="legal">
   <div class="container legal">
     <header class="site-header">
       <div class="brand">Blossom &amp; Blade</div>
       <div class="header-actions">
-        <a class="btn" href="/">Main</a>
         <a class="btn" href="/pay.html">Plans</a>
       </div>
     </header>
 
-    <main>
-      <h1>Privacy Policy</h1>
-      <time datetime="2025-10-08">Last updated: Oct 8, 2025</time>
+    <h1>Privacy Policy</h1>
+    <p class="muted">Effective date: <strong>October 8, 2025</strong></p>
 
-      <div class="section">
-        <p>Blossom &amp; Blade (“we,” “us,” “our”), operated by <strong>Venus Venue LLC</strong>, provides an adult-only, AI-only chat experience. This Privacy Policy explains what we collect, how we use it, and your choices.</p>
-        <p>Plainly: we keep things private, log the minimum we need for safety and operations, and we <strong>do not sell your personal information</strong>.</p>
-      </div>
+    <p>This Privacy Policy explains how Blossom &amp; Blade (“<strong>we</strong>,” “<strong>us</strong>,” or “<strong>our</strong>”) collects, uses, and shares information when you use our website and AI chat services (the “<strong>Service</strong>”).</p>
 
-      <h2>1) What we collect</h2>
-      <div class="section">
-        <ul>
-          <li><strong>Account &amp; purchase info:</strong> details provided at checkout (handled by our payment processor), purchase history, plan type (Day Pass / Monthly).</li>
-          <li><strong>Chat content:</strong> messages you send and AI replies. For Monthly plans, we may store history (“memory”) while your plan is active so conversations feel continuous.</li>
-          <li><strong>Safety &amp; operations:</strong> limited technical logs (IP, device info, timestamps) for security, fraud prevention, abuse mitigation, and reliability.</li>
-          <li><strong>Consent flags (local device):</strong> one-time gate confirmations in your browser’s localStorage (<code>bb18</code>, <code>bbTerms</code>, <code>bbRules</code>, <code>bbRefund</code>, and <code>bbConsentAt</code>).</li>
-          <li><strong>Cookies/local storage:</strong> used for session, preferences, and the 18+ gate. No third-party ad trackers.</li>
-        </ul>
-      </div>
+    <h2>1) Information we collect</h2>
+    <ul>
+      <li><strong>Account &amp; contact.</strong> Email address and basic account details you provide (e.g., for receipts, support, or login links).</li>
+      <li><strong>Payment.</strong> Our payment processor collects payment details (e.g., card). We receive limited information (e.g., payment status) but not full card numbers.</li>
+      <li><strong>Usage &amp; device.</strong> IP address, device/browser details, timestamps, and basic analytics (page views, clicks). We use cookies/local storage for features like the 18+ gate and session continuity.</li>
+      <li><strong>Chat content.</strong> Your prompts and the AI responses. For the Monthly plan, we keep conversation “memory” to personalize your experience.</li>
+      <li><strong>Safety signals.</strong> Automated flags and limited human review for policy enforcement, fraud prevention, and safety (e.g., self-harm indicators).</li>
+    </ul>
 
-      <h2>2) How we use your information</h2>
-      <div class="section">
-        <ul>
-          <li>Provide the service (AI chat), personalize character responses, and maintain features you enable (e.g., conversation memory on Monthly).</li>
-          <li>Process payments and prevent fraud (via our payment processor).</li>
-          <li>Operate, secure, and improve the site, including troubleshooting and aggregate/de-identified analytics.</li>
-          <li>Comply with law, handle disputes, and enforce Terms (including refunds within 24 hours for verified technical access failures).</li>
-        </ul>
-      </div>
+    <h2>2) How we use information</h2>
+    <ul>
+      <li>Provide and maintain the Service (including chat generation and “memory”).</li>
+      <li>Process payments and manage subscriptions.</li>
+      <li>Operate safety systems, detect abuse, and enforce our House Rules.</li>
+      <li>Communicate with you (support, receipts, important updates).</li>
+      <li>Improve the Service using de-identified or aggregated data.</li>
+      <li>Comply with law, legal process, and to protect our rights and users.</li>
+    </ul>
 
-      <h2>3) Safety, moderation, and limited logging</h2>
-      <div class="section">
-        <ul>
-          <li><strong>Crisis support pop-up:</strong> if self-harm risk phrases are detected, we may show a resource pop-up (e.g., U.S. <strong>988</strong> Suicide &amp; Crisis Lifeline). The AI aims to reassure and redirect to help.</li>
-          <li><strong>Internal alert:</strong> clear self-harm intent or severe risk signals may trigger an internal alert to our safety contact.</li>
-          <li><strong>Minimal safety log:</strong> for investigating violations, safety, fraud, or disputes, we may temporarily retain <strong>limited excerpts</strong> (e.g., last <strong>five (5)</strong> messages), timestamps, and a session identifier. Used only for safety/ops.</li>
-          <li><strong>Policy enforcement:</strong> repeated or severe violations (e.g., minors, bestiality, non-consensual harm, trafficking, DV-play, scat, necrophilia, threats, illegal activity) may result in suspension or termination.</li>
-        </ul>
-      </div>
+    <h2>3) Data retention</h2>
+    <ul>
+      <li><strong>Day Pass:</strong> we generally retain chat content for up to <strong>30 days</strong> for fraud prevention and safety review, then delete or de-identify it.</li>
+      <li><strong>Monthly:</strong> we retain chat “memory” while your subscription is active and may delete or archive it within <strong>30–60 days</strong> after lapse. If you re-subscribe after memory is deleted, we treat you as new.</li>
+      <li><strong>Safety logs:</strong> for policy enforcement, we may retain up to the last <strong>five (5)</strong> flagged transcripts and related records for up to <strong>12 months</strong> (or longer if needed for legal reasons).</li>
+      <li><strong>Legal/backup copies:</strong> we may keep minimal archival copies as required by law or for security/backup.</li>
+    </ul>
 
-      <h2>4) Sharing</h2>
-      <div class="section">
-        <ul>
-          <li><strong>Payment processors:</strong> to take payments and handle disputes.</li>
-          <li><strong>Hosting &amp; infrastructure:</strong> to run the site and store data securely.</li>
-          <li><strong>Analytics/monitoring:</strong> to keep the service reliable (aggregate or de-identified where possible).</li>
-          <li><strong>Legal &amp; safety:</strong> to comply with law, respond to legal requests, prevent fraud, and protect users and our service.</li>
-        </ul>
-        <p>We do <strong>not</strong> sell your personal information.</p>
-      </div>
+    <h2>4) Sharing</h2>
+    <ul>
+      <li><strong>Vendors.</strong> We use trusted service providers (e.g., hosting, payment processing, email). They process data on our instructions.</li>
+      <li><strong>Safety &amp; legal.</strong> We may disclose information if we believe it’s necessary to comply with law, prevent fraud, protect rights/safety, or respond to lawful requests.</li>
+      <li><strong>Business transfers.</strong> If we undergo a merger, acquisition, or asset sale, information may transfer as part of that transaction.</li>
+      <li><strong>No sale of personal data.</strong> We do not sell your personal information.</li>
+    </ul>
 
-      <h2>5) Storage &amp; retention</h2>
-      <div class="section">
-        <ul>
-          <li><strong>Conversation memory (Monthly plans):</strong> kept while your plan is active; may be reset if your plan lapses.</li>
-          <li><strong>Day Pass:</strong> we keep only what’s needed to provide access and operate the service; long-term memory is not retained after access ends.</li>
-          <li><strong>Safety excerpts:</strong> kept only as long as needed for investigation and dispute handling, then minimized or deleted.</li>
-          <li><strong>Operational logs:</strong> kept for a limited time to secure and operate the service, then rotated or deleted.</li>
-        </ul>
-      </div>
+    <h2>5) Security</h2>
+    <p>We use reasonable technical and organizational measures to protect information. No system is 100% secure. You are responsible for safeguarding your account and device.</p>
 
-      <h2>6) Your choices</h2>
-      <div class="section">
-        <ul>
-          <li><strong>One-time gate:</strong> clear site data in your browser to remove local consent flags; you’ll be re-prompted next visit.</li>
-          <li><strong>Access/correction/deletion:</strong> you can request a copy, correction, or deletion of account-linked data (subject to verification and legal exceptions).</li>
-          <li><strong>Communications:</strong> you may opt out of non-essential emails; transactional emails (like receipts) may still be sent.</li>
-        </ul>
-      </div>
+    <h2>6) Your choices &amp; rights</h2>
+    <ul>
+      <li><strong>Access &amp; deletion.</strong> You can request a copy or deletion of your account data by emailing <a href="mailto:blossomnblade1@gmail.com">blossomnblade1@gmail.com</a>. We may ask to verify your identity and may retain information as required by law or for safety logs.</li>
+      <li><strong>Marketing.</strong> If we send marketing emails, you can opt out via the email footer.</li>
+      <li><strong>Cookies.</strong> You can control cookies in your browser; some features may not work without necessary cookies.</li>
+    </ul>
 
-      <h2>7) Security</h2>
-      <div class="section">
-        <p>We use reasonable technical and organizational measures to protect data. No system is perfectly secure. Keep your device and access credentials safe.</p>
-      </div>
+    <h2>7) Children</h2>
+    <p>The Service is for adults only (18+). We do not knowingly collect data from children. If you believe a minor is using the Service, contact us and we will take appropriate action.</p>
 
-      <h2>8) Children</h2>
-      <div class="section">
-        <p>This service is for <strong>adults 18+</strong>. We do not knowingly collect data from minors. If you believe a minor has used the service, let us know and we will act promptly.</p>
-      </div>
+    <h2>8) International users</h2>
+    <p>We are US-based. If you use the Service from outside the US, your information may be transferred to and processed in the US or other countries with different data-protection laws.</p>
 
-      <h2>9) International users</h2>
-      <div class="section">
-        <p>Data may be processed in the United States and other locations where we or our providers operate. By using the service, you understand your data may be transferred to, stored, and processed in these locations.</p>
-      </div>
+    <h2>9) Changes</h2>
+    <p>We may update this Policy. If we make material changes, we’ll post the new effective date and, where required, provide notice. Your continued use means you accept the changes.</p>
 
-      <h2>10) Changes to this policy</h2>
-      <div class="section">
-        <p>We may update this Privacy Policy. The effective date appears at the top. Continued use after changes means you accept the updated policy.</p>
-      </div>
-    </main>
+    <h2>10) Contact</h2>
+    <p>Privacy questions or requests: <a href="mailto:blossomnblade1@gmail.com">blossomnblade1@gmail.com</a></p>
 
     <footer class="footer">
       Need support? 988 Suicide &amp; Crisis Lifeline — call or text 988 (US). If you’re in immediate danger, call 911.
