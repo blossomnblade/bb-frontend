@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blossom &amp; Blade</title>
 
-  <!-- LANDING kill-switch (no per-man BGs inside cards, ever) -->
+  <!-- LANDING kill-switch (no per-man BGs inside cards, ever) + bulletproof ratio box -->
   <style>
-    /* annihilate any old background-image tricks inside cards */
+    /* Annihilate any old background-image tricks inside cards and their pseudos */
     .grid .card,
     .grid .card::before,
     .grid .card::after,
@@ -16,16 +16,26 @@
     .grid .card .pic::after{
       background: none !important;
       background-image: none !important;
+      box-shadow: none !important;
     }
-    .card .pic{ position:relative; aspect-ratio:4/5; background:#000 !important; overflow:hidden; }
-    .card .pic img{ display:block !important; width:100%; height:100%; object-fit:cover; }
 
-    /* 6-across on large screens; smaller breakpoints from home.css */
+    /* Ratio box that works on every mobile browser */
+    .card .pic{ position: relative; width: 100%; overflow: hidden; background:#000 !important; }
+    .card .pic::before{
+      content: ""; display: block; padding-top: 125%; /* 4:5 portrait */
+    }
+    .card .pic > img{
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: block !important;
+    }
+
+    /* 6-across on large screens; smaller breakpoints handled by home.css */
     @media (min-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr) !important; } }
   </style>
 
   <!-- Site styles (version bump so phones fetch fresh CSS) -->
-  <link rel="stylesheet" href="/styles/home.css?v=22">
+  <link rel="stylesheet" href="/styles/home.css?v=23">
 </head>
 <body class="landing">
   <div class="container">
@@ -46,10 +56,10 @@
         <div class="pic" style="background:none !important;background-image:none !important;">
           <img
             alt="Blade" loading="lazy" data-step=""
-            src="/images/characters/blade/blade-card-on.webp?v=22"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/blade/blade-card.webp?v=22';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/blade/blade.webp?v=22';}
-                     else {this.src='/images/bg/default.webp?v=22';}">
+            src="/images/characters/blade/blade-card-on.webp?v=23"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/blade/blade-card.webp?v=23';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/blade/blade.webp?v=23';}
+                     else {this.src='/images/bg/default.webp?v=23';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=blade">Chat now</a>
@@ -62,10 +72,10 @@
         <div class="pic" style="background:none !important;background-image:none !important;">
           <img
             alt="Viper" loading="lazy" data-step=""
-            src="/images/characters/viper/viper-card-on.webp?v=22"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/viper/viper-card.webp?v=22';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/viper/viper.webp?v=22';}
-                     else {this.src='/images/bg/default.webp?v=22';}">
+            src="/images/characters/viper/viper-card-on.webp?v=23"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/viper/viper-card.webp?v=23';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/viper/viper.webp?v=23';}
+                     else {this.src='/images/bg/default.webp?v=23';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=viper">Chat now</a>
@@ -78,10 +88,10 @@
         <div class="pic" style="background:none !important;background-image:none !important;">
           <img
             alt="Dylan" loading="lazy" data-step=""
-            src="/images/characters/dylan/dylan-card-on.webp?v=22"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/dylan/dylan-card.webp?v=22';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/dylan/dylan.webp?v=22';}
-                     else {this.src='/images/bg/default.webp?v=22';}">
+            src="/images/characters/dylan/dylan-card-on.webp?v=23"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/dylan/dylan-card.webp?v=23';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/dylan/dylan.webp?v=23';}
+                     else {this.src='/images/bg/default.webp?v=23';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
@@ -94,10 +104,10 @@
         <div class="pic" style="background:none !important;background-image:none !important;">
           <img
             alt="Alexander" loading="lazy" data-step=""
-            src="/images/characters/alexander/alexander-card-on.webp?v=22"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/alexander/alexander-card.webp?v=22';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/alexander/alexander.webp?v=22';}
-                     else {this.src='/images/bg/default.webp?v=22';}">
+            src="/images/characters/alexander/alexander-card-on.webp?v=23"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/alexander/alexander-card.webp?v=23';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/alexander/alexander.webp?v=23';}
+                     else {this.src='/images/bg/default.webp?v=23';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
@@ -110,10 +120,10 @@
         <div class="pic" style="background:none !important;background-image:none !important;">
           <img
             alt="Grayson" loading="lazy" data-step=""
-            src="/images/characters/grayson/grayson-card-on.webp?v=22"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/grayson/grayson-card.webp?v=22';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/grayson/grayson.webp?v=22';}
-                     else {this.src='/images/bg/default.webp?v=22';}">
+            src="/images/characters/grayson/grayson-card-on.webp?v=23"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/grayson/grayson-card.webp?v=23';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/grayson/grayson.webp?v=23';}
+                     else {this.src='/images/bg/default.webp?v=23';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
@@ -126,10 +136,10 @@
         <div class="pic" style="background:none !important;background-image:none !important;">
           <img
             alt="Silas" loading="lazy" data-step=""
-            src="/images/characters/silas/silas-card-on.webp?v=22"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/silas/silas-card.webp?v=22';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/silas/silas.webp?v=22';}
-                     else {this.src='/images/bg/default.webp?v=22';}">
+            src="/images/characters/silas/silas-card-on.webp?v=23"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/silas/silas-card.webp?v=23';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/silas/silas.webp?v=23';}
+                     else {this.src='/images/bg/default.webp?v=23';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=silas">Chat now</a>
