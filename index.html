@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blossom &amp; Blade</title>
 
-  <!-- LANDING kill-switch: annihilate any old per-man background styles -->
+  <!-- LANDING kill-switch (no per-man BGs inside cards, ever) -->
   <style>
-    /* Nuke all background-image sources on landing cards, including pseudo elements */
+    /* annihilate any old background-image tricks inside cards */
     .grid .card,
     .grid .card::before,
     .grid .card::after,
@@ -16,17 +16,16 @@
     .grid .card .pic::after{
       background: none !important;
       background-image: none !important;
-      box-shadow: none; /* just in case someone hid an image in a shadow */
     }
     .card .pic{ position:relative; aspect-ratio:4/5; background:#000 !important; overflow:hidden; }
     .card .pic img{ display:block !important; width:100%; height:100%; object-fit:cover; }
 
-    /* 6-across on large screens; smaller breakpoints handled in home.css */
+    /* 6-across on large screens; smaller breakpoints from home.css */
     @media (min-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr) !important; } }
   </style>
 
   <!-- Site styles (version bump so phones fetch fresh CSS) -->
-  <link rel="stylesheet" href="/styles/home.css?v=21">
+  <link rel="stylesheet" href="/styles/home.css?v=22">
 </head>
 <body class="landing">
   <div class="container">
@@ -38,14 +37,19 @@
     </header>
 
     <div class="announce">
-      <strong>Today’s promo:</strong> $1 from each purchase supports domestic violence resources.
+      <strong>Today’s promo:</strong> $1 from each purchase supports domestic-violence resources.
     </div>
 
     <main class="grid">
       <!-- Blade -->
       <article class="card" data-man="blade">
         <div class="pic" style="background:none !important;background-image:none !important;">
-          <img alt="Blade" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
+          <img
+            alt="Blade" loading="lazy" data-step=""
+            src="/images/characters/blade/blade-card-on.webp?v=22"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/blade/blade-card.webp?v=22';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/blade/blade.webp?v=22';}
+                     else {this.src='/images/bg/default.webp?v=22';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=blade">Chat now</a>
@@ -56,7 +60,12 @@
       <!-- Viper -->
       <article class="card" data-man="viper">
         <div class="pic" style="background:none !important;background-image:none !important;">
-          <img alt="Viper" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
+          <img
+            alt="Viper" loading="lazy" data-step=""
+            src="/images/characters/viper/viper-card-on.webp?v=22"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/viper/viper-card.webp?v=22';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/viper/viper.webp?v=22';}
+                     else {this.src='/images/bg/default.webp?v=22';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=viper">Chat now</a>
@@ -67,7 +76,12 @@
       <!-- Dylan -->
       <article class="card" data-man="dylan">
         <div class="pic" style="background:none !important;background-image:none !important;">
-          <img alt="Dylan" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
+          <img
+            alt="Dylan" loading="lazy" data-step=""
+            src="/images/characters/dylan/dylan-card-on.webp?v=22"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/dylan/dylan-card.webp?v=22';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/dylan/dylan.webp?v=22';}
+                     else {this.src='/images/bg/default.webp?v=22';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
@@ -78,7 +92,12 @@
       <!-- Alexander -->
       <article class="card" data-man="alexander">
         <div class="pic" style="background:none !important;background-image:none !important;">
-          <img alt="Alexander" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
+          <img
+            alt="Alexander" loading="lazy" data-step=""
+            src="/images/characters/alexander/alexander-card-on.webp?v=22"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/alexander/alexander-card.webp?v=22';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/alexander/alexander.webp?v=22';}
+                     else {this.src='/images/bg/default.webp?v=22';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
@@ -89,7 +108,12 @@
       <!-- Grayson -->
       <article class="card" data-man="grayson">
         <div class="pic" style="background:none !important;background-image:none !important;">
-          <img alt="Grayson" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
+          <img
+            alt="Grayson" loading="lazy" data-step=""
+            src="/images/characters/grayson/grayson-card-on.webp?v=22"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/grayson/grayson-card.webp?v=22';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/grayson/grayson.webp?v=22';}
+                     else {this.src='/images/bg/default.webp?v=22';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
@@ -100,7 +124,12 @@
       <!-- Silas -->
       <article class="card" data-man="silas">
         <div class="pic" style="background:none !important;background-image:none !important;">
-          <img alt="Silas" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
+          <img
+            alt="Silas" loading="lazy" data-step=""
+            src="/images/characters/silas/silas-card-on.webp?v=22"
+            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/silas/silas-card.webp?v=22';}
+                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/silas/silas.webp?v=22';}
+                     else {this.src='/images/bg/default.webp?v=22';}">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=silas">Chat now</a>
@@ -113,58 +142,5 @@
       Need support? 988 Suicide &amp; Crisis Lifeline — call or text 988 (US). If you’re in immediate danger, call 911.
     </footer>
   </div>
-
-  <!-- Bulletproof face loader + background scrubbing -->
-  <script>
-    (function(){
-      // 0) Scrub any stray per-man markers that could leak backgrounds
-      document.body.removeAttribute('data-man');
-      (document.body.className || '').split(/\s+/).forEach(c=>{
-        if (['blade','viper','dylan','alexander','grayson','silas'].includes(c)) {
-          document.body.classList.remove(c);
-        }
-      });
-
-      const bust = 'f=21'; // bump this next time you change a face image
-      const exts = ['webp','jpg','png'];       // formats to try
-      const variants = ['-card-on','-card'];   // prefer -card-on, fall back to -card
-
-      function candidates(man){
-        const base = `/images/characters/${man}/${man}`;
-        const list = [];
-        for (const v of variants){
-          for (const ext of exts){
-            list.push(`${base}${v}.${ext}?${bust}`);
-          }
-        }
-        return list;
-      }
-
-      function loadWithFallback(img, list){
-        if (!list.length) return;
-        const url = list.shift();
-        img.onerror = ()=> loadWithFallback(img, list);
-        img.src = url;
-      }
-
-      // 1) Strip ANY background imagery on every card.pic at runtime (ultimate override)
-      document.querySelectorAll('.card .pic').forEach(pic=>{
-        pic.style.setProperty('background','none','important');
-        pic.style.setProperty('background-image','none','important');
-        // kill pseudo via CSS injection per element (belt + suspenders)
-        const killer = document.createElement('style');
-        killer.textContent = `
-          .card .pic::before, .card .pic::after{ content:none !important; background:none !important; }
-        `;
-        pic.appendChild(killer);
-      });
-
-      // 2) Load the first working face image for each man
-      document.querySelectorAll('.card[data-man] .pic img').forEach(img=>{
-        const man = img.closest('.card')?.getAttribute('data-man') || 'blade';
-        loadWithFallback(img, candidates(man));
-      });
-    })();
-  </script>
 </body>
 </html>
