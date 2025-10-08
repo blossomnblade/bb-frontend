@@ -1,6 +1,8 @@
 :root{
   --bg:#0b0b0d; --ink:#eee; --muted:#bdbdbd; --line:#232326; --accent:#e66;
   --card:#0f0f11; --button:#1b1b1f;
+  /* shared pink gradient (matches paywall) */
+  --brand1:#ff2d6f; --brand2:#ff165f;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
@@ -11,89 +13,57 @@ a{ color:#fff; text-decoration:none }
 .wrap{ max-width:1100px; margin:0 auto; padding:16px }
 h1{ font-size:32px; margin:24px 0 8px }
 .tag{ opacity:.9; margin:0 0 16px }
-.top-banner,.foot{ background:#121216; border-bottom:1px solid var(--line); padding:10px 16px; text-align:center }
+.top, .foot{ background:#121216; border-bottom:1px solid var(--line); padding:10px 16px; text-align:center }
 .foot{ border-top:1px solid var(--line); border-bottom:none; margin-top:32px }
 .grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin:20px 0 10px }
 .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; display:block }
 .card:hover{ outline:1px solid #333 }
 
-/* Desktop card “face” images */
+/* Desktop card “face” fallback images (if you ever decide to use backgrounds again) */
 .face{
   height:180px; border-radius:12px; background:#1a1a1e; margin-bottom:10px;
   background-size:cover; background-position:center; background-repeat:no-repeat;
 }
-.face.blade{      background-image:url('/images/characters/blade/blade-card.webp'); }
-.face.alexander{  background-image:url('/images/characters/alexander/alexander-card-on.webp'); }
-.face.dylan{      background-image:url('/images/characters/dylan/dylan-card-on.webp'); }
-.face.grayson{    background-image:url('/images/characters/grayson/grayson-card-on.webp'); }
-.face.viper{      background-image:url('/images/characters/viper/viper-card-on.webp'); }
-.face.silas{      background-image:url('/images/characters/silas/silas-card-on.webp'); }
+.face.blade     { background-image:url('/images/characters/blade/blade-card.webp'); }
+.face.alexander { background-image:url('/images/characters/alexander/alexander-card-on.webp'); }
+.face.dylan     { background-image:url('/images/characters/dylan/dylan-card-on.webp'); }
+.face.grayson   { background-image:url('/images/characters/grayson/grayson-card-on.webp'); }
+.face.viper     { background-image:url('/images/characters/viper/viper-card-on.webp'); }
+.face.silas     { background-image:url('/images/characters/silas/silas-card-on.webp'); }
 
 /* Default site wallpaper for home/pay pages */
 #bg{
   position:fixed; inset:0;
   background:url('/images/bg/default.webp') center / cover no-repeat;
-  opacity:.34;
-  filter:brightness(1.12) contrast(1.06) saturate(1.14);
+  opacity:.42; /* little more pop */
+  filter:brightness(1.14) contrast(1.08) saturate(1.20);
   pointer-events:none; z-index:-1;
 }
 
-/* Keep content above wallpaper */
-.wrap, .plans { position:relative; }
+/* CTA buttons on cards */
+.cta{ margin:16px 0; display:flex; gap:10px; flex-wrap:wrap }
+.cta a{
+  display:inline-block; padding:10px 14px; border-radius:12px; cursor:pointer;
+  text-decoration:none; border:1px solid var(--line); color:#fff;
+}
+.cta a.primary{
+  border:0;
+  background:linear-gradient(180deg,var(--brand1),var(--brand2));
+  box-shadow:0 8px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+.cta a.ghost{ background:transparent }
 
-/* Subtle per-man nudges for inline <img> fallback (desktop) */
+/* Mobile niceties */
+@media (max-width:900px){
+  /* give the image a tiny edge so it “sits” on the card */
+  .card .pic{ padding:6px; background-color:rgba(255,255,255,.04); border-radius:14px }
+  .card .pic img{ display:block !important; width:100%; height:100%; object-fit:cover }
+}
+
+/* (Optional) subtle per-man lifts while using <img> */
 .card[data-man="blade"]     .pic img { filter:brightness(1.06) contrast(1.08) saturate(1.04); }
 .card[data-man="alexander"] .pic img { filter:brightness(1.05) contrast(1.10) saturate(1.08); }
 .card[data-man="dylan"]     .pic img { filter:brightness(1.06) contrast(1.06) saturate(1.05); }
 .card[data-man="viper"]     .pic img { filter:brightness(1.10) contrast(1.10) saturate(1.02); }
 .card[data-man="grayson"]   .pic img { filter:brightness(1.04) contrast(1.12) saturate(1.02); }
 .card[data-man="silas"]     .pic img { filter:brightness(1.08) contrast(1.09) saturate(1.06); }
-
-/* ===== Mobile card images (phones) ===== */
-@media (max-width:900px){
-  /* Paint the image on the .pic wrapper and hide any inline <img> */
-  .card .pic{
-    height:180px; border-radius:12px;
-    background-size:cover; background-position:center; background-repeat:no-repeat;
-    padding:6px; background-color:rgba(255,255,255,.04);
-    display:block;
-  }
-
-  /* Per-man mapping: works for .face.* or data-man="*" */
-  .card.face.blade .pic,     .card[data-man="blade"]     .pic{ background-image:url('/images/characters/blade/blade-card.webp') !important; }
-  .card.face.alexander .pic, .card[data-man="alexander"] .pic{ background-image:url('/images/characters/alexander/alexander-card-on.webp') !important; }
-  .card.face.dylan .pic,     .card[data-man="dylan"]     .pic{ background-image:url('/images/characters/dylan/dylan-card-on.webp') !important; }
-  .card.face.grayson .pic,   .card[data-man="grayson"]   .pic{ background-image:url('/images/characters/grayson/grayson-card-on.webp') !important; }
-  .card.face.viper .pic,     .card[data-man="viper"]     .pic{ background-image:url('/images/characters/viper/viper-card-on.webp') !important; }
-  .card.face.silas .pic,     .card[data-man="silas"]     .pic{ background-image:url('/images/characters/silas/silas-card-on.webp') !important; }
-}
-/* === Choose-page CTA buttons (cards) ===================== */
-.cta{
-  margin:16px 0;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.cta a{
-  display:inline-block;
-  background:var(--button);
-  border:1px solid var(--line);
-  color:#fff;
-  padding:10px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  text-decoration:none;
-}
-.cta a.ghost{ background:transparent }
-@media (max-width:480px){
-  .cta a{ width:100%; text-align:center; }
-}
-/* --- Mobile: make sure the card image actually shows --- */
-@media (max-width:900px){
-  .card .pic img{
-    display:block !important;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-  }
-}
