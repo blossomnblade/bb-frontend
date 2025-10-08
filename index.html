@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <title>Blossom & Blade — Choose</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/styles/home.css?v=14">
-
-  <!-- tiny guard so empty cards don’t look broken while images load -->
+  <link rel="stylesheet" href="/styles/home.css?v=16">
   <style>
-    .card .pic{background:linear-gradient(180deg,#111,#1a1f29)} /* disappears once img loads */
+    /* guard while CSS loads */
+    .pic{display:block;aspect-ratio:1/1;border-radius:18px;overflow:hidden}
+    .pic img{width:100%;height:100%;object-fit:cover;display:block}
   </style>
 </head>
 <body class="home">
@@ -24,21 +24,18 @@
       </p>
     </div>
     <nav class="right">
-      <a class="btn primary" href="/pay.html">Plans</a>
+      <a class="btn" href="/pay.html">Plans</a>
     </nav>
   </header>
 
-  <!-- Announcement / ad slot (optional; delete if unused) -->
-  <section class="announce wrap" role="region" aria-label="Announcements">
-    <span>✨ We’re live! New scenes arriving this week.</span>
-  </section>
+  <!-- optional announcements / promos -->
+  <div class="announce">Opening promo: first month $14.99 covers all six men. Cancel anytime.</div>
 
-  <main class="grid wrap">
+  <main class="grid">
     <!-- Blade -->
     <article class="card" data-man="blade">
       <a class="pic" href="/age.html?next=/chat.html?man=blade" aria-label="Chat with Blade">
-        <!-- If you DID NOT rename, change this src to /images/characters/blade/blade-card.webp -->
-        <img src="/images/characters/blade/blade-card-on.webp" alt="Blade" loading="eager" />
+        <img src="/images/characters/blade/blade-card-on.webp" alt="Blade" loading="eager">
       </a>
       <div class="cta">
         <a class="btn primary" href="/age.html?next=/chat.html?man=blade">Chat now</a>
@@ -49,7 +46,7 @@
     <!-- Viper -->
     <article class="card" data-man="viper">
       <a class="pic" href="/age.html?next=/chat.html?man=viper" aria-label="Chat with Viper">
-        <img src="/images/characters/viper/viper-card-on.webp" alt="Viper" loading="lazy" />
+        <img src="/images/characters/viper/viper-card-on.webp" alt="Viper" loading="lazy">
       </a>
       <div class="cta">
         <a class="btn primary" href="/age.html?next=/chat.html?man=viper">Chat now</a>
@@ -60,7 +57,7 @@
     <!-- Dylan -->
     <article class="card" data-man="dylan">
       <a class="pic" href="/age.html?next=/chat.html?man=dylan" aria-label="Chat with Dylan">
-        <img src="/images/characters/dylan/dylan-card-on.webp" alt="Dylan" loading="lazy" />
+        <img src="/images/characters/dylan/dylan-card-on.webp" alt="Dylan" loading="lazy">
       </a>
       <div class="cta">
         <a class="btn primary" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
@@ -71,7 +68,7 @@
     <!-- Alexander -->
     <article class="card" data-man="alexander">
       <a class="pic" href="/age.html?next=/chat.html?man=alexander" aria-label="Chat with Alexander">
-        <img src="/images/characters/alexander/alexander-card-on.webp" alt="Alexander" loading="lazy" />
+        <img src="/images/characters/alexander/alexander-card-on.webp" alt="Alexander" loading="lazy">
       </a>
       <div class="cta">
         <a class="btn primary" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
@@ -82,7 +79,7 @@
     <!-- Grayson -->
     <article class="card" data-man="grayson">
       <a class="pic" href="/age.html?next=/chat.html?man=grayson" aria-label="Chat with Grayson">
-        <img src="/images/characters/grayson/grayson-card-on.webp" alt="Grayson" loading="lazy" />
+        <img src="/images/characters/grayson/grayson-card-on.webp" alt="Grayson" loading="lazy">
       </a>
       <div class="cta">
         <a class="btn primary" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
@@ -93,7 +90,7 @@
     <!-- Silas -->
     <article class="card" data-man="silas">
       <a class="pic" href="/age.html?next=/chat.html?man=silas" aria-label="Chat with Silas">
-        <img src="/images/characters/silas/silas-card-on.webp" alt="Silas" loading="lazy" />
+        <img src="/images/characters/silas/silas-card-on.webp" alt="Silas" loading="lazy">
       </a>
       <div class="cta">
         <a class="btn primary" href="/age.html?next=/chat.html?man=silas">Chat now</a>
