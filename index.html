@@ -5,37 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blossom &amp; Blade</title>
 
-  <!-- LANDING kill-switch (no per-man BGs inside cards, ever) + bulletproof ratio box -->
-  <style>
-    /* Annihilate any old background-image tricks inside cards and their pseudos */
-    .grid .card,
-    .grid .card::before,
-    .grid .card::after,
-    .grid .card .pic,
-    .grid .card .pic::before,
-    .grid .card .pic::after{
-      background: none !important;
-      background-image: none !important;
-      box-shadow: none !important;
-    }
-
-    /* Ratio box that works on every mobile browser */
-    .card .pic{ position: relative; width: 100%; overflow: hidden; background:#000 !important; }
-    .card .pic::before{
-      content: ""; display: block; padding-top: 125%; /* 4:5 portrait */
-    }
-    .card .pic > img{
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; display: block !important;
-    }
-
-    /* 6-across on large screens; smaller breakpoints handled by home.css */
-    @media (min-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr) !important; } }
-  </style>
-
-  <!-- Site styles (version bump so phones fetch fresh CSS) -->
-  <link rel="stylesheet" href="/styles/home.css?v=23">
+  <!-- Use your normal styles; just bump the version so browsers refresh -->
+  <link rel="stylesheet" href="/styles/home.css?v=26" />
 </head>
 <body class="landing">
   <div class="container">
@@ -46,20 +17,18 @@
       </div>
     </header>
 
+    <!-- Announcement band -->
     <div class="announce">
-      <strong>Today’s promo:</strong> $1 from each purchase supports domestic-violence resources.
+      <strong>Free 20-minute trial:</strong> test any man. When you’re ready — <em>Day Pass</em> (pick one, 24h) or <em>Monthly</em> (all 6).
     </div>
 
+    <!-- Card grid (6 across on desktop driven by home.css) -->
     <main class="grid">
+
       <!-- Blade -->
       <article class="card" data-man="blade">
-        <div class="pic" style="background:none !important;background-image:none !important;">
-          <img
-            alt="Blade" loading="lazy" data-step=""
-            src="/images/characters/blade/blade-card-on.webp?v=23"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/blade/blade-card.webp?v=23';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/blade/blade.webp?v=23';}
-                     else {this.src='/images/bg/default.webp?v=23';}">
+        <div class="pic">
+          <img src="/images/characters/blade/blade-card-on.webp" alt="Blade">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=blade">Chat now</a>
@@ -69,13 +38,8 @@
 
       <!-- Viper -->
       <article class="card" data-man="viper">
-        <div class="pic" style="background:none !important;background-image:none !important;">
-          <img
-            alt="Viper" loading="lazy" data-step=""
-            src="/images/characters/viper/viper-card-on.webp?v=23"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/viper/viper-card.webp?v=23';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/viper/viper.webp?v=23';}
-                     else {this.src='/images/bg/default.webp?v=23';}">
+        <div class="pic">
+          <img src="/images/characters/viper/viper-card-on.webp" alt="Viper">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=viper">Chat now</a>
@@ -85,13 +49,8 @@
 
       <!-- Dylan -->
       <article class="card" data-man="dylan">
-        <div class="pic" style="background:none !important;background-image:none !important;">
-          <img
-            alt="Dylan" loading="lazy" data-step=""
-            src="/images/characters/dylan/dylan-card-on.webp?v=23"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/dylan/dylan-card.webp?v=23';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/dylan/dylan.webp?v=23';}
-                     else {this.src='/images/bg/default.webp?v=23';}">
+        <div class="pic">
+          <img src="/images/characters/dylan/dylan-card-on.webp" alt="Dylan">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
@@ -101,13 +60,8 @@
 
       <!-- Alexander -->
       <article class="card" data-man="alexander">
-        <div class="pic" style="background:none !important;background-image:none !important;">
-          <img
-            alt="Alexander" loading="lazy" data-step=""
-            src="/images/characters/alexander/alexander-card-on.webp?v=23"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/alexander/alexander-card.webp?v=23';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/alexander/alexander.webp?v=23';}
-                     else {this.src='/images/bg/default.webp?v=23';}">
+        <div class="pic">
+          <img src="/images/characters/alexander/alexander-card-on.webp" alt="Alexander">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
@@ -117,13 +71,8 @@
 
       <!-- Grayson -->
       <article class="card" data-man="grayson">
-        <div class="pic" style="background:none !important;background-image:none !important;">
-          <img
-            alt="Grayson" loading="lazy" data-step=""
-            src="/images/characters/grayson/grayson-card-on.webp?v=23"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/grayson/grayson-card.webp?v=23';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/grayson/grayson.webp?v=23';}
-                     else {this.src='/images/bg/default.webp?v=23';}">
+        <div class="pic">
+          <img src="/images/characters/grayson/grayson-card-on.webp" alt="Grayson">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
@@ -133,19 +82,15 @@
 
       <!-- Silas -->
       <article class="card" data-man="silas">
-        <div class="pic" style="background:none !important;background-image:none !important;">
-          <img
-            alt="Silas" loading="lazy" data-step=""
-            src="/images/characters/silas/silas-card-on.webp?v=23"
-            onerror="if(this.dataset.step===''){this.dataset.step='1';this.src='/images/characters/silas/silas-card.webp?v=23';}
-                     else if(this.dataset.step==='1'){this.dataset.step='2';this.src='/images/characters/silas/silas.webp?v=23';}
-                     else {this.src='/images/bg/default.webp?v=23';}">
+        <div class="pic">
+          <img src="/images/characters/silas/silas-card-on.webp" alt="Silas">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=silas">Chat now</a>
           <a class="btn-ghost" href="/chat.html?man=silas">Preview</a>
         </div>
       </article>
+
     </main>
 
     <footer class="footer">
