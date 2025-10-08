@@ -2,105 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Blossom & Blade — Choose</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/styles/home.css?v=16">
+  <title>Blossom &amp; Blade</title>
+
+  <!-- Landing-only background kill (absolute minimal change) -->
   <style>
-    /* guard while CSS loads */
-    .pic{display:block;aspect-ratio:1/1;border-radius:18px;overflow:hidden}
-    .pic img{width:100%;height:100%;object-fit:cover;display:block}
+    /* Stop any wallpaper or old cached background from appearing on landing */
+    body{ background-color:#0b0b0d; background-image:none !important; }
+    #siteWallpaper{ display:none !important; }
   </style>
+
+  <!-- Use the unified styles; version bump to refresh phones -->
+  <link rel="stylesheet" href="/styles/home.css?v=17">
 </head>
-<body class="home">
-  <div id="bg" aria-hidden="true"></div>
+<body>
+  <div class="container">
+    <header class="site-header">
+      <div class="brand">Blossom &amp; Blade</div>
+      <div class="header-actions">
+        <a class="btn" href="/pay.html">Plans</a>
+      </div>
+    </header>
 
-  <header class="wrap top">
-    <div>
-      <h1>Blossom &amp; Blade</h1>
-      <p class="banner">
-        <strong>Free 20-minute trial.</strong>
-        Day Pass <b>$7.99</b> (pick one) • Monthly <b>$14.99</b> (all six).
-        <em>$1 goes to Domestic Violence charity.</em>
-      </p>
+    <div class="announce">
+      <strong>Today’s promo:</strong> $1 from each purchase supports domestic violence resources.
     </div>
-    <nav class="right">
-      <a class="btn" href="/pay.html">Plans</a>
-    </nav>
-  </header>
 
-  <!-- optional announcements / promos -->
-  <div class="announce">Opening promo: first month $14.99 covers all six men. Cancel anytime.</div>
+    <main class="grid">
+      <!-- Blade -->
+      <article class="card">
+        <div class="pic">
+          <img src="/images/characters/blade/blade-card-on.webp" alt="Blade">
+        </div>
+        <div class="body">
+          <a class="btn" href="/age.html?next=/chat.html?man=blade">Chat now</a>
+          <a class="btn-ghost" href="/chat.html?man=blade">Preview</a>
+        </div>
+      </article>
 
-  <main class="grid">
-    <!-- Blade -->
-    <article class="card" data-man="blade">
-      <a class="pic" href="/age.html?next=/chat.html?man=blade" aria-label="Chat with Blade">
-        <img src="/images/characters/blade/blade-card-on.webp" alt="Blade" loading="eager">
-      </a>
-      <div class="cta">
-        <a class="btn primary" href="/age.html?next=/chat.html?man=blade">Chat now</a>
-        <a class="btn ghost" href="/chat.html?man=blade">Preview first — no sign-up</a>
-      </div>
-    </article>
+      <!-- Viper -->
+      <article class="card">
+        <div class="pic">
+          <img src="/images/characters/viper/viper-card-on.webp" alt="Viper">
+        </div>
+        <div class="body">
+          <a class="btn" href="/age.html?next=/chat.html?man=viper">Chat now</a>
+          <a class="btn-ghost" href="/chat.html?man=viper">Preview</a>
+        </div>
+      </article>
 
-    <!-- Viper -->
-    <article class="card" data-man="viper">
-      <a class="pic" href="/age.html?next=/chat.html?man=viper" aria-label="Chat with Viper">
-        <img src="/images/characters/viper/viper-card-on.webp" alt="Viper" loading="lazy">
-      </a>
-      <div class="cta">
-        <a class="btn primary" href="/age.html?next=/chat.html?man=viper">Chat now</a>
-        <a class="btn ghost" href="/chat.html?man=viper">Preview first — no sign-up</a>
-      </div>
-    </article>
+      <!-- Dylan -->
+      <article class="card">
+        <div class="pic">
+          <img src="/images/characters/dylan/dylan-card-on.webp" alt="Dylan">
+        </div>
+        <div class="body">
+          <a class="btn" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
+          <a class="btn-ghost" href="/chat.html?man=dylan">Preview</a>
+        </div>
+      </article>
 
-    <!-- Dylan -->
-    <article class="card" data-man="dylan">
-      <a class="pic" href="/age.html?next=/chat.html?man=dylan" aria-label="Chat with Dylan">
-        <img src="/images/characters/dylan/dylan-card-on.webp" alt="Dylan" loading="lazy">
-      </a>
-      <div class="cta">
-        <a class="btn primary" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
-        <a class="btn ghost" href="/chat.html?man=dylan">Preview first — no sign-up</a>
-      </div>
-    </article>
+      <!-- Alexander -->
+      <article class="card">
+        <div class="pic">
+          <img src="/images/characters/alexander/alexander-card-on.webp" alt="Alexander">
+        </div>
+        <div class="body">
+          <a class="btn" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
+          <a class="btn-ghost" href="/chat.html?man=alexander">Preview</a>
+        </div>
+      </article>
 
-    <!-- Alexander -->
-    <article class="card" data-man="alexander">
-      <a class="pic" href="/age.html?next=/chat.html?man=alexander" aria-label="Chat with Alexander">
-        <img src="/images/characters/alexander/alexander-card-on.webp" alt="Alexander" loading="lazy">
-      </a>
-      <div class="cta">
-        <a class="btn primary" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
-        <a class="btn ghost" href="/chat.html?man=alexander">Preview first — no sign-up</a>
-      </div>
-    </article>
+      <!-- Grayson -->
+      <article class="card">
+        <div class="pic">
+          <img src="/images/characters/grayson/grayson-card-on.webp" alt="Grayson">
+        </div>
+        <div class="body">
+          <a class="btn" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
+          <a class="btn-ghost" href="/chat.html?man=grayson">Preview</a>
+        </div>
+      </article>
 
-    <!-- Grayson -->
-    <article class="card" data-man="grayson">
-      <a class="pic" href="/age.html?next=/chat.html?man=grayson" aria-label="Chat with Grayson">
-        <img src="/images/characters/grayson/grayson-card-on.webp" alt="Grayson" loading="lazy">
-      </a>
-      <div class="cta">
-        <a class="btn primary" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
-        <a class="btn ghost" href="/chat.html?man=grayson">Preview first — no sign-up</a>
-      </div>
-    </article>
+      <!-- Silas -->
+      <article class="card">
+        <div class="pic">
+          <img src="/images/characters/silas/silas-card-on.webp" alt="Silas">
+        </div>
+        <div class="body">
+          <a class="btn" href="/age.html?next=/chat.html?man=silas">Chat now</a>
+          <a class="btn-ghost" href="/chat.html?man=silas">Preview</a>
+        </div>
+      </article>
+    </main>
 
-    <!-- Silas -->
-    <article class="card" data-man="silas">
-      <a class="pic" href="/age.html?next=/chat.html?man=silas" aria-label="Chat with Silas">
-        <img src="/images/characters/silas/silas-card-on.webp" alt="Silas" loading="lazy">
-      </a>
-      <div class="cta">
-        <a class="btn primary" href="/age.html?next=/chat.html?man=silas">Chat now</a>
-        <a class="btn ghost" href="/chat.html?man=silas">Preview first — no sign-up</a>
-      </div>
-    </article>
-  </main>
-
-  <footer class="foot">
-    <p>Adults-only, consent-first fantasy romance. Trial is exactly 20 minutes; after that, sending routes to Pay. Monthly memory persists while active; lapses reset memory.</p>
-  </footer>
+    <footer class="footer">
+      Need support? 988 Suicide &amp; Crisis Lifeline — call or text 988 (US). If you’re in immediate danger, call 911.
+    </footer>
+  </div>
 </body>
 </html>
