@@ -2,153 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Plans — Blossom & Blade</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plans — Blossom & Blade</title>
+
+  <!-- Paywall page uses the pinks/dark theme; v19 to beat caches -->
+  <link rel="stylesheet" href="/styles/home.css?v=19" />
+
+  <!-- Local layout helper for the two panels -->
   <style>
-    :root{
-      --bg:#0b0b0d; --ink:#eeecf7; --dim:#bdbdbd; --edge:#282c32;
-      --brand1:#ff2d6f; --brand2:#ff165f; --ok:#28c173;
-      --glass:rgba(18,20,34,.32);
+    .plans-grid{
+      display:grid; gap:24px;
+      grid-template-columns:1fr;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui, Segoe UI, Inter, Arial}
-    a{color:inherit}
-
-    .wrap{max-width:1000px;margin:32px auto;padding:0 20px}
-    header.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
-    .brand{font-weight:800;letter-spacing:.4px;text-decoration:none}
-    .grid{display:grid;gap:16px;grid-template-columns:1fr 1fr}
-    .card{position:relative;border:1px solid var(--edge);border-radius:16px;background:var(--glass);
-      padding:18px;backdrop-filter:saturate(120%) blur(10px);box-shadow:0 10px 28px rgba(0,0,0,.35)}
-    .card h2{margin:0 0 6px}
-    .price{font-size:28px;font-weight:800;margin:8px 0}
-    .note{color:var(--dim);font-size:13px}
-    .radio{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
-    .hidden{display:none}
-
-    .choose-man{margin-top:8px}
-    select, input[type="text"]{width:100%;height:44px;border-radius:12px;border:1px solid var(--edge);
-      background:rgba(255,255,255,.06);color:#fff;padding:0 12px}
-
-    .checks{margin-top:16px;display:flex;flex-direction:column;gap:10px}
-    .checks label{display:flex;gap:10px;align-items:flex-start}
-    .checks input{margin-top:3px}
-
-    .buy{display:flex;gap:12px;margin-top:18px}
-    .btn{height:48px;padding:0 18px;border-radius:12px;border:0;cursor:pointer;font-weight:800}
-    .btn.primary{background:linear-gradient(180deg,var(--brand1),var(--brand2));color:#fff}
-    .btn.ghost{background:transparent;border:1px solid var(--edge);color:var(--ink)}
-
-    .fine{color:var(--dim);font-size:12px;margin-top:6px}
-    .hr{height:1px;background:rgba(255,255,255,.06);margin:16px 0}
-
-    /* Crisis/support strip */
-    .support{
-      position:fixed;left:16px;bottom:16px;z-index:50;
-      background:rgba(15,16,24,.85);border:1px solid var(--edge);border-radius:12px;
-      padding:10px 12px;backdrop-filter:saturate(120%) blur(6px);font-size:13px;color:#e9f7ff
+    @media (min-width: 900px){
+      .plans-grid{ grid-template-columns: 1fr 1fr; }
     }
-    .support strong{color:#c4f0ff}
-    .support .mini{font-size:12px;opacity:.85}
-
-    /* Paywall wallpaper */
-    #pageWallpaper{
-      position:fixed; inset:0; z-index:0;      /* behind everything */
-      background: center / cover no-repeat;
-      background-image:url('/images/bg/bg-paywall.webp');
-      opacity:.42;                              /* tweak: .35–.50 */
-      pointer-events:none;
-      filter:brightness(1.14) contrast(1.08) saturate(1.22);
-    }
-
-    /* Make sure real content sits above the wallpaper */
-    header, .wrap, .card, footer { position:relative; z-index:1; }
-
-    @media (max-width:840px){
-      .grid{grid-template-columns:1fr}
-    }
+    .plan h2{ margin:0 0 8px; }
+    .plan .price{ margin:8px 0 14px; }
+    .checks{ display:grid; gap:10px; margin:12px 0 16px; }
+    .row-actions{ display:flex; gap:10px; flex-wrap:wrap; }
   </style>
 </head>
-<body class="pay">
-  <div id="pageWallpaper" aria-hidden="true"></div>
 
-  <div class="wrap">
-    <header class="top">
-      <a class="brand" href="/index.html">Blossom &amp; Blade</a>
-      <nav><a href="/index.html" class="btn ghost" style="padding:8px 12px;height:auto">Main</a></nav>
+<!-- paywall wallpaper hook lives in home.css -->
+<body class="paywall">
+  <div class="container">
+    <header class="site-header">
+      <div class="brand">Blossom &amp; Blade</div>
+      <div class="header-actions">
+        <a class="btn" href="/">Main</a>
+      </div>
     </header>
 
-    <div class="grid">
+    <main class="plans-grid">
       <!-- Day Pass -->
-      <section class="card" id="dayCard">
-        <div class="radio">
-          <input type="radio" name="plan" id="plan_day" value="day" checked />
-          <label for="plan_day"><h2 style="margin:0">Day Pass — 24 hours</h2></label>
-        </div>
+      <section class="plan" aria-labelledby="daypass-title">
+        <h2 id="daypass-title">Day Pass — 24 hours</h2>
         <div class="price">$7.99</div>
-        <p class="note">Pick one man for 24 hours. No auto-renew. Instant access.</p>
+        <p>Pick one man for 24 hours. No auto-renew. Instant access.</p>
 
-        <div class="choose-man">
-        <!-- Who do you want today? -->
-<label for="pickMan"><h2 style="margin:0">Who do you want today?</h2></label>
-<select id="pickMan" name="man">
-  <option value="blade">Blade</option>
-  <option value="alexander">Alexander</option>
-  <option value="dylan">Dylan</option>
-  <option value="viper">Viper</option>
-  <option value="grayson">Grayson</option>
-  <option value="silas">Silas</option>
-</select> 
-        </div>
+        <label for="manSelect"><strong>Who do you want today?</strong></label>
+        <select id="manSelect" aria-label="Choose a man">
+          <option value="blade">Blade</option>
+          <option value="alexander">Alexander</option>
+          <option value="dylan">Dylan</option>
+          <option value="viper">Viper</option>
+          <option value="grayson">Grayson</option>
+          <option value="silas">Silas</option>
+        </select>
 
         <div class="checks">
-          <label><input type="checkbox" /> I confirm I am 18+.</label>
-          <label><input type="checkbox" /> I agree to the <a href="#" target="_blank">Terms</a> and <a href="#" target="_blank">Privacy Policy</a>.</label>
-          <label><input type="checkbox" /> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
+          <label><input type="checkbox" id="dp18"> I confirm I am 18+.</label>
+          <label><input type="checkbox" id="dpTerms"> I agree to the <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.</label>
+          <label><input type="checkbox" id="dpAI"> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
         </div>
 
-        <div class="buy">
-          <button class="btn primary">Pay $7.99</button>
-          <a class="btn ghost" href="#monthly">See Monthly</a>
+        <div class="row-actions">
+          <a id="btnDay" class="btn" href="#">Pay $7.99</a>
+          <a class="btn" href="#monthly">See Monthly</a>
         </div>
 
-        <p class="fine">After payment: no extra prompts—straight to your room.</p>
+        <p class="muted" style="color:var(--muted); margin-top:10px;">
+          After payment: no extra prompts—straight to your room.
+        </p>
       </section>
 
       <!-- Monthly -->
-      <section class="card" id="monthCard">
-        <a id="monthly" class="hidden" aria-hidden="true"></a>
-        <div class="radio">
-          <input type="radio" name="plan" id="plan_month" value="month" />
-          <label for="plan_month"><h2 style="margin:0">Monthly — All 6 men</h2></label>
-        </div>
-
+      <section id="monthly" class="plan" aria-labelledby="monthly-title">
+        <h2 id="monthly-title">Monthly — All 6 men</h2>
         <div class="price">$14.99</div>
-        <p class="note">$1 is donated to DV support. Swap men anytime. Optional auto-renew.</p>
+        <p>$1 is donated to DV support. Swap men anytime. Optional auto-renew.</p>
 
         <div class="checks">
-          <label><input type="checkbox" /> I confirm I am 18+.</label>
-          <label><input type="checkbox" /> I agree to the <a href="#" target="_blank">Terms</a> and <a href="#" target="_blank">Privacy Policy</a>.</label>
-          <label><input type="checkbox" /> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
-          <label><input type="checkbox" /> Auto-renew monthly (you can turn this off anytime).</label>
+          <label><input type="checkbox" id="mo18"> I confirm I am 18+.</label>
+          <label><input type="checkbox" id="moTerms"> I agree to the <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.</label>
+          <label><input type="checkbox" id="moAI"> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
+          <label><input type="checkbox" id="moAuto"> Auto-renew monthly (you can turn this off anytime).</label>
         </div>
 
-        <div class="buy">
-          <button class="btn primary">Pay $14.99</button>
-          <a class="btn ghost" href="#dayCard">See Day Pass</a>
+        <div class="row-actions">
+          <a id="btnMonthly" class="btn" href="#">Pay $14.99</a>
+          <a class="btn" href="#daypass-title">See Day Pass</a>
         </div>
 
-        <p class="fine">$1 from each month supports domestic violence resources.</p>
+        <p class="muted" style="color:var(--muted); margin-top:10px;">
+          $1 from each month supports domestic violence resources.
+        </p>
       </section>
-    </div>
+    </main>
 
-    <footer class="foot" style="margin-top:16px">
-      <div class="support">
-        <strong>Need support?</strong> 988 Suicide & Crisis Lifeline —
-        <span class="mini">call or text <b>988</b> (US). If you’re in immediate danger, call 911.</span>
-      </div>
+    <footer class="footer">
+      Need support? 988 Suicide &amp; Crisis Lifeline — call or text 988 (US). If you’re in immediate danger, call 911.
     </footer>
   </div>
+
+  <!-- Minimal wiring: route Day Pass through your existing age gate to the chosen man.
+       Monthly button is a placeholder until we wire the processor. -->
+  <script>
+    (function(){
+      const sel = document.getElementById('manSelect');
+      const btnDay = document.getElementById('btnDay');
+      const btnMonthly = document.getElementById('btnMonthly');
+
+      function setDayLink(){
+        const man = (sel && sel.value) || 'blade';
+        btnDay.href = `/age.html?next=/chat.html?man=${encodeURIComponent(man)}`;
+      }
+      setDayLink();
+      if (sel) sel.addEventListener('change', setDayLink);
+
+      // Placeholder monthly route (we’ll replace with processor URL later)
+      btnMonthly.href = '/age.html?next=/chat.html?man=blade';
+    })();
+  </script>
 </body>
 </html>
