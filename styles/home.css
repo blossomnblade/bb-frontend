@@ -58,7 +58,6 @@ h1{ font-size:32px; margin:24px 0 8px }
     padding:6px; background-color:rgba(255,255,255,.04);
     display:block;
   }
-  .card .pic img{ display:none !important; }
 
   /* Per-man mapping: works for .face.* or data-man="*" */
   .card.face.blade .pic,     .card[data-man="blade"]     .pic{ background-image:url('/images/characters/blade/blade-card.webp') !important; }
@@ -88,4 +87,13 @@ h1{ font-size:32px; margin:24px 0 8px }
 .cta a.ghost{ background:transparent }
 @media (max-width:480px){
   .cta a{ width:100%; text-align:center; }
+}
+/* --- Mobile: make sure the card image actually shows --- */
+@media (max-width:900px){
+  .card .pic img{
+    display:block !important;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
 }
