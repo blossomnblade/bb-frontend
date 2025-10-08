@@ -274,3 +274,24 @@ body{
       rgba(10,12,18,.18) 78%,
       rgba(10,12,18,.55) 100%);
 }
+/* === Bubbles: shrink-to-text & gentler pink =========================== */
+#feed .msg{
+  display:inline-block;
+  width:fit-content;
+  max-width:72ch;           /* readable wrap */
+  margin:10px 0;
+}
+
+#feed .msg .text{ color:var(--ink) }
+
+/* your bubble */
+#feed .msg.you{
+  background:rgba(255,46,139,.08);   /* was .10 */
+  border-color:rgba(255,46,139,.20); /* was .25 */
+}
+
+/* buttons (if any in chat) — match paywall pink gradient */
+.button, .btn, #sendBtn{
+  background:linear-gradient(180deg,#ff2d6f,#ff165f);
+  color:#fff; border:0;
+}
