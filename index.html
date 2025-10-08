@@ -5,29 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blossom &amp; Blade</title>
 
-  <!-- Landing-only hammer: nuke any per-man/card backgrounds, even from old CSS -->
+  <!-- LANDING kill-switch: annihilate any old per-man background styles -->
   <style>
-    /* Stop legacy background images cold */
+    /* Nuke all background-image sources on landing cards, including pseudo elements */
     .grid .card,
     .grid .card::before,
     .grid .card::after,
     .grid .card .pic,
     .grid .card .pic::before,
     .grid .card .pic::after{
-      background:none !important;
-      background-image:none !important;
+      background: none !important;
+      background-image: none !important;
+      box-shadow: none; /* just in case someone hid an image in a shadow */
     }
-    /* Make sure the face image is visible and covers the frame */
     .card .pic{ position:relative; aspect-ratio:4/5; background:#000 !important; overflow:hidden; }
     .card .pic img{ display:block !important; width:100%; height:100%; object-fit:cover; }
-    /* 6-across on large screens; smaller breakpoints stay responsive via home.css */
+
+    /* 6-across on large screens; smaller breakpoints handled in home.css */
     @media (min-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr) !important; } }
   </style>
 
   <!-- Site styles (version bump so phones fetch fresh CSS) -->
-  <link rel="stylesheet" href="/styles/home.css?v=20">
+  <link rel="stylesheet" href="/styles/home.css?v=21">
 </head>
-<body>
+<body class="landing">
   <div class="container">
     <header class="site-header">
       <div class="brand">Blossom &amp; Blade</div>
@@ -43,8 +44,8 @@
     <main class="grid">
       <!-- Blade -->
       <article class="card" data-man="blade">
-        <div class="pic">
-          <img alt="Blade" loading="lazy">
+        <div class="pic" style="background:none !important;background-image:none !important;">
+          <img alt="Blade" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=blade">Chat now</a>
@@ -54,8 +55,8 @@
 
       <!-- Viper -->
       <article class="card" data-man="viper">
-        <div class="pic">
-          <img alt="Viper" loading="lazy">
+        <div class="pic" style="background:none !important;background-image:none !important;">
+          <img alt="Viper" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=viper">Chat now</a>
@@ -65,8 +66,8 @@
 
       <!-- Dylan -->
       <article class="card" data-man="dylan">
-        <div class="pic">
-          <img alt="Dylan" loading="lazy">
+        <div class="pic" style="background:none !important;background-image:none !important;">
+          <img alt="Dylan" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
@@ -76,8 +77,8 @@
 
       <!-- Alexander -->
       <article class="card" data-man="alexander">
-        <div class="pic">
-          <img alt="Alexander" loading="lazy">
+        <div class="pic" style="background:none !important;background-image:none !important;">
+          <img alt="Alexander" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
@@ -87,8 +88,8 @@
 
       <!-- Grayson -->
       <article class="card" data-man="grayson">
-        <div class="pic">
-          <img alt="Grayson" loading="lazy">
+        <div class="pic" style="background:none !important;background-image:none !important;">
+          <img alt="Grayson" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
@@ -98,8 +99,8 @@
 
       <!-- Silas -->
       <article class="card" data-man="silas">
-        <div class="pic">
-          <img alt="Silas" loading="lazy">
+        <div class="pic" style="background:none !important;background-image:none !important;">
+          <img alt="Silas" loading="lazy" style="display:block !important;width:100%;height:100%;object-fit:cover;">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=silas">Chat now</a>
@@ -113,12 +114,20 @@
     </footer>
   </div>
 
-  <!-- Bulletproof face loader: tries -card-on.webp, then -card.webp, then .jpg/.png -->
+  <!-- Bulletproof face loader + background scrubbing -->
   <script>
     (function(){
-      const bust = 'f=8'; // cache-bust so phones drop stale assets
-      const exts = ['webp','jpg','png'];           // supported formats to try
-      const variants = ['-card-on','-card'];       // prefer "-card-on", fall back to "-card"
+      // 0) Scrub any stray per-man markers that could leak backgrounds
+      document.body.removeAttribute('data-man');
+      (document.body.className || '').split(/\s+/).forEach(c=>{
+        if (['blade','viper','dylan','alexander','grayson','silas'].includes(c)) {
+          document.body.classList.remove(c);
+        }
+      });
+
+      const bust = 'f=21'; // bump this next time you change a face image
+      const exts = ['webp','jpg','png'];       // formats to try
+      const variants = ['-card-on','-card'];   // prefer -card-on, fall back to -card
 
       function candidates(man){
         const base = `/images/characters/${man}/${man}`;
@@ -132,18 +141,26 @@
       }
 
       function loadWithFallback(img, list){
-        if (!list.length) return; // give up silently
+        if (!list.length) return;
         const url = list.shift();
-        // set next candidate on error, then attempt to load
-        img.onerror = () => loadWithFallback(img, list);
+        img.onerror = ()=> loadWithFallback(img, list);
         img.src = url;
       }
 
-      // Nuke any per-man class names that might re-apply backgrounds
-      document.querySelectorAll('.card').forEach(card => { card.className = 'card'; });
+      // 1) Strip ANY background imagery on every card.pic at runtime (ultimate override)
+      document.querySelectorAll('.card .pic').forEach(pic=>{
+        pic.style.setProperty('background','none','important');
+        pic.style.setProperty('background-image','none','important');
+        // kill pseudo via CSS injection per element (belt + suspenders)
+        const killer = document.createElement('style');
+        killer.textContent = `
+          .card .pic::before, .card .pic::after{ content:none !important; background:none !important; }
+        `;
+        pic.appendChild(killer);
+      });
 
-      // For each card, load the first working face image
-      document.querySelectorAll('.card[data-man] .pic img').forEach(img => {
+      // 2) Load the first working face image for each man
+      document.querySelectorAll('.card[data-man] .pic img').forEach(img=>{
         const man = img.closest('.card')?.getAttribute('data-man') || 'blade';
         loadWithFallback(img, candidates(man));
       });
