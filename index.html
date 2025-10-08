@@ -4,6 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blossom &amp; Blade</title>
+
+  <!-- Landing-only guard: never show per-man BGs inside cards -->
+  <style>
+    /* Kill any old background-image-based card styles that might be cached */
+    .card .pic{ background-image:none !important; }
+    .card .pic img{ display:block !important; width:100%; height:100%; object-fit:cover; }
+
+    /* 6-across on large screens, keep responsive on smaller */
+    @media (min-width: 1200px){
+      .grid{ grid-template-columns: repeat(6, 1fr) !important; }
+    }
+  </style>
+
+  <!-- Use latest site styles (v18 has default wallpaper + unified controls) -->
   <link rel="stylesheet" href="/styles/home.css?v=18">
 </head>
 <body>
@@ -16,14 +30,14 @@
     </header>
 
     <div class="announce">
-      <strong>Free 20-minute trial:</strong> test any man. $1 of every subscription goes to a Domestic Violence charity.
+      <strong>Free 20-minute trial:</strong> test any man. $1 from every subscription supports domestic violence resources.
     </div>
 
     <main class="grid">
       <!-- Blade -->
       <article class="card">
-        <div class="pic">
-          <img src="/images/characters/blade/blade-card-on.webp?i=2" alt="Blade" loading="lazy" />
+        <div class="pic" aria-hidden="true">
+          <img src="/images/characters/blade/blade-card-on.webp?i=3" alt="Blade">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=blade">Chat now</a>
@@ -33,8 +47,8 @@
 
       <!-- Viper -->
       <article class="card">
-        <div class="pic">
-          <img src="/images/characters/viper/viper-card-on.webp?i=2" alt="Viper" loading="lazy" />
+        <div class="pic" aria-hidden="true">
+          <img src="/images/characters/viper/viper-card-on.webp?i=3" alt="Viper">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=viper">Chat now</a>
@@ -44,8 +58,8 @@
 
       <!-- Dylan -->
       <article class="card">
-        <div class="pic">
-          <img src="/images/characters/dylan/dylan-card-on.webp?i=2" alt="Dylan" loading="lazy" />
+        <div class="pic" aria-hidden="true">
+          <img src="/images/characters/dylan/dylan-card-on.webp?i=3" alt="Dylan">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=dylan">Chat now</a>
@@ -55,8 +69,8 @@
 
       <!-- Alexander -->
       <article class="card">
-        <div class="pic">
-          <img src="/images/characters/alexander/alexander-card-on.webp?i=2" alt="Alexander" loading="lazy" />
+        <div class="pic" aria-hidden="true">
+          <img src="/images/characters/alexander/alexander-card-on.webp?i=3" alt="Alexander">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=alexander">Chat now</a>
@@ -66,8 +80,8 @@
 
       <!-- Grayson -->
       <article class="card">
-        <div class="pic">
-          <img src="/images/characters/grayson/grayson-card-on.webp?i=2" alt="Grayson" loading="lazy" />
+        <div class="pic" aria-hidden="true">
+          <img src="/images/characters/grayson/grayson-card-on.webp?i=3" alt="Grayson">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=grayson">Chat now</a>
@@ -77,8 +91,8 @@
 
       <!-- Silas -->
       <article class="card">
-        <div class="pic">
-          <img src="/images/characters/silas/silas-card-on.webp?i=2" alt="Silas" loading="lazy" />
+        <div class="pic" aria-hidden="true">
+          <img src="/images/characters/silas/silas-card-on.webp?i=3" alt="Silas">
         </div>
         <div class="body">
           <a class="btn" href="/age.html?next=/chat.html?man=silas">Chat now</a>
