@@ -259,3 +259,30 @@ label{ color:var(--ink); }
 @media (min-width: 1440px){
   .container{ max-width: 1500px; }
 }
+/* ===== GRID: force six across on big screens (safe override) ===== */
+.grid{
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0,1fr)); /* phones */
+  align-items: stretch;
+}
+
+/* tablet */
+@media (min-width: 768px){
+  .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+/* small laptop */
+@media (min-width: 1024px){
+  .grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+
+/* big laptop / desktop */
+@media (min-width: 1280px){
+  .grid{ grid-template-columns: repeat(6, minmax(0,1fr)); }
+}
+
+/* give the layout some breathing room on very wide screens */
+@media (min-width: 1440px){
+  .container{ max-width: 1500px; }
+}
