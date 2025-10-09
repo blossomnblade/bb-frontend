@@ -286,3 +286,22 @@ label{ color:var(--ink); }
 @media (min-width: 1440px){
   .container{ max-width: 1500px; }
 }
+/* ==== Header brand: larger + bright ==== */
+.site-header .brand{
+  font-weight: 800;
+  letter-spacing: .3px;
+  /* scales with screen; caps nicely */
+  font-size: clamp(28px, 2.2vw + 10px, 44px);
+  color: var(--ink); /* #eee from your vars */
+}
+
+/* ==== Landing readability: bright text on the chalkboard ==== */
+.landing .announce{ color: var(--ink); }
+.landing .announce a{ color: var(--ink); text-decoration: underline; }
+
+/* General text blocks (your glass panels / checklists) */
+.panel, .panel p, .panel li{ color: var(--ink); }
+.panel a{ color: var(--ink); text-decoration: underline; }
+
+/* Legal pages links stay readable too */
+.legal a{ color: var(--ink); text-decoration: underline; }
