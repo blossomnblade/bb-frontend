@@ -231,3 +231,31 @@ label{ color:var(--ink); }
   button, .btn, a.btn, input[type="submit"], input[type="button"]{ padding:14px 18px; }
   select, input, textarea{ padding:14px 14px; }
 }
+/* ===== 6-across desktop override (safe) ===== */
+.grid{
+  display:grid;
+  gap:24px;
+  grid-template-columns: repeat(2, minmax(0,1fr)); /* phones */
+  align-items: stretch;
+}
+.card{ width:100%; }
+
+/* tablet */
+@media (min-width: 768px){
+  .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+/* small laptop */
+@media (min-width: 1024px){
+  .grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+
+/* big laptop / desktop — make it six across */
+@media (min-width: 1280px){
+  .grid{ grid-template-columns: repeat(6, minmax(0,1fr)); }
+}
+
+/* give the outer container room so six columns fit comfortably */
+@media (min-width: 1440px){
+  .container{ max-width: 1500px; }
+}
