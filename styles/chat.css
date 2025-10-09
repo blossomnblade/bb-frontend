@@ -295,3 +295,52 @@ body{
   background:linear-gradient(180deg,#ff2d6f,#ff165f);
   color:#fff; border:0;
 }
+/* ===== Mobile chat fixes (stack + readable + no zoom) ===== */
+
+/* Default (keeps your current desktop/tablet) assumed above */
+
+/* Phones: stack portrait above chat, keep everything inside the screen */
+@media (max-width: 768px){
+  .room{ 
+    display: grid;
+    grid-template-columns: 1fr;   /* stack */
+    gap: 16px;
+  }
+
+  /* portrait/card area */
+  .portrait, .profile, .left {     /* whichever you use for the image panel */
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  /* chat panel */
+  .right, .messages, .chat-pane{   /* main chat column wrapper */
+    width: 100%;
+  }
+
+  /* message bubbles readable without pinching */
+  .bubble{
+    font-size: 16px;
+    line-height: 1.35;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* composer pinned and readable */
+  #composer, .composer, .input-row{
+    position: sticky;
+    bottom: 0;
+    padding: 10px;
+    backdrop-filter: blur(6px);
+  }
+
+  /* iOS: prevent zoom-on-focus by keeping font-size >=16px */
+  input[type="text"], input[type="search"], textarea{
+    font-size: 16px;
+  }
+
+  /* buttons comfortable tap size */
+  .btn, button{
+    min-height: 44px;
+  }
+}
