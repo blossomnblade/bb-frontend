@@ -244,3 +244,56 @@ html, body { height: 100%; overflow: hidden; }
 .composer ~ .men{
   display: none !important;
 }
+/* === BnB mobile composer hard-lock (always visible) === */
+@media (max-width: 900px){
+
+  /* Only the feed scrolls, not the whole page */
+  html, body { height: 100%; overflow: hidden; }
+
+  /* Keep the bubbles area below the hero and above the composer */
+  #feed{
+    position: relative;
+    z-index: 2;
+    margin-top: calc(46vh + 16px);        /* clears the fixed hero */
+    padding: 12px 16px calc(168px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Force the composer to be visible and clickable at the bottom */
+  .composer{
+    position: fixed !important;
+    left: 0; right: 0; bottom: 0;
+    display: flex !important;
+    gap: 10px; align-items: center;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(10,10,14,.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255,255,255,.08);
+    z-index: 9999;
+    pointer-events: auto;
+  }
+
+  /* Big readable input prevents iOS zoom & keeps layout clean */
+  #input{
+    flex: 1 1 auto; min-width: 0;
+    height: 52px; font-size: 16px;
+    border-radius: 14px; padding: 0 16px;
+    border: 1px solid rgba(255,255,255,.12);
+    color: #eaeaf5; background: rgba(13,16,24,.85);
+  }
+  #input::placeholder{ color: rgba(234,234,245,.55); }
+
+  #sendBtn{
+    height: 52px; border-radius: 14px;
+    padding: 0 18px; font-weight: 700;
+    border: 0; color: #fff;
+    background: linear-gradient(180deg,#ff2d6f,#ff165f);
+    box-shadow: 0 8px 20px rgba(255,45,111,.35);
+    flex: 0 0 auto;
+  }
+}
+
+/* Just in case any container tries to clip the fixed bar */
+.chatPanel, main.wrap { overflow: visible; }
