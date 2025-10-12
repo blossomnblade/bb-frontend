@@ -163,3 +163,84 @@ input[type="text"], textarea{ font-size:16px }
 
 /* Containment guard (prevents odd artifacts on some phones) */
 #app, main.wrap, .chatPanel { contain: layout paint; }
+/* ==== BnB mobile lock-in (portrait fixed, full-room wallpaper, tidy bottom) ==== */
+
+/* Wallpaper must cover the whole viewport behind everything */
+#chatWallpaper{
+  position: fixed;
+  inset: 0;
+  background: center / cover no-repeat;
+  opacity: .70;
+  z-index: 0;               /* stays behind portrait, feed, composer */
+  pointer-events: none;
+}
+
+/* Keep the page from creating extra page scroll; only the feed should scroll */
+html, body { height: 100%; overflow: hidden; }
+
+/* Desktop stays as-is; mobile gets the locked layout */
+@media (max-width: 900px){
+
+  /* Fix the hero image at the very top (under the header) */
+  #portrait{
+    position: fixed;
+    top: 64px;                          /* header height; tweak if your header differs */
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);           /* 16px side padding */
+    height: 46vh;                       /* how tall you want the hero; change to taste */
+    object-fit: cover;
+    object-position: center;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    z-index: 2;
+    display: block;
+  }
+
+  /* The messages area lives UNDER the hero and scrolls */
+  #feed{
+    position: relative;
+    z-index: 2;
+    margin-top: calc(46vh + 16px);      /* clears the fixed hero + a little gap */
+    padding: 12px 16px calc(140px + env(safe-area-inset-bottom));
+    height: auto;
+    max-height: none;
+    overflow-y: auto;                    /* only this scrolls on mobile */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Input bar fixed to bottom */
+  .composer{
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 3;
+    display: flex; gap: 10px; align-items: center;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(10,10,14,.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+
+  /* Big, readable input prevents iOS zoom */
+  #input{
+    flex: 1 1 auto; min-width: 0;
+    height: 52px; font-size: 16px;
+    border-radius: 14px; padding: 0 16px;
+    border: 1px solid rgba(255,255,255,.12);
+    color: #eaeaf5; background: rgba(13,16,24,.85);
+  }
+  #sendBtn{ height: 52px; border-radius: 14px; padding: 0 18px; }
+}
+
+/* Hide any stray “mini profile card / strip” that might render below the composer */
+.chatPanel + .card,
+.chatPanel + .mini,
+.chatPanel + .profile,
+.chatPanel + .men,
+.composer ~ .card,
+.composer ~ .mini,
+.composer ~ .profile,
+.composer ~ .men{
+  display: none !important;
+}
