@@ -318,3 +318,8 @@ label{ color:var(--ink); }
 .site-header nav a {
   color: #fff !important;
 }
+/* Hide Terms / Privacy links on the landing page only */
+.landing a[href="/terms.html"],
+.landing a[href="/privacy.html"]{
+  display: none !important;
+}
