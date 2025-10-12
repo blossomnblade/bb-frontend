@@ -305,3 +305,16 @@ label{ color:var(--ink); }
 
 /* Legal pages links stay readable too */
 .legal a{ color: var(--ink); text-decoration: underline; }
+/* ---- Brand header: larger + white across site ---- */
+.site-header .brand {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  font-weight: 600;
+  letter-spacing: .5px;
+  /* Scales nicely from phones to desktop */
+  font-size: clamp(20px, 2.2vw + 10px, 40px);
+}
+.site-header .header-actions a,
+.site-header nav a {
+  color: #fff !important;
+}
