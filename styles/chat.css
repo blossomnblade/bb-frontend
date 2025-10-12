@@ -18,6 +18,25 @@ body{
   color:var(--ink);
   font:16px/1.5 system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;
 }
+/* === Mobile comfort: stop iOS zoom + fit chat on screen === */
+.composer input {
+  font-size: 16px;           /* >=16px prevents iOS auto-zoom on focus */
+  line-height: 1.2;
+  padding: 12px 14px;
+}
+
+/* Make the chat area fit the viewport height on phones */
+.wrap { min-height: 100dvh; }                /* dynamic viewport for mobile bars */
+.feed { height: calc(100dvh - 190px); }      /* tweak 190px if your header/footer differ */
+
+/* Reduce accidental double-tap zoom / delays on controls */
+body, button, a { touch-action: manipulation; }
+
+/* Optional: hide the left portrait panel on small screens to avoid pinching */
+@media (max-width: 900px) {
+  aside.portraitPanel { display: none; }
+  .wrap { grid-template-columns: 1fr !important; } /* if you use CSS grid */
+}
 
 /* ===== Header ====================================================== */
 .topbar{
