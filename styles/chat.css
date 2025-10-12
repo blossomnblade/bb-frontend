@@ -40,6 +40,52 @@ body, button, a { touch-action: manipulation; }
     display:block !important;
     padding: 12px 16px 0;
   }
+  /* ---- Mobile composer: make sure the input bar shows ---- */
+.composer{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(10,10,14,.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255,255,255,.08);
+  z-index: 9999;
+}
+
+#input{
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 52px;
+  border-radius: 14px;
+  padding: 0 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  color: #eaeaf5;
+  background: rgba(13,16,24,.85);
+}
+#input::placeholder{ color: rgba(234,234,245,.55); }
+
+#sendBtn{
+  height: 52px;
+  border-radius: 14px;
+  padding: 0 18px;
+  font-weight: 700;
+  border: none;
+  color: #fff;
+  background: #ff2b6d;
+  box-shadow: 0 8px 20px rgba(255,43,109,.35);
+}
+
+/* Leave scroll room so the composer doesn't cover the last messages */
+.feed{
+  padding-bottom: calc(140px + env(safe-area-inset-bottom));
+  z-index: 1;
+}
+
   /* full-width hero image */
   #portrait{
     width:100%;
