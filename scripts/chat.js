@@ -163,34 +163,32 @@ function sendFromComposer(){
 }
 
 function wireComposer(){
-  const input  = $('#input') || $('.composer input');
+  const input = $('#input') || $('.composer input');
   const button = $('#sendBtn') || $('.composer button');
-  const form   = $('#composerForm') || $('.composer');
+  const form = $('#composerForm') || $('.composer');
 
-  // Click the Send button
-  if (button){
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      sendFromComposer();
-      if (input && input.focus) setTimeout(() => input.focus(), 0);
-    });
-  }
+  // Click Send
+  if (button) button.addEventListener('click', (e) => {
+    e.preventDefault();
+    sendFromComposer();
+    setTimeout(() => input && input.focus(), 0); // keep keyboard up
+  });
 
-  // Press Enter on the input (Shift+Enter makes a newline if you ever use a <textarea>)
+  // Press Enter (on the input ONLY; Shift+Enter would be a newline if textarea later)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey && document.activeElement === input){
       e.preventDefault();
       sendFromComposer();
-      if (input && input.focus) setTimeout(() => input.focus(), 0);
+      setTimeout(() => input && input.focus(), 0);
     }
   });
 
-  // If a form wraps the composer, handle submit too
+  // If a form wraps the composer, handle submit too (mobile safety)
   if (form && form.addEventListener){
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       sendFromComposer();
-      if (input && input.focus) setTimeout(() => input.focus(), 0);
+      setTimeout(() => input && input.focus(), 0);
     });
   }
 }
