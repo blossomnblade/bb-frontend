@@ -386,3 +386,34 @@ body, button, a, input { touch-action: manipulation; }
   }
 }
 body, button, a, input { touch-action: manipulation; }
+/* === FINAL MOBILE LOCK: composer fixed, feed leaves room === */
+@media (max-width: 900px){
+  .composer{
+    position: fixed !important;
+    left: 0; right: 0; bottom: 0;
+    z-index: 10000;
+    display: flex; gap: 10px; align-items: center;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(10,10,14,.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  #input{
+    flex: 1 1 auto; min-width: 0;
+    height: 52px; font-size: 16px; /* stops iOS zoom */
+    border-radius: 14px; padding: 0 16px;
+    border: 1px solid rgba(255,255,255,.12);
+    color: #eaeaf5; background: rgba(13,16,24,.85);
+  }
+  #sendBtn{
+    height: 52px; border-radius: 14px; padding: 0 18px;
+    font-weight: 700; border: none; color: #fff;
+    background: #ff2b6d; box-shadow: 0 8px 20px rgba(255,43,109,.35);
+  }
+  /* make room so the last bubbles aren’t hidden under the composer */
+  #feed{
+    padding-bottom: calc(160px + env(safe-area-inset-bottom)) !important;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+}
