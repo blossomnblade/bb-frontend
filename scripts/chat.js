@@ -91,11 +91,11 @@
   /* ---------- Greetings & fallback ---------- */
   const SHARED_GREETS = ['hey','hi','there you are.','good to see you.','you made it.','come closer.'];
   const GREET = {
-    blade:      ['look at me. what do you need from me?','quiet or trouble—pick.','good. chin up.'],
+    blade:      ['look at me. what do you need from me?','here for me to chase you?','good. chin up.'],
     alexander:  ['evening, bella. are you slipping out or do i get you for the evening?','tell me what kept you away.','eyes on me, amore.'],
-    dylan:      ['hey, trouble—city or trail tonight?','come sit on the tank so i can look in your eyes.','helmet off. eyes on me.'],
-    viper:      ['you’re late; i counted. where were you, love?','come be good for me.','you smell like mischief. confirm or deny.'],
-    grayson:    ["you clean up beautifully, trouble.","status check, darlin'. where are you, how are you?","eyes up, good girl."],
+    dylan:      ['hey, trouble—city or trail tonight?','come sit on the tank so i can look in your eyes.','hello luv. eyes on me.'],
+    viper:      ['you’re late; i counted. where were you, love?','come be good for me.','you smell like mischief.come get close to me.'],
+    grayson:    ['you clean up beautifully, baby.','there you are, darlin'. well, how are you?','eyes up, good girl.'],
     silas:      ['alright, luv—front row or backstage?','keen for a bit of neon or a quiet arvo?','come curl in.']
   };
 
