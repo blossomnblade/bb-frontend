@@ -139,25 +139,62 @@
   }
 
   /* ---------- Composer wiring (Enter + button) ---------- */
-  function sendFromComposer(){
-    const el = $('#input') || $('.composer input');
-    if (!el) return;
-    const val = (el.value || el.textContent || '').trim();
-    if (!val) return;
-    addBubble('you', val);
-    el.value = '';
-    reply(val);
-  }
-  function wireComposer(){
-    const input  = $('#input') || $('.composer input');
-    const button = $('#sendBtn') || $('.composer button');
-    if (button) button.addEventListener('click', (e)=>{ e.preventDefault(); sendFromComposer(); });
-    document.addEventListener('keydown', (e)=>{
-      if (e.key === 'Enter' && !e.shiftKey && document.activeElement === input){
-        e.preventDefault(); sendFromComposer();
-      }
+ /* -------- Composer wiring (Enter + button) -------- */
+function sendFromComposer(){
+  const el = $('#input') || $('.composer input');
+  if (!el) return;
+
+  const val = (el.value || el.textContent || '').trim();
+  if (!val) return;
+
+  // Add your message
+  addBubble('you', val);
+  el.value = '';
+
+  // Trigger bot reply
+  reply(val);
+
+  // Keep the latest messages visible
+  const feed = $('#feed') || document.getElementById('feed');
+  if (feed) feed.scrollTop = feed.scrollHeight;
+
+  // Keep the mobile keyboard up
+  if (el && el.focus) setTimeout(() => el.focus(), 0);
+}
+
+function wireComposer(){
+  const input  = $('#input') || $('.composer input');
+  const button = $('#sendBtn') || $('.composer button');
+  const form   = $('#composerForm') || $('.composer');
+
+  // Click the Send button
+  if (button){
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      sendFromComposer();
+      if (input && input.focus) setTimeout(() => input.focus(), 0);
     });
   }
+
+  // Press Enter on the input (Shift+Enter makes a newline if you ever use a <textarea>)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && document.activeElement === input){
+      e.preventDefault();
+      sendFromComposer();
+      if (input && input.focus) setTimeout(() => input.focus(), 0);
+    }
+  });
+
+  // If a form wraps the composer, handle submit too
+  if (form && form.addEventListener){
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      sendFromComposer();
+      if (input && input.focus) setTimeout(() => input.focus(), 0);
+    });
+  }
+}
+
 
   /* ---------- Boot ---------- */
   function boot(){
