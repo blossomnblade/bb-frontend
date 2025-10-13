@@ -302,3 +302,52 @@ html, body { height: 100%; overflow: hidden; }
 
 /* Just in case any container tries to clip the fixed bar */
 .chatPanel, main.wrap { overflow: visible; }
+/* ===== FINAL MOBILE FIXUPS (force composer visible, stop zoom, lock layout) ===== */
+@media (max-width: 900px){
+
+  /* Keep the hero fixed but shorter so the feed and composer both fit */
+  #portrait{
+    height: 38vh !important;
+  }
+
+  /* Messages live under the hero and above the composer; only this scrolls */
+  #feed{
+    margin-top: calc(38vh + 16px) !important;
+    /* leave room so the fixed composer never covers the last bubbles */
+    padding-bottom: calc(132px + env(safe-area-inset-bottom)) !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 2;
+  }
+
+  /* Pinned input bar at the bottom, always clickable and above all layers */
+  .composer{
+    position: fixed !important;
+    left: 0; right: 0; bottom: 0;
+    display: flex; gap: 10px; align-items: center;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(10,10,14,.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255,255,255,.08);
+    z-index: 9999;
+    pointer-events: auto;
+  }
+
+  /* Prevent iOS/Android zoom-on-focus and make the input comfy to tap */
+  #input{
+    flex: 1 1 auto; min-width: 0;
+    height: 52px; min-height: 52px;
+    font-size: 16px !important;        /* critical: kills auto-zoom */
+    border-radius: 14px;
+    padding: 0 16px;
+  }
+
+  #sendBtn{
+    height: 52px;
+    border-radius: 14px;
+  }
+}
+
+/* Reduce double-tap delays and accidental zooms on controls */
+body, button, a, input { touch-action: manipulation; }
