@@ -159,6 +159,11 @@ input[type="text"], textarea{ font-size:16px }
 
   /* make sure bubbles & input are easily readable */
   #feed .msg{ font-size:16px; line-height:1.35; }
+ /* Hide footer/mini-card rows on phones */
+.miniProfile, .roster, .picker, .cardRow, .manRow {
+  display: none !important;
+}
+ 
 }
 
 /* Containment guard (prevents odd artifacts on some phones) */
@@ -188,7 +193,7 @@ html, body { height: 100%; overflow: hidden; }
     left: 50%;
     transform: translateX(-50%);
     width: calc(100% - 32px);           /* 16px side padding */
-    height: 46vh;                       /* how tall you want the hero; change to taste */
+    height: 38vh;                       /* how tall you want the hero; change to taste */
     object-fit: cover;
     object-position: center;
     border-radius: 18px;
@@ -201,7 +206,7 @@ html, body { height: 100%; overflow: hidden; }
   #feed{
     position: relative;
     z-index: 2;
-    margin-top: calc(46vh + 16px);      /* clears the fixed hero + a little gap */
+    margin-top: calc(38vh + 16px);      /* clears the fixed hero + a little gap */
     padding: 12px 16px calc(140px + env(safe-area-inset-bottom));
     height: auto;
     max-height: none;
