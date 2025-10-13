@@ -252,8 +252,9 @@ html, body { height: 100%; overflow: hidden; }
 /* === BnB mobile composer hard-lock (always visible) === */
 @media (max-width: 900px){
 
-  /* Only the feed scrolls, not the whole page */
-  html, body { height: 100%; overflow: hidden; }
+ /* Let the browser adjust for the keyboard; avoid clipping fixed composer */
+html, body { min-height: 100%; overflow-x: hidden; }
+
 
   /* Keep the bubbles area below the hero and above the composer */
   #feed{
@@ -352,3 +353,36 @@ html, body { height: 100%; overflow: hidden; }
 /* Reduce double-tap delays and accidental zooms on controls */
 body, button, a, input { touch-action: manipulation; }
 
+/* ===== Persist mobile composer + no-zoom safety net ===== */
+@media (max-width: 900px){
+  .composer{
+    position: fixed !important;
+    left: 0; right: 0; bottom: 0;
+    display: flex !important;          /* never hidden */
+    gap: 10px; align-items: center;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(10,10,14,.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255,255,255,.08);
+    z-index: 9999;
+    pointer-events: auto;
+  }
+  #input{
+    display: block !important;
+    flex: 1 1 auto; min-width: 0;
+    height: 52px; min-height: 52px;
+    font-size: 16px !important; /* prevents mobile zoom */
+    border-radius: 14px; padding: 0 16px;
+  }
+  #sendBtn{
+    display: block !important;
+    height: 52px; border-radius: 14px;
+  }
+  /* leave room so composer never covers the last bubble */
+  #feed{
+    padding-bottom: calc(132px + env(safe-area-inset-bottom)) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+body, button, a, input { touch-action: manipulation; }
