@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="/styles/chat.css?v=3">
   <meta name="color-scheme" content="dark light">
   <style>body{background:#0b0b0e;color:#f5f6f8}</style>
+
+  <!-- NEW: memory config hook (safe to include now; we’ll flip it on next week) -->
+  <script src="/scripts/memory-config.js?v=1" defer></script>
 </head>
 <body class="has-wallpaper" data-man="">
   <!-- HERO (fixed ~38vh on mobile) -->
@@ -31,7 +34,7 @@
     <button id="sendBtn" type="submit" class="button-pink">Send</button>
   </form>
 
-  <!-- Important: phrases first, then chat logic -->
+  <!-- Phrase bank then chat logic -->
   <script src="/scripts/phrases.js?v=1" defer></script>
   <script src="/scripts/chat.js?v=3" defer></script>
 </body>
