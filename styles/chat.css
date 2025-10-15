@@ -1,240 +1,210 @@
-/* ===== Blossom & Blade — Chat (consolidated) ========================= */
-/* Theme tokens */
+/* styles/chat.css — full replacement */
+
+/* ===== Root + resets ===== */
 :root{
-  --bg: #0b0e16;
-  --ink: #e9eaf5;
-  --ink-dim: #b7b9d6;
-  --ink-faint: #8b8fb1;
-  --panel: rgba(15,17,28,.42);
-  --panel-border: rgba(255,255,255,.08);
-  --you: #ff2e8b;
-  --you-ink: #fff;
-
-  /* chat layout constants */
-  --header-h: 64px;    /* top bar height (if any) */
-  --portrait-h: 520px; /* desktop portrait height */
-  --composer-h: 90px;  /* sticky input row incl. padding */
-}
-*{ box-sizing: border-box }
-html,body{ height:100% }
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font:16px/1.5 system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;
-}
-body, button, a { touch-action: manipulation; }
-
-/* Prevent iOS zoom on focus */
-input[type="text"], textarea{ font-size:16px }
-
-/* ===== Shell ========================================================= */
-.wrap{
-  max-width:1100px; margin:22px auto; padding:0 16px;
-  display:grid; grid-template-columns: 420px 1fr; gap: 28px;
+  --bb-pink: linear-gradient(180deg,#ff2d83,#ff165f);
+  --bg-dark: #0b0b0e;
+  --ink: #f5f6f8;
+  --ink-dim: #c9cbd1;
+  --bubble-self: rgba(255,45,131,0.12);
+  --bubble-them: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.08);
+  --shadow: 0 6px 24px rgba(0,0,0,0.35);
 }
 
-/* ===== Portrait (fixed panel) ======================================= */
-.portraitPanel{ position:relative; z-index:3 }
-.portraitPanel img{
-  width:100%; height:540px; aspect-ratio:3/4; object-fit:cover;
-  border-radius:14px; border:1px solid rgba(255,255,255,.06);
-  filter: brightness(1.18) contrast(1.18) saturate(1.06)
-          drop-shadow(0 26px 64px rgba(0,0,0,.58));
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0;background:var(--bg-dark);color:var(--ink);font:500 16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;-webkit-text-size-adjust:100%}
+
+/* ===== Page background (full-bleed wallpaper behind everything) ===== */
+body.has-wallpaper{
+  /* chat.html should set body.has-wallpaper with inline style for per-man bg, e.g. style="background-image:url('/images/characters/blade/blade-bg.jpg')" */
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
 }
 
-/* ===== Chat panel (right side) ====================================== */
-.chatPanel{
-  position:relative;
-  min-height:60vh;
-  border:1px solid var(--panel-border);
+/* ===== Layout regions =====
+Expected structure in chat.html:
+<body class="has-wallpaper">
+  <div id="hero"> ... fixed portrait ... </div>
+  <main id="feed"> ... messages ... </main>
+  <form id="composerForm" class="composer"> ... input + button ... </form>
+</body>
+*/
+
+/* HERO (desktop: left column feel; mobile: fixed ~38vh) */
+#hero{
+  position:sticky; /* behaves like a left rail on wide screens */
+  top:0;
+  height:100vh;
+  max-height:100vh;
+  display:flex;
+  align-items:flex-end;
+  padding:24px;
+  background:linear-gradient(180deg,rgba(0,0,0,0.0),rgba(0,0,0,0.45));
+  backdrop-filter:saturate(120%) blur(0.5px);
+}
+#hero .portrait{
+  width:100%;
+  max-width:520px;
   border-radius:16px;
-  background:rgba(12,14,22,.28);
-  padding:18px 18px calc(18px + var(--composer-h)); /* room for composer */
-  box-shadow:0 30px 50px rgba(0,0,0,.45);
+  box-shadow:var(--shadow);
+  display:block;
 }
 
-/* Full-viewport wallpaper stays behind everything */
-#chatWallpaper{
-  position:fixed; inset:0; z-index:0;                 /* << full page */
-  background:center / cover no-repeat;
-  opacity:.78;
-  filter: brightness(1.10) contrast(1.06) saturate(1.02);
-  pointer-events:none;
-}
-
-/* Glass tint over the chat panel */
-.chatGlass{
-  position:absolute; inset:0; z-index:1; pointer-events:none;
-  background:
-    radial-gradient(1100px 420px at 55% 0%, rgba(255,255,255,.08), transparent),
-    linear-gradient(180deg,
-      rgba(10,12,18,.55) 0%,
-      rgba(10,12,18,.18) 28%,
-      rgba(10,12,18,.18) 78%,
-      rgba(10,12,18,.55) 100%);
-}
-
-/* ===== Feed (scrolls), bubbles ====================================== */
+/* FEED (scroll container on mobile; normal flow desktop) */
 #feed{
-  position:relative; z-index:2;
-  max-width:880px; margin:6px auto 0;
-  padding:10px 10px calc(10px + var(--composer-h));
-  min-height:260px;
-  max-height: calc(100vh - 300px);
-  overflow-y:auto;
+  width:100%;
+  max-width:900px;
+  margin:0 auto;
+  padding:24px 20px 120px; /* bottom space for composer on desktop too */
 }
-#feed .msg{
-  display:inline-block;
-  width:fit-content;
-  max-width:72ch;             /* readable wrap */
-  margin:10px 0;
-  padding:12px 14px;
-  border-radius:18px;
-  background: rgba(15,17,25,.72);
-  border:1px solid rgba(255,255,255,.06);
-  box-shadow:0 6px 20px rgba(0,0,0,.40);
-}
-#feed .msg .meta{
-  display:block; font-size:12px; opacity:.80; margin-bottom:6px;
-  color: rgba(233,233,245,.85);
-}
-/* you bubble (softer pink) */
-#feed .msg.you{
-  background: rgba(255,46,139,.08);
-  border-color: rgba(255,46,139,.20);
-  color: var(--you-ink);
-}
-#feed .msg.you .meta{ color:#fff }
 
-/* ===== Sticky Composer (bottom, fixed) ============================== */
+/* Composer (pinned on mobile; anchored bottom) */
 .composer{
-  position:fixed; left:0; right:0;
-  bottom:0; z-index:9999;
-  display:flex; gap:12px; align-items:center;
-  padding:14px 16px calc(14px + env(safe-area-inset-bottom));
-  background: rgba(10,10,14,.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-top:1px solid rgba(255,255,255,.08);
-  height: var(--composer-h);
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:12px;
+  background:rgba(15,15,20,0.8);
+  border-top:1px solid var(--border);
+  backdrop-filter:saturate(120%) blur(6px);
 }
-#input{
-  flex:1 1 auto; min-width:0;
-  height:52px; border-radius:14px; padding:0 16px;
-  border:1px solid rgba(255,255,255,.12);
-  color:#eaeaf5;
-  background: rgba(13,16,24,.85);
+.composer input[type="text"],
+.composer textarea{
+  flex:1;
+  min-height:44px;
+  padding:12px 14px;
+  font-size:16px; /* >=16px to avoid iOS zoom */
+  line-height:1.3;
+  color:var(--ink);
+  background:rgba(255,255,255,0.06);
+  border:1px solid var(--border);
+  border-radius:12px;
+  outline:none;
 }
-#input::placeholder{ color: rgba(234,234,245,.55) }
-#sendBtn{
-  height:52px; border-radius:14px; padding:0 18px;
-  border:none; font-weight:700;
-  color:#fff;
-  background: linear-gradient(180deg,#ff2d6f,#ff165f);
-  box-shadow:0 8px 20px rgba(255,45,111,.35);
-}
-
-/* ===== Small elevations ============================================ */
-.portraitPanel img, .chatPanel, #sendBtn, #feed .msg{
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-@media (hover:hover){
-  .portraitPanel img:hover{ transform:translateY(-2px) }
-  #feed .msg:hover{ transform:translateY(-1px) }
-}
-
-/* ===== Phones: stack portrait above chat, keep composer readable ==== */
-@media (max-width: 900px){
-  .wrap{ grid-template-columns:1fr; gap:16px; }
-
-  .portraitPanel{ order:0 }
-  .chatPanel{ order:1; padding-bottom: calc(18px + var(--composer-h)) }
-
-  /* show portrait on mobile */
-  .portraitPanel{ display:block !important; padding: 0 2px 0 }
-
-  /* feed leaves room for the sticky composer */
-  #feed{ padding-bottom: calc(128px + env(safe-area-inset-bottom)) }
-
-  /* make sure bubbles & input are easily readable */
-  #feed .msg{ font-size:16px; line-height:1.35; }
- /* Hide footer/mini-card rows on phones */
-.miniProfile, .roster, .picker, .cardRow, .manRow {
-  display: none !important;
-}
- 
+.composer button,
+.button-pink{
+  min-height:44px;
+  padding:0 16px;
+  font-weight:700;
+  color:white;
+  background:var(--bb-pink);
+  border:none;
+  border-radius:12px;
+  box-shadow:0 6px 14px rgba(255,22,95,0.25);
+  cursor:pointer;
 }
 
-/* Containment guard (prevents odd artifacts on some phones) */
-#app, main.wrap, .chatPanel { contain: layout paint; }
-/* ==== BnB mobile layout — single source of truth ===================== */
-@media (max-width: 900px){
+/* Message bubbles */
+.msg{
+  max-width:78ch;
+  padding:12px 14px;
+  border-radius:14px;
+  margin:10px 0;
+  border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(0,0,0,0.18);
+  word-wrap:break-word;
+  backdrop-filter:saturate(120%);
+}
+.msg.them{background:var(--bubble-them); margin-right:auto}
+.msg.you{background:var(--bubble-self); margin-left:auto}
 
-  /* stack columns */
-  .wrap{ grid-template-columns: 1fr; gap: 16px; }
-  .portraitPanel{ display:block !important; padding: 0 2px 0; order:0; }
-  .chatPanel{ order:1; padding-bottom: calc(18px + 90px); } /* 90px = composer height */
+/* Timestamp / meta */
+.meta{display:block;margin-top:6px;color:var(--ink-dim);font-size:12px}
 
-  /* full-viewport wallpaper behind everything */
-  #chatWallpaper{
-    position: fixed; inset: 0;
-    background: center / cover no-repeat;
-    opacity: .70; z-index: 0; pointer-events: none;
+/* Strip elements that shouldn't show on phones */
+.mini, .roster, .footer-strip{ /* visible on desktop by default */
+  opacity:0.9;
+}
+
+/* ===== Desktop grid (≥900px) ===== */
+@media (min-width:901px){
+  body{
+    display:grid;
+    grid-template-columns:minmax(340px,520px) 1fr;
+    grid-template-rows:auto 1fr auto;
+    grid-template-areas:
+      "hero feed"
+      "hero feed"
+      "hero composer";
+    height:100%;
+    overflow:auto; /* desktop can scroll body */
+  }
+  #hero{grid-area:hero}
+  #feed{grid-area:feed}
+  .composer{grid-area:composer; position:sticky; bottom:0}
+}
+
+/* ===== Single consolidated MOBILE block (≤900px) — non-negotiable behavior ===== */
+@media (max-width:900px){
+  /* Body itself must NOT scroll; only #feed scrolls */
+  html, body{height:100%}
+  body{
+    overflow:hidden; /* lock the page */
+    position:relative;
   }
 
-  /* hero portrait fixed at top */
-  #portrait{
-    position: fixed;
-    top: 64px;                      /* adjust if your header height differs */
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 32px);       /* 16px side padding */
-    height: 38vh;                   /* tweak to taste */
-    object-fit: cover; object-position: center;
-    border-radius: 18px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.35);
-    z-index: 2; display: block;
+  /* Fixed hero ~38vh at top */
+  #hero{
+    position:fixed;
+    left:0; right:0; top:0;
+    height:38vh;
+    max-height:38vh;
+    padding:12px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    background:linear-gradient(180deg,rgba(0,0,0,0.0),rgba(0,0,0,0.55));
+    pointer-events:none; /* taps go to feed unless interactive children need it */
+  }
+  #hero .portrait{
+    width:55%;
+    max-width:62vh; /* scales with viewport height nicely */
+    border-radius:14px;
   }
 
-  /* messages live under hero and above composer; only this scrolls */
+  /* Feed is the ONLY scrollable region */
   #feed{
-    position: relative; z-index: 1;
-    margin-top: calc(38vh + 16px);  /* clears the fixed hero */
-    padding: 12px 16px calc(148px + env(safe-area-inset-bottom));
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    position:fixed;
+    left:0; right:0;
+    /* Start right below the hero */
+    top:38vh; 
+    /* End above the composer; account for safe-area */
+    bottom:calc(64px + env(safe-area-inset-bottom,0px));
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:14px 14px 24px;
+    margin:0;
+    backdrop-filter:saturate(120%) blur(0px);
   }
 
-  /* pinned composer at the bottom */
+  /* Pinned composer at bottom, never disappears */
   .composer{
-    position: fixed; left: 0; right: 0; bottom: 0;
-    z-index: 10000;
-    display: flex; gap: 10px; align-items: center;
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    background: rgba(10,10,14,.55);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border-top: 1px solid rgba(255,255,255,.08);
+    position:fixed;
+    left:0; right:0;
+    bottom:0;
+    padding:10px calc(10px + env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) calc(10px + env(safe-area-inset-left,0px));
+    border-top:1px solid var(--border);
+    background:rgba(12,12,18,0.86);
   }
-
-  /* comfy input; 16px prevents iOS zoom-on-focus */
-  #input{
-    flex: 1 1 auto; min-width: 0;
-    height: 52px; font-size: 16px;
-    border-radius: 14px; padding: 0 16px;
-    border: 1px solid rgba(255,255,255,.12);
-    color: #eaeaf5; background: rgba(13,16,24,.85);
+  .composer input[type="text"],
+  .composer textarea{
+    font-size:16px; /* keep ≥16px to defeat iOS zoom */
+    border-radius:12px;
   }
-  #input::placeholder{ color: rgba(234,234,245,.55); }
+  .composer button{min-width:84px}
 
-  #sendBtn{
-    height: 52px; border-radius: 14px; padding: 0 18px;
-    font-weight: 700; border: 0; color: #fff;
-    background: linear-gradient(180deg,#ff2d6f,#ff165f);
-    box-shadow: 0 0 14px rgba(255,45,111,.35);
-    flex: 0 0 auto;
-  }
+  /* Hide any mini/roster/footer strips on phones */
+  .mini, .roster, .footer-strip{display:none !important}
 
-  /* hide any footer/mini rows that might render under the composer */
-  .miniProfile, .roster, .picker, .cardRow, .manRow,
-  .profile, .mini, .men, .card { display: none !important; }
+  /* Bubble sizing feels better on small screens */
+  .msg{max-width:90%; padding:10px 12px; border-radius:12px}
 }
+
+/* ===== Utilities ===== */
+.hidden{display:none !important}
+.spacer{height:20px}
+a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+a.btn.pink{background:var(--bb-pink);color:#fff;border-radius:12px;padding:10px 14px;font-weight:700}
