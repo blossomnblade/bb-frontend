@@ -1,23 +1,16 @@
-/* scripts/chat.js — persona voices + lightweight boyfriend memory (front-end)
-   - Uses window.BBPhrases (loaded by /scripts/phrases.js)
+/* scripts/chat.js — persona voices + BBMemory layer
+   - Hooks into BBMemory (localStorage now, Supabase later)
    - Greets with BBPhrases.firstLineFor(man)
-   - Replies with persona-specific lines (no-repeat) + nicknames
-   - Extracts simple facts and stores them per-man in localStorage
-     (name, nickname preference, hometown, favorites)
-   - Keeps hero/wallpaper behavior + mobile composer wiring
+   - Saves messages + learned facts via BBMemory
+   - Loads message history at boot
 */
 
 (function () {
-  // ----- config -------------------------------------------------------------
   const ALLOWED = ["blade","alexander","dylan","viper","grayson","silas"];
-  const STORAGE_PREFIX = "bb:mm:"; // boyfriend memory key prefix
-
-  // URL param
   const qs = new URLSearchParams(location.search);
   const man = (qs.get("man") || "").toLowerCase();
   const chosen = ALLOWED.includes(man) ? man : "blade";
 
-  // DOM
   const body = document.body;
   const feed = document.getElementById("feed");
   const messages = document.getElementById("messages");
@@ -26,15 +19,13 @@
   const input = document.getElementById("input");
   const sendBtn = document.getElementById("sendBtn");
 
-  body.dataset.man = chosen;
-
-  // Safety: phrases presence
-  const P = (window.BBPhrases || {});
+  const P = window.BBPhrases || {};
+  const M = window.BBMemory || {};
   const PERSONAS = P.PERSONAS || {};
   const pick = P.pick || ((_, list) => (list && list[0]) || "");
   const persona = PERSONAS[chosen] || { greet: [], lines: [], nick: [] };
 
-  // ----- visuals (portrait + wallpaper) ------------------------------------
+  // --- visuals --------------------------------------------------------------
   function preload(src){
     return new Promise(resolve=>{
       const img = new Image();
@@ -58,69 +49,75 @@
     if(bgRes){ body.style.backgroundImage = `url('${bgRes}')`; }
   }
 
-  // ----- boyfriend memory (front-end only) ---------------------------------
-  function storeKey(k){ return `${STORAGE_PREFIX}${chosen}:${k}`; }
-  function setMem(k, v){ try{ localStorage.setItem(storeKey(k), v); }catch(_){} }
-  function getMem(k){ try{ return localStorage.getItem(storeKey(k)) || ""; }catch(_){ return ""; } }
-  function hasMem(k){ return !!getMem(k); }
-
-  // extract simple facts
-  function ingestFacts(text){
-    const t = " " + text.toLowerCase().trim() + " ";
-    // name
-    let m = t.match(/\b(my name is|i'm|im|call me)\s+([a-z][a-z'-]{1,20})\b/);
-    if(m){ setMem("name", title(m[2])); }
-    // hometown
-    m = t.match(/\b(i (live in|am from|from))\s+([a-z][a-z\s'-]{2,30})\b/);
-    if(m){ setMem("hometown", title(m[3].trim())); }
-    // favorites: color / drink / song / book / necklace
-    m = t.match(/\bfavorite (color|drink|song|book|movie|necklace)\s*(is|=)?\s*([a-z0-9\s'-]{2,40})/);
-    if(m){ setMem(`fav_${m[1]}`, title(m[3].trim())); }
-    // likes: "i like/love X"
-    m = t.match(/\bi (like|love)\s+([a-z0-9\s'-]{2,40})/);
-    if(m){ setMem("likes", title(m[2].trim())); }
-    // desired nickname: "call me babe/bunny/etc."
-    m = t.match(/\b(call me|you can call me)\s+([a-z][a-z\s'-]{2,20})\b/);
-    if(m){ setMem("pet", title(m[2].trim())); }
+  // --- boyfriend memory helpers --------------------------------------------
+  function saveMessage(from, text){
+    try{ M.saveMessage?.(chosen, from, text); }catch(_){}
+  }
+  function saveFact(k, v){
+    try{ M.saveFact?.(chosen, k, v); }catch(_){}
+  }
+  async function loadHistory(){
+    try{
+      const hist = await M.loadHistory?.(chosen);
+      if(Array.isArray(hist)){
+        hist.forEach(m => appendMessage(m.from_role, m.text, m.ts, false));
+      }
+    }catch(_){}
   }
 
-  function nickChoice(){
-    const userPet = getMem("pet");
-    if(userPet) return userPet;
+  // --- fact extraction ------------------------------------------------------
+  function ingestFacts(text){
+    const t = " " + text.toLowerCase().trim() + " ";
+    let m;
+    m = t.match(/\b(my name is|i'm|im|call me)\s+([a-z][a-z'-]{1,20})\b/);
+    if(m){ saveFact("name", title(m[2])); }
+    m = t.match(/\b(i (live in|am from|from))\s+([a-z][a-z\s'-]{2,30})\b/);
+    if(m){ saveFact("hometown", title(m[3].trim())); }
+    m = t.match(/\bfavorite (color|drink|song|book|movie|necklace)\s*(is|=)?\s*([a-z0-9\s'-]{2,40})/);
+    if(m){ saveFact(`fav_${m[1]}`, title(m[3].trim())); }
+    m = t.match(/\bi (like|love)\s+([a-z0-9\s'-]{2,40})/);
+    if(m){ saveFact("likes", title(m[2].trim())); }
+    m = t.match(/\b(call me|you can call me)\s+([a-z][a-z\s'-]{2,20})\b/);
+    if(m){ saveFact("pet", title(m[2].trim())); }
+  }
+
+  // --- personalization ------------------------------------------------------
+  async function getFacts(){
+    const f = {};
+    const keys = ["name","pet","hometown","fav_color","fav_drink","fav_song","fav_book","fav_movie","fav_necklace","likes"];
+    for(const k of keys){
+      try{ f[k] = (await M.getFact?.(chosen, k)) || ""; }catch{ f[k] = ""; }
+    }
+    return f;
+  }
+  function nickChoice(f){
+    if(f.pet) return f.pet;
     const nicks = Array.isArray(persona.nick) ? persona.nick : [];
     return nicks.length ? pick("nick:"+chosen, nicks) : "";
   }
-
-  function personalize(line){
-    // slots: {name}, {pet}, {hometown}, {fav_color}, etc.
+  function personalize(line, f){
     const replacements = {
-      "{name}": getMem("name") || "",
-      "{pet}": nickChoice(),
-      "{hometown}": getMem("hometown") || "",
-      "{fav_color}": getMem("fav_color") || "",
-      "{fav_drink}": getMem("fav_drink") || "",
-      "{fav_song}": getMem("fav_song") || "",
-      "{fav_book}": getMem("fav_book") || "",
-      "{fav_movie}": getMem("fav_movie") || "",
-      "{fav_necklace}": getMem("fav_necklace") || "",
-      "{likes}": getMem("likes") || ""
+      "{name}": f.name || "",
+      "{pet}": nickChoice(f),
+      "{hometown}": f.hometown || "",
+      "{fav_color}": f.fav_color || "",
+      "{fav_drink}": f.fav_drink || "",
+      "{fav_song}": f.fav_song || "",
+      "{fav_book}": f.fav_book || "",
+      "{fav_movie}": f.fav_movie || "",
+      "{fav_necklace}": f.fav_necklace || "",
+      "{likes}": f.likes || ""
     };
     let out = line;
-    Object.keys(replacements).forEach(k=>{
-      out = out.replaceAll(k, replacements[k]);
-    });
-    // sprinkle nickname if not already present
-    if(!/{pet}/.test(line) && Math.random()<0.45){
-      const pet = replacements["{pet}"];
-      if(pet){
-        out = out.replace(/\.$/, "") + `, ${pet}.`;
-      }
+    for(const k in replacements){ out = out.replaceAll(k, replacements[k]); }
+    if(!/{pet}/.test(line) && Math.random()<0.45 && replacements["{pet}"]){
+      out = out.replace(/\.$/, "") + `, ${replacements["{pet}"]}.`;
     }
     return out;
   }
 
-  // ----- messaging ----------------------------------------------------------
-  function appendMessage(from, text){
+  // --- messaging ------------------------------------------------------------
+  function appendMessage(from, text, ts, save=true){
     const bubble = document.createElement("div");
     bubble.className = `msg ${from === "you" ? "you" : "them"}`;
     bubble.textContent = text;
@@ -130,67 +127,55 @@
     bubble.appendChild(document.createTextNode(" "));
     bubble.appendChild(meta);
     messages.appendChild(bubble);
+    if(save) saveMessage(from, text);
     requestAnimationFrame(scrollToBottom);
   }
 
-  function greetIfEmpty(){
-    if(messages && messages.children.length === 0){
-      // dynamic first line from phrase bank, with personalization pass
-      const line = (P.firstLineFor ? P.firstLineFor(chosen) : "there you are.") || "there you are.";
-      appendMessage("them", personalize(line));
-    }else{
-      // If chat.html had a seeded system line, we leave it; next reply will be persona.
+  async function greetIfEmpty(){
+    const has = messages && messages.querySelector(".msg");
+    if(!has){
+      const f = await getFacts();
+      const line = P.firstLineFor ? P.firstLineFor(chosen) : "there you are.";
+      appendMessage("them", personalize(line, f));
     }
   }
 
-  function botReply(userText){
-    // learn facts
+  async function botReply(userText){
     ingestFacts(userText);
-
-    // reply from persona lines with fallback to global openers
-    const pool = []
-      .concat(persona.lines || [])
-      .filter(Boolean);
-
+    const f = await getFacts();
+    const pool = [].concat(persona.lines || []);
     let line = pool.length ? pick("lines:"+chosen, pool) : (P.GLOBAL?.openers ? pick("open", P.GLOBAL.openers) : "i'm here.");
-
-    // Occasionally mirror context gently
     const t = userText.trim();
-    if(/\?$/.test(t) && Math.random() < 0.5){
+    if(/\?$/.test(t) && Math.random()<0.5){
       line = line.replace(/\.$/,"") + " give me a beat more detail.";
     }
-    // Personalize with memory slots
-    return personalize(line);
+    return personalize(line, f);
   }
 
-  function sendFromComposer(){
+  async function sendFromComposer(){
     const val = (input.value || "").trim();
     if(!val) return;
     appendMessage("you", val);
     input.value = "";
     input.focus({preventScroll:true});
-    setTimeout(()=> appendMessage("them", botReply(val)), 320);
+    const reply = await botReply(val);
+    setTimeout(()=> appendMessage("them", reply), 300);
   }
 
-  function scrollToBottom(){
-    feed.scrollTop = feed.scrollHeight;
-  }
-
-  // ----- events -------------------------------------------------------------
-  form.addEventListener("submit", (e)=>{ e.preventDefault(); sendFromComposer(); });
-  sendBtn.addEventListener("click", (e)=>{ e.preventDefault(); sendFromComposer(); });
-  input.addEventListener("focus", ()=> setTimeout(scrollToBottom, 50));
-
-  // ----- boot ---------------------------------------------------------------
-  setupVisuals().then(()=>{
-    // If you left a hardcoded welcome in chat.html, you can clear it once:
-    // messages.innerHTML = "";
-    greetIfEmpty();
-    scrollToBottom();
-  });
-
-  // ----- utils --------------------------------------------------------------
+  function scrollToBottom(){ feed.scrollTop = feed.scrollHeight; }
   function timeNow(){ const d=new Date(); return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`; }
   function title(s){ return s.split(/\s+/).map(cap).join(" "); }
   function cap(s){ return s? s[0].toUpperCase()+s.slice(1):""; }
+
+  // --- events ---------------------------------------------------------------
+  form.addEventListener("submit", e=>{ e.preventDefault(); sendFromComposer(); });
+  sendBtn.addEventListener("click", e=>{ e.preventDefault(); sendFromComposer(); });
+  input.addEventListener("focus", ()=> setTimeout(scrollToBottom, 50));
+
+  // --- boot -----------------------------------------------------------------
+  setupVisuals().then(async ()=>{
+    await loadHistory();
+    await greetIfEmpty();
+    scrollToBottom();
+  });
 })();
