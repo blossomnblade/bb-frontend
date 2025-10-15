@@ -7,10 +7,7 @@
   <link rel="preload" as="image" href="/images/bg/default.webp">
   <link rel="stylesheet" href="/styles/chat.css?v=3">
   <meta name="color-scheme" content="dark light">
-  <style>
-    /* optional tiny guard if CSS cache lags */
-    body{background:#0b0b0e;color:#f5f6f8}
-  </style>
+  <style>body{background:#0b0b0e;color:#f5f6f8}</style>
 </head>
 <body class="has-wallpaper" data-man="">
   <!-- HERO (fixed ~38vh on mobile) -->
@@ -21,7 +18,6 @@
   <!-- FEED: the ONLY scrollable region on mobile -->
   <main id="feed" role="feed" aria-live="polite" aria-label="Chat messages">
     <div id="messages">
-      <!-- Optional: seed a soft system hello so users see the layout instantly -->
       <div class="msg them">
         Welcome. I’m here for you—talk to me.
         <span class="meta">system</span>
@@ -29,12 +25,14 @@
     </div>
   </main>
 
-  <!-- COMPOSER: pinned bottom, never disappears -->
+  <!-- COMPOSER -->
   <form id="composerForm" class="composer" autocomplete="off">
     <input id="input" name="input" type="text" inputmode="text" placeholder="Type a message…" aria-label="Message input">
     <button id="sendBtn" type="submit" class="button-pink">Send</button>
   </form>
 
+  <!-- Important: phrases first, then chat logic -->
+  <script src="/scripts/phrases.js?v=1" defer></script>
   <script src="/scripts/chat.js?v=3" defer></script>
 </body>
 </html>
