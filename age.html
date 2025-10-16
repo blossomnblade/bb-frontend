@@ -2,93 +2,125 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
- <meta name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
- 
-  <!-- bump to refresh phones -->
-  <link rel="stylesheet" href="/styles/home.css?v=26" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plans — Blossom N Blade</title>
+  <meta name="color-scheme" content="dark">
+  <link rel="preload" as="image" href="/images/bg/default.webp">
+  <link rel="stylesheet" href="/styles/home.css?v=3">
   <style>
-    /* tiny helpers so we don't touch your global CSS */
-    .gate { max-width: 960px; margin: 0 auto 48px; }
-    .panel {
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px;
-    }
-    .checks { display:grid; gap:10px; margin:12px 0 14px; }
-    .rules { margin-top: 10px; }
-    .rules h3 { margin: 10px 0 6px; }
-    .rules ul { margin: 6px 0 6px 20px; }
-    .footer-note { margin-top: 12px; color: var(--muted); }
-    .btnRow { margin-top: 12px; }
-    .btn[aria-disabled="true"]{ opacity:.5; pointer-events:none; }
+    :root{ --bb-pink: linear-gradient(180deg,#ff2d83,#ff165f); --ink:#f5f6f8; --dim:#b9bbc4; --bg:#0b0b0e; --card:#121219; --border:rgba(255,255,255,0.08); }
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:500 16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
+    .wrap{max-width:1080px;margin:0 auto;padding:18px 16px 40px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .brand{font-weight:800;letter-spacing:.6px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:12px;background:var(--bb-pink);color:#fff;text-decoration:none;border:none;font-weight:700;cursor:pointer;box-shadow:0 6px 14px rgba(255,22,95,.25)}
+    .grid{display:grid;gap:16px;grid-template-columns:1fr}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+    .muted{color:var(--dim);font-size:14px}
+    .men{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+    .man{display:flex;flex-direction:column;gap:8px;background:#0f0f15;border:1px solid var(--border);border-radius:14px;padding:10px}
+    .man img{width:100%;border-radius:10px;display:block}
+    .man .row{display:flex;gap:8px}
+    .ghost{background:transparent;border:1px solid var(--border);color:var(--ink)}
+    footer{margin-top:18px;text-align:center}
+    .tiny{font-size:12px;color:var(--dim)}
+    @media(min-width:880px){ .grid{grid-template-columns:1fr 1fr} }
   </style>
+  <script src="/scripts/memory-config.js?v=1" defer></script>
 </head>
-<body class="age">
-  <div class="container gate">
-    <header class="site-header">
-      <div class="brand">Blossom &amp; Blade</div>
-      <div class="header-actions">
-        <a class="btn" href="/pay.html">Plans</a>
-      </div>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">Blossom N Blade</div>
+      <a class="btn" href="/index.html">Back</a>
     </header>
 
-    <main class="panel">
-      <p><strong>AI-only, fantasy-forward.</strong> No human-to-human dating here. This is private roleplay with AI characters only. It’s entertainment and may be imperfect.</p>
+    <div class="grid">
+      <!-- Day Pass -->
+      <section class="card">
+        <h2 style="margin:0 0 6px">Day Pass — $7.99</h2>
+        <p class="muted" style="margin:0 0 10px">Pick a man and go. Memory lasts one day (today).</p>
+        <div class="men">
+          <!-- Each man: clicking sets plan=day and routes through age gate to chat -->
+          <div class="man">
+            <img src="/images/characters/blade/blade-card-on.webp" alt="Blade">
+            <div class="row">
+              <button class="btn" data-man="blade">Chat now</button>
+              <a class="btn ghost" href="/chat.html?man=blade">Preview</a>
+            </div>
+          </div>
+          <div class="man">
+            <img src="/images/characters/alexander/alexander-card-on.webp" alt="Alexander">
+            <div class="row">
+              <button class="btn" data-man="alexander">Chat now</button>
+              <a class="btn ghost" href="/chat.html?man=alexander">Preview</a>
+            </div>
+          </div>
+          <div class="man">
+            <img src="/images/characters/dylan/dylan-card-on.webp" alt="Dylan">
+            <div class="row">
+              <button class="btn" data-man="dylan">Chat now</button>
+              <a class="btn ghost" href="/chat.html?man=dylan">Preview</a>
+            </div>
+          </div>
+          <div class="man">
+            <img src="/images/characters/viper/viper-card-on.webp" alt="Viper">
+            <div class="row">
+              <button class="btn" data-man="viper">Chat now</button>
+              <a class="btn ghost" href="/chat.html?man=viper">Preview</a>
+            </div>
+          </div>
+          <div class="man">
+            <img src="/images/characters/grayson/grayson-card-on.webp" alt="Grayson">
+            <div class="row">
+              <button class="btn" data-man="grayson">Chat now</button>
+              <a class="btn ghost" href="/chat.html?man=grayson">Preview</a>
+            </div>
+          </div>
+          <div class="man">
+            <img src="/images/characters/silas/silas-card-on.webp" alt="Silas">
+            <div class="row">
+              <button class="btn" data-man="silas">Chat now</button>
+              <a class="btn ghost" href="/chat.html?man=silas">Preview</a>
+            </div>
+          </div>
+        </div>
+      </section>
 
-     <div class="checks">
-  <label><input type="checkbox" id="a18"> I confirm I am <strong>18+</strong> (or older in my location).</label>
-  <label><input type="checkbox" id="aTerms"> I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</label>
-  <label><input type="checkbox" id="aRules"> I understand and accept the <strong>House Rules</strong> below.</label>
-  <label><input type="checkbox" id="aRefund"> I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.</label>
-</div>
- 
-      <div class="rules panel">
-        <h3>House Rules (what’s allowed vs banned)</h3>
-        <p><strong>Allowed:</strong> consensual adult fantasies; adult “Daddy/Mommy” roleplay (explicitly adult); possessive/jealous BF vibes; rough talk; kink negotiation.</p>
-        <p><strong>Banned (hard NO):</strong> minors or implied minors; bestiality; non-consensual harm; trafficking; domestic-violence play; scat; necrophilia; doxxing or real-world threats; illegal activity.</p>
-        <p class="footer-note">We keep chats private to you and our system. Limited internal review may occur for safety, fraud, or law compliance. $1 from each purchase supports domestic-violence resources.</p>
-      </div>
+      <!-- Monthly -->
+      <section class="card">
+        <h2 style="margin:0 0 6px">Monthly — $14.99</h2>
+        <p class="muted" style="margin:0 0 14px">Rolling memory for 31 days. Pick any man anytime.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button id="startMonthly" class="btn">Start Monthly</button>
+          <a class="btn ghost" href="/index.html">Choose a man first</a>
+        </div>
+        <p class="tiny" style="margin-top:10px">+$1 from every purchase goes to domestic-violence charities.</p>
+      </section>
+    </div>
 
-      <div class="btnRow">
-        <a id="go" class="btn" href="#" aria-disabled="true">Continue</a>
-      </div>
-    </main>
-
-    <footer class="footer">
-      Need support? 988 Suicide &amp; Crisis Lifeline — call or text 988 (US). If you’re in immediate danger, call 911.
+    <footer>
+      <p class="tiny">Adults only. By continuing you agree to our <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy</a>. No refunds after 24 hours.</p>
+      <p class="tiny">Contact: hello@blossomnblade.com</p>
     </footer>
   </div>
 
   <script>
-    (function(){
-      const qs = new URLSearchParams(location.search);
-      const next = qs.get('next') || '/chat.html?man=blade';
+    // Unified pink already handled by .btn class
+    const goDay = (man)=>{
+      try{ window.BBMemory?.setPlan("day"); }catch(e){}
+      const next = `/chat.html?man=${encodeURIComponent(man)}`;
+      location.href = `/age.html?next=${encodeURIComponent(next)}`;
+    };
+    document.querySelectorAll('button[data-man]')
+      .forEach(btn => btn.addEventListener('click', ()=> goDay(btn.dataset.man)));
 
-      const boxes = ['a18','aTerms','aRules','aRefund'].map(id=>document.getElementById(id));
-      const btn = document.getElementById('go');
-
-      function refresh(){
-        const all = boxes.every(b => b && b.checked);
-        btn.setAttribute('aria-disabled', all ? 'false' : 'true');
-      }
-      boxes.forEach(b => b.addEventListener('change', refresh));
-      refresh();
-
-      btn.addEventListener('click', function(e){
-        if (btn.getAttribute('aria-disabled') === 'true'){ e.preventDefault(); return; }
-        try {
-          // set once so they don't see the gate again on this device
-          localStorage.setItem('bb18','1');
-          localStorage.setItem('bbTerms','1');
-          localStorage.setItem('bbRules','1');
-          localStorage.setItem('bbRefund','1');
-          localStorage.setItem('bbConsentAt', new Date().toISOString());
-        } catch(e){}
-        location.href = next;
-      });
-    })();
+    document.getElementById('startMonthly')?.addEventListener('click', ()=>{
+      try{ window.BBMemory?.setPlan("monthly"); }catch(e){}
+      // After age gate, send them back to index to pick any man
+      const next = `/index.html`;
+      location.href = `/age.html?next=${encodeURIComponent(next)}`;
+    });
   </script>
 </body>
 </html>
