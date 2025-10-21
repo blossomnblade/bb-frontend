@@ -2,40 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Chat — Blossom N Blade</title>
   <link rel="preload" as="image" href="/images/bg/default.webp">
-  <link rel="stylesheet" href="/styles/chat.css?v=3">
-  <meta name="color-scheme" content="dark light">
-  <style>body{background:#0b0b0e;color:#f5f6f8}</style>
-
-  <!-- NEW: memory config hook (safe to include now; we’ll flip it on next week) -->
-  <script src="/scripts/memory-config.js?v=1" defer></script>
+  <link rel="stylesheet" href="/styles/chat.css?v=7" />
 </head>
-<body class="has-wallpaper" data-man="">
-  <!-- HERO (fixed ~38vh on mobile) -->
-  <div id="hero" aria-hidden="true">
-    <img id="portrait" class="portrait" alt="Character portrait" src="" loading="eager" decoding="async">
-  </div>
+<body>
+  <!-- Full-bleed wallpaper layer (CSS controls the image via --wall-url) -->
+  <div class="wall" aria-hidden="true"></div>
 
-  <!-- FEED: the ONLY scrollable region on mobile -->
-  <main id="feed" role="feed" aria-live="polite" aria-label="Chat messages">
-    <div id="messages">
-      <div class="msg them">
-        Welcome. I’m here for you—talk to me.
-        <span class="meta">system</span>
+  <!-- Grid shell: left = hero, right = chat -->
+  <main class="chat-shell">
+    <!-- HERO PORTRAIT (sticky on desktop, fixed height on mobile) -->
+    <aside class="hero">
+      <!-- Important: keep the id so chat.js can swap src -->
+      <img id="heroImg" src="/images/characters/blade/blade-chat.webp" alt="" />
+    </aside>
+
+    <!-- CHAT COLUMN -->
+    <section class="chat-col">
+      <!-- Scrolling feed (JS writes bubbles here) -->
+      <div id="feed" aria-live="polite" aria-label="Conversation"></div>
+
+      <!-- Composer pinned at bottom -->
+      <div class="composer-wrap">
+        <form id="composerForm" class="composer" autocomplete="off">
+          <input id="input" type="text" placeholder="Type a message…" inputmode="text" />
+          <button id="sendBtn" type="submit">Send</button>
+        </form>
       </div>
-    </div>
+    </section>
   </main>
 
-  <!-- COMPOSER -->
-  <form id="composerForm" class="composer" autocomplete="off">
-    <input id="input" name="input" type="text" inputmode="text" placeholder="Type a message…" aria-label="Message input">
-    <button id="sendBtn" type="submit" class="button-pink">Send</button>
-  </form>
-
-  <!-- Phrase bank then chat logic -->
-  <script src="/scripts/phrases.js?v=1" defer></script>
-  <script src="/scripts/chat.js?v=3" defer></script>
+  <!-- PERSONA PHRASES + MEMORY CONFIG MUST LOAD BEFORE chat.js -->
+  <script src="/scripts/phrases.js?v=3"></script>
+  <script src="/scripts/memory-config.js?v=1"></script>
+  <script src="/scripts/chat.js?v=7"></script>
 </body>
 </html>
