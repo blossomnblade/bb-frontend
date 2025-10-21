@@ -1,135 +1,110 @@
-/* Blossom N Blade — chat.css (wallpaper & layout hardening)
-   - Full-bleed wallpaper behind everything
-   - Desktop: wall fixed; Mobile: no fixed (iOS perf)
-   - Only #feed scrolls; composer pinned
-   - One consolidated mobile block (max-width:900px)
+/* Blossom N Blade — chat.css (full-bleed wall, glass chat)  */
+/* — Wallpaper fills the viewport behind hero + feed
+   — Per-man wall set via CSS var --wall-url (chat.js sets it)
+   — Only #feed scrolls; composer pinned
+   — One consolidated mobile block
 */
 
 :root{
-  --ink:#fff;
-  --ink-dim:#d8d8df;
+  --ink:#eaf0ff;
   --bubble-me:#ff2d83;
-  --bubble-them:#1f1f26;
-  --glass: rgba(0,0,0,.28);
-  --glass-strong: rgba(0,0,0,.45);
-  --radius:14px;
+  --bubble-them:#151821;
+  --glass: rgba(10,12,18,.58);
+  --glass-soft: rgba(10,12,18,.38);
+  --radius:18px;
 }
 
-/* Page scaffold */
-html,body{height:100%; margin:0; background:#0a0a0d; color:var(--ink); font-family: system-ui, -apple-system, Segoe UI, Inter, Arial, sans-serif;}
+/* Page base */
+html,body{height:100%;margin:0;background:#05060a;color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;}
 body{display:flex;}
 
-/* ===== WALLPAPER =====
-   The background image is applied via inline style on .wall or by JS setting --wall-url on :root.
-   Fallback is a dark texture.
-*/
+/* ===== FULL-BLEED WALLPAPER ===== */
 .wall{
   position:fixed; inset:0; z-index:0;
-  background:
-    var(--wall-url, url('/images/bg/default.webp')) center/cover no-repeat fixed;
-  /* iOS ignores fixed sometimes; we handle in mobile block */
-  filter:saturate(1.02) contrast(1.04);
+  background: var(--wall-url, url('/images/bg/default.webp')) center/cover no-repeat fixed;
+  /* slight boost like your old look */
+  filter: saturation(1.05) contrast(1.06) brightness(0.96);
 }
 .wall::after{
-  /* legibility veil */
+  /* subtle veil for readability (lighter than previous) */
   content:""; position:absolute; inset:0;
   background:
-    radial-gradient(120% 120% at 20% 10%, transparent 40%, rgba(0,0,0,.55) 85%),
-    linear-gradient(0deg, rgba(0,0,0,.35), rgba(0,0,0,.25) 30%, rgba(0,0,0,.45));
+    radial-gradient(120% 120% at 20% 15%, rgba(0,0,0,.00) 45%, rgba(0,0,0,.45) 85%),
+    linear-gradient(0deg, rgba(0,0,0,.25), rgba(0,0,0,.15) 30%, rgba(0,0,0,.35));
 }
 
-/* ===== LAYOUT WRAP ===== */
+/* ===== LAYOUT ===== */
 .chat-shell{
   position:relative; z-index:1; /* above wall */
-  display:grid; grid-template-columns: 460px 1fr;
-  gap:24px; width:100%; max-width:1400px; margin:0 auto; padding:28px;
+  display:grid; grid-template-columns: 520px 1fr;
+  gap:28px; width:100%; max-width:1500px; margin:0 auto; padding:28px;
   box-sizing:border-box;
+  background: transparent; /* keep backdrop visible like before */
 }
 
-/* ===== LEFT: HERO PORTRAIT ===== */
+/* LEFT: HERO */
 .hero{
   position:sticky; top:28px;
-  align-self:start; width:100%; height:auto;
-  border-radius:24px; overflow:hidden;
-  box-shadow:0 18px 60px rgba(0,0,0,.45);
+  align-self:start; border-radius:24px; overflow:hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,.55);
+  background: rgba(0,0,0,.12);
 }
 .hero img{display:block; width:100%; height:auto;}
 
-/* ===== RIGHT: CHAT COLUMN ===== */
-.chat-col{
-  display:flex; flex-direction:column; min-height:0; /* allow child flex scroll */
-}
+/* RIGHT: CHAT COLUMN */
+.chat-col{ display:flex; flex-direction:column; min-height:0; }
 
-/* Feed: only thing that scrolls */
+/* FEED (glass over city; only this scrolls) */
 #feed{
   flex:1 1 auto; min-height:0; overflow:auto;
-  padding:18px; border-radius:18px;
-  background: rgba(0,0,0,.22);
-  backdrop-filter: blur(4px);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+  padding:22px; border-radius:24px;
+  background: var(--glass); backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05), 0 12px 40px rgba(0,0,0,.35);
 }
 
 /* Bubbles */
-.msg{max-width:78%; margin:10px 0; padding:12px 14px; border-radius:16px; line-height:1.35;}
-.msg.them{background:var(--bubble-them); border-top-left-radius:4px; color:#eef;}
-.msg.me{background: linear-gradient(180deg,#ff2d83,#ff165f); border-top-right-radius:4px; margin-left:auto; color:#fff;}
+.msg{max-width:78%; margin:12px 0; padding:14px 16px; border-radius:16px; line-height:1.42;}
+.msg.them{background:var(--bubble-them); color:#dde5ff; border-top-left-radius:6px;}
+.msg.me{background: linear-gradient(180deg,#ff2d83,#ff165f); color:#fff; border-top-right-radius:6px; margin-left:auto;}
 
-/* System banner line */
 .banner{
-  margin:0 auto 14px; padding:10px 14px;
-  color:#e8ebf5; background:rgba(0,0,0,.35);
-  border-radius:999px; font-weight:600; width:max-content;
-  backdrop-filter: blur(2px);
+  margin:0 auto 16px; padding:10px 16px; font-weight:700; color:#f2f6ff;
+  background: var(--glass-soft); border-radius:999px; backdrop-filter: blur(6px);
 }
 
-/* ===== COMPOSER (pinned) ===== */
+/* COMPOSER (pinned) */
 .composer-wrap{ position:sticky; bottom:0; margin-top:14px; }
 .composer{
   display:flex; gap:10px; align-items:center;
-  background: rgba(0,0,0,.34); border:1px solid rgba(255,255,255,.12);
-  padding:10px; border-radius:16px;
-  backdrop-filter: blur(6px);
+  background: var(--glass-soft); border:1px solid rgba(255,255,255,.12);
+  padding:10px; border-radius:16px; backdrop-filter: blur(8px);
 }
 #input{
-  flex:1 1 auto; min-width:0; font-size:16px; /* prevent iOS zoom */
+  flex:1 1 auto; min-width:0; font-size:16px; /* ≥16px prevents iOS zoom */
   padding:12px 14px; border:0; outline:none; color:#fff;
-  background:rgba(255,255,255,.06); border-radius:12px;
+  background: rgba(255,255,255,.07); border-radius:12px;
 }
 #sendBtn{
-  white-space:nowrap; padding:12px 16px; border:0; cursor:pointer;
-  color:#fff; border-radius:12px;
+  padding:12px 16px; border:0; border-radius:12px; color:#fff; cursor:pointer;
   background: linear-gradient(180deg,#ff2d83,#ff165f);
   box-shadow:0 10px 26px rgba(255,22,95,.28);
 }
 
-/* ===== MOBILE (one consolidated block) ===== */
+/* ===== MOBILE (single block) ===== */
 @media (max-width:900px){
+  .wall{ background-attachment:scroll; } /* iOS perf */
 
-  .wall{
-    /* drop 'fixed' on iOS to avoid jank; emulate via container scroll */
-    background-attachment:scroll;
-  }
+  .chat-shell{ grid-template-columns:1fr; gap:14px; padding:14px; }
 
-  .chat-shell{
-    grid-template-columns: 1fr;
-    gap:14px; padding:14px;
-  }
+  /* Fixed hero ~38vh on phones */
+  .hero{ position:sticky; top:0; height:38vh; border-radius:18px; }
+  .hero img{ width:100%; height:100%; object-fit:cover; }
 
-  /* Fixed hero ~38vh at top */
-  .hero{
-    position:sticky; top:0; height:38vh; border-radius:18px;
-  }
-  .hero img{
-    width:100%; height:100%; object-fit:cover;
-  }
-
-  /* Chat column fills below hero; only feed scrolls */
+  /* Only feed scrolls; keep full wall visible behind */
   #feed{
-    max-height: calc(100vh - 38vh - 110px); /* 110 = composer + paddings */
-    overflow:auto;
-    background: rgba(0,0,0,.20);
+    max-height: calc(100vh - 38vh - 110px);
+    background: rgba(10,12,18,.44); /* a hair darker on mobile for legibility */
   }
 
-  .composer-wrap{ position:sticky; bottom:0; }
-  #input{ font-size:16px; } /* keep at least 16px to stop iOS zoom */
+  #input{ font-size:16px; }
 }
