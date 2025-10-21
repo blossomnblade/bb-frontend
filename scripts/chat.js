@@ -13,15 +13,16 @@
   const man = (params.get("man") || "blade").toLowerCase();
 
   // image paths (change paths here if you rename)
-  const ART = {
-    blade:     { hero: "/images/characters/blade/blade-chat.webp",     wall: "/images/characters/blade/blade-bg.jpg" },
-    alexander: { hero: "/images/characters/alexander/alexander-chat.webp", wall: "/images/characters/alexander/alexander-bg.jpg" },
-    dylan:     { hero: "/images/characters/dylan/dylan-chat.webp",     wall: "/images/characters/dylan/dylan-bg.jpg" },
-    viper:     { hero: "/images/characters/viper/viper-chat.webp",     wall: "/images/characters/viper/viper-bg.jpg" },
-    grayson:   { hero: "/images/characters/grayson/grayson-chat.webp", wall: "/images/characters/grayson/grayson-bg.jpg" },
-    silas:     { hero: "/images/characters/silas/silas-chat.webp",     wall: "/images/characters/silas/silas-bg.jpg" },
-  };
-
+ // image paths (exactly as in your repo)
+const ART = {
+  blade:     { hero: "/images/characters/blade/blade-chat.webp",       wall: "/images/characters/blade/blade-woods.jpg" },
+  alexander: { hero: "/images/characters/alexander/alexander-chat.webp", wall: "/images/characters/alexander/alexander-boardroom.jpg" },
+  dylan:     { hero: "/images/characters/dylan/dylan-chat.webp",       wall: "/images/characters/dylan/dylan-garage.jpg" },
+  viper:     { hero: "/images/characters/viper/viper-chat.webp",       wall: "/images/characters/viper/viper-bg.jpg" },
+  grayson:   { hero: "/images/characters/grayson/grayson-chat.webp",   wall: "/images/characters/grayson/grayson-bg.jpg" },
+  silas:     { hero: "/images/characters/silas/silas-chat.webp",       wall: "/images/characters/silas/silas-stage.jpg" },
+};
+ 
   function setWall(url){
     // prefer CSS var so chat.css can control attachment/cover
     document.documentElement.style.setProperty("--wall-url", `url('${url}')`);
