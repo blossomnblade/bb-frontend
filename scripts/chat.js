@@ -1,181 +1,143 @@
-/* scripts/chat.js — persona voices + BBMemory layer
-   - Hooks into BBMemory (localStorage now, Supabase later)
-   - Greets with BBPhrases.firstLineFor(man)
-   - Saves messages + learned facts via BBMemory
-   - Loads message history at boot
+/* Blossom N Blade — chat.js (persona wiring + composer)
+   - Pulls ?man= from URL (defaults to 'blade')
+   - Sets per-man hero portrait + full-bleed wallpaper
+   - Uses BBPhrases for greeting + replies (no more robots)
+   - Composer: click, Enter, and form submit all send
+   - Feed autoscroll + focus after every send
 */
 
 (function () {
-  const ALLOWED = ["blade","alexander","dylan","viper","grayson","silas"];
-  const qs = new URLSearchParams(location.search);
-  const man = (qs.get("man") || "").toLowerCase();
-  const chosen = ALLOWED.includes(man) ? man : "blade";
+  /* ---------- tiny utils ---------- */
+  const $ = (sel) => document.querySelector(sel);
+  const params = new URLSearchParams(location.search);
+  const man = (params.get("man") || "blade").toLowerCase();
 
-  const body = document.body;
-  const feed = document.getElementById("feed");
-  const messages = document.getElementById("messages");
-  const portrait = document.getElementById("portrait");
-  const form = document.getElementById("composerForm");
-  const input = document.getElementById("input");
-  const sendBtn = document.getElementById("sendBtn");
+  // image paths (change paths here if you rename)
+  const ART = {
+    blade:     { hero: "/images/characters/blade/blade-chat.webp",     wall: "/images/characters/blade/blade-bg.jpg" },
+    alexander: { hero: "/images/characters/alexander/alexander-chat.webp", wall: "/images/characters/alexander/alexander-bg.jpg" },
+    dylan:     { hero: "/images/characters/dylan/dylan-chat.webp",     wall: "/images/characters/dylan/dylan-bg.jpg" },
+    viper:     { hero: "/images/characters/viper/viper-chat.webp",     wall: "/images/characters/viper/viper-bg.jpg" },
+    grayson:   { hero: "/images/characters/grayson/grayson-chat.webp", wall: "/images/characters/grayson/grayson-bg.jpg" },
+    silas:     { hero: "/images/characters/silas/silas-chat.webp",     wall: "/images/characters/silas/silas-bg.jpg" },
+  };
 
-  const P = window.BBPhrases || {};
-  const M = window.BBMemory || {};
+  function setWall(url){
+    // prefer CSS var so chat.css can control attachment/cover
+    document.documentElement.style.setProperty("--wall-url", `url('${url}')`);
+  }
+  function el(type, cls, text){
+    const n = document.createElement(type);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function scrollToBottom(){
+    const feed = $("#feed");
+    if (!feed) return;
+    feed.scrollTop = feed.scrollHeight;
+  }
+
+  /* ---------- persona brain (phrases) ---------- */
+  const P = (window.BBPhrases || {});
   const PERSONAS = P.PERSONAS || {};
-  const pick = P.pick || ((_, list) => (list && list[0]) || "");
-  const persona = PERSONAS[chosen] || { greet: [], lines: [], nick: [] };
+  const GLOBAL = P.GLOBAL || {};
 
-  // --- visuals --------------------------------------------------------------
-  function preload(src){
-    return new Promise(resolve=>{
-      const img = new Image();
-      img.onload = ()=>resolve({ok:true,src});
-      img.onerror = ()=>resolve({ok:false,src});
-      img.src = src;
+  function greetLine() {
+    if (typeof P.firstLineFor === "function") return P.firstLineFor(man);
+    // fallback if phrases not loaded
+    const opens = (GLOBAL && GLOBAL.openers) || ["hey.", "evening.", "there you are."];
+    return opens[Math.floor(Math.random() * opens.length)];
+  }
+
+  function replyLine() {
+    const p = PERSONAS[man];
+    if (p && Array.isArray(p.lines) && p.lines.length) {
+      // use the no-repeat ring picker if available
+      if (typeof P.pick === "function") return P.pick("line:"+man, p.lines);
+      return p.lines[Math.floor(Math.random() * p.lines.length)];
+    }
+    // fallback blend so it never feels empty
+    const pool = (GLOBAL.smallWords || []).concat(GLOBAL.openers || []);
+    return pool[Math.floor(Math.random() * pool.length)] || "mm.";
+  }
+
+  /* ---------- render ---------- */
+  function bubble(text, who){
+    const feed = $("#feed");
+    if (!feed) return;
+    const b = el("div", "msg " + (who === "me" ? "me" : "them"));
+    b.textContent = text;
+    feed.appendChild(b);
+    scrollToBottom();
+  }
+
+  function banner(text){
+    const feed = $("#feed");
+    if (!feed) return;
+    const b = el("div", "banner", text);
+    feed.appendChild(b);
+    scrollToBottom();
+  }
+
+  /* ---------- composer ---------- */
+  function sendFromComposer(ev){
+    if (ev) ev.preventDefault();
+    const input = $("#input");
+    if (!input) return;
+    const txt = (input.value || "").trim();
+    if (!txt) { input.focus(); return; }
+
+    // you → bubble
+    bubble(txt, "me");
+
+    // naive persona reply (local-only until backend/LLM)
+    window.setTimeout(() => {
+      bubble(replyLine(), "them");
+    }, 450);
+
+    // TODO: persistence (local or Supabase/Azure via adapter)
+    try {
+      if (window.BBMemory && typeof window.BBMemory.store === "function") {
+        window.BBMemory.store({ man, from: "you", text: txt });
+      }
+    } catch (e) { /* non-fatal */ }
+
+    input.value = "";
+    input.focus();
+  }
+
+  function wireComposer(){
+    const form = $("#composerForm");
+    const sendBtn = $("#sendBtn");
+    const input = $("#input");
+    if (!form || !input) return;
+
+    form.addEventListener("submit", sendFromComposer);
+    if (sendBtn) sendBtn.addEventListener("click", sendFromComposer);
+    input.addEventListener("keydown", (e)=>{
+      // allow Enter to send (but Shift+Enter = newline)
+      if (e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendFromComposer();
+      }
     });
   }
-  async function setupVisuals(){
-    const por1 = `/images/characters/${chosen}/${chosen}-chat.webp`;
-    const por2 = `/images/characters/${chosen}/${chosen}-card-on.webp`;
-    const porRes = (await preload(por1)).ok ? por1 :
-                   (await preload(por2)).ok ? por2 : "";
-    if(porRes){ portrait.src = porRes; portrait.alt = cap(chosen) + " portrait"; }
-    else { portrait?.remove(); }
 
-    const bgTry = `/images/characters/${chosen}/${chosen}-bg.jpg`;
-    const bgDefault = `/images/bg/default.webp`;
-    const bgRes = (await preload(bgTry)).ok ? bgTry :
-                  (await preload(bgDefault)).ok ? bgDefault : "";
-    if(bgRes){ body.style.backgroundImage = `url('${bgRes}')`; }
-  }
+  /* ---------- init ---------- */
+  document.addEventListener("DOMContentLoaded", function(){
+    // lock in correct wall + portrait per man
+    const art = ART[man] || ART["blade"];
+    if (art && art.wall) setWall(art.wall);
+    const heroImg = document.querySelector(".hero img, #heroImg");
+    if (heroImg && art && art.hero) heroImg.src = art.hero;
 
-  // --- boyfriend memory helpers --------------------------------------------
-  function saveMessage(from, text){
-    try{ M.saveMessage?.(chosen, from, text); }catch(_){}
-  }
-  function saveFact(k, v){
-    try{ M.saveFact?.(chosen, k, v); }catch(_){}
-  }
-  async function loadHistory(){
-    try{
-      const hist = await M.loadHistory?.(chosen);
-      if(Array.isArray(hist)){
-        hist.forEach(m => appendMessage(m.from_role, m.text, m.ts, false));
-      }
-    }catch(_){}
-  }
+    // system banner + first persona line
+    banner("Welcome. I'm here for you—talk to me.");
+    bubble(greetLine(), "them");
 
-  // --- fact extraction ------------------------------------------------------
-  function ingestFacts(text){
-    const t = " " + text.toLowerCase().trim() + " ";
-    let m;
-    m = t.match(/\b(my name is|i'm|im|call me)\s+([a-z][a-z'-]{1,20})\b/);
-    if(m){ saveFact("name", title(m[2])); }
-    m = t.match(/\b(i (live in|am from|from))\s+([a-z][a-z\s'-]{2,30})\b/);
-    if(m){ saveFact("hometown", title(m[3].trim())); }
-    m = t.match(/\bfavorite (color|drink|song|book|movie|necklace)\s*(is|=)?\s*([a-z0-9\s'-]{2,40})/);
-    if(m){ saveFact(`fav_${m[1]}`, title(m[3].trim())); }
-    m = t.match(/\bi (like|love)\s+([a-z0-9\s'-]{2,40})/);
-    if(m){ saveFact("likes", title(m[2].trim())); }
-    m = t.match(/\b(call me|you can call me)\s+([a-z][a-z\s'-]{2,20})\b/);
-    if(m){ saveFact("pet", title(m[2].trim())); }
-  }
-
-  // --- personalization ------------------------------------------------------
-  async function getFacts(){
-    const f = {};
-    const keys = ["name","pet","hometown","fav_color","fav_drink","fav_song","fav_book","fav_movie","fav_necklace","likes"];
-    for(const k of keys){
-      try{ f[k] = (await M.getFact?.(chosen, k)) || ""; }catch{ f[k] = ""; }
-    }
-    return f;
-  }
-  function nickChoice(f){
-    if(f.pet) return f.pet;
-    const nicks = Array.isArray(persona.nick) ? persona.nick : [];
-    return nicks.length ? pick("nick:"+chosen, nicks) : "";
-  }
-  function personalize(line, f){
-    const replacements = {
-      "{name}": f.name || "",
-      "{pet}": nickChoice(f),
-      "{hometown}": f.hometown || "",
-      "{fav_color}": f.fav_color || "",
-      "{fav_drink}": f.fav_drink || "",
-      "{fav_song}": f.fav_song || "",
-      "{fav_book}": f.fav_book || "",
-      "{fav_movie}": f.fav_movie || "",
-      "{fav_necklace}": f.fav_necklace || "",
-      "{likes}": f.likes || ""
-    };
-    let out = line;
-    for(const k in replacements){ out = out.replaceAll(k, replacements[k]); }
-    if(!/{pet}/.test(line) && Math.random()<0.45 && replacements["{pet}"]){
-      out = out.replace(/\.$/, "") + `, ${replacements["{pet}"]}.`;
-    }
-    return out;
-  }
-
-  // --- messaging ------------------------------------------------------------
-  function appendMessage(from, text, ts, save=true){
-    const bubble = document.createElement("div");
-    bubble.className = `msg ${from === "you" ? "you" : "them"}`;
-    bubble.textContent = text;
-    const meta = document.createElement("span");
-    meta.className = "meta";
-    meta.textContent = timeNow();
-    bubble.appendChild(document.createTextNode(" "));
-    bubble.appendChild(meta);
-    messages.appendChild(bubble);
-    if(save) saveMessage(from, text);
-    requestAnimationFrame(scrollToBottom);
-  }
-
-  async function greetIfEmpty(){
-    const has = messages && messages.querySelector(".msg");
-    if(!has){
-      const f = await getFacts();
-      const line = P.firstLineFor ? P.firstLineFor(chosen) : "there you are.";
-      appendMessage("them", personalize(line, f));
-    }
-  }
-
-  async function botReply(userText){
-    ingestFacts(userText);
-    const f = await getFacts();
-    const pool = [].concat(persona.lines || []);
-    let line = pool.length ? pick("lines:"+chosen, pool) : (P.GLOBAL?.openers ? pick("open", P.GLOBAL.openers) : "i'm here.");
-    const t = userText.trim();
-    if(/\?$/.test(t) && Math.random()<0.5){
-      line = line.replace(/\.$/,"") + " give me a beat more detail.";
-    }
-    return personalize(line, f);
-  }
-
-  async function sendFromComposer(){
-    const val = (input.value || "").trim();
-    if(!val) return;
-    appendMessage("you", val);
-    input.value = "";
-    input.focus({preventScroll:true});
-    const reply = await botReply(val);
-    setTimeout(()=> appendMessage("them", reply), 300);
-  }
-
-  function scrollToBottom(){ feed.scrollTop = feed.scrollHeight; }
-  function timeNow(){ const d=new Date(); return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`; }
-  function title(s){ return s.split(/\s+/).map(cap).join(" "); }
-  function cap(s){ return s? s[0].toUpperCase()+s.slice(1):""; }
-
-  // --- events ---------------------------------------------------------------
-  form.addEventListener("submit", e=>{ e.preventDefault(); sendFromComposer(); });
-  sendBtn.addEventListener("click", e=>{ e.preventDefault(); sendFromComposer(); });
-  input.addEventListener("focus", ()=> setTimeout(scrollToBottom, 50));
-
-  // --- boot -----------------------------------------------------------------
-  setupVisuals().then(async ()=>{
-    await loadHistory();
-    await greetIfEmpty();
+    // wire composer
+    wireComposer();
     scrollToBottom();
   });
 })();
