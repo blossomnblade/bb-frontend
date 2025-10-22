@@ -40,6 +40,9 @@ const ART = {
   }
 
   /* ---------- persona brain (phrases) ---------- */
+  // Multilingual rule to be included in the LLM system prompt once wired:
+const MULTILINGUAL_RULE = "Always reply in the user's language. Detect the language from the user's last message; if uncertain, default to English.";
+ 
   const P = (window.BBPhrases || {});
   const PERSONAS = P.PERSONAS || {};
   const GLOBAL = P.GLOBAL || {};
