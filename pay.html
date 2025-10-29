@@ -1,65 +1,101 @@
-<!-- Day Pass -->
-<section id="daypass" class="plan" aria-labelledby="daypass-title">
-  <h2 id="daypass-title">Day Pass — 24 hours</h2>
-  <div class="price">$7.99</div>
-  <p>Pick one man for 24 hours. No auto-renew. Instant access.</p>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blossom & Blade — Pay</title>
 
-  <div class="select-man">
-    <label for="manChoice">Who do you want today?</label>
-    <select id="manChoice" name="manChoice">
-      <option value="blade">Blade</option>
-      <option value="silas">Silas</option>
-      <option value="dylan">Dylan</option>
-      <option value="alexander">Alexander</option>
-      <option value="grayson">Grayson</option>
-      <option value="viper">Viper</option>
-    </select>
-  </div>
+  <!-- If your main stylesheet is different, change this path -->
+  <link rel="stylesheet" href="styles/chat.css?v=pay-20251029" />
+</head>
+<body>
+  <main class="container">
 
-  <div class="checks">
-    <label><input type="checkbox" id="dp18"> I confirm I am 18+.</label>
-    <label><input type="checkbox" id="dpTerms"> I agree to the <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.</label>
-    <label><input type="checkbox" id="dpAI"> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
-    <label><input type="checkbox" id="dpRefund"> I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.</label>
-    <label>
-      <input type="checkbox" required>
-      I agree that all chats must comply with Blossom & Blade’s 
-      <a href="safety.html" target="_blank">Prohibited Content & Safety Policy</a>.
-    </label>
-  </div>
+    <!-- =========================
+         Day Pass
+    ========================== -->
+    <section id="daypass" class="plan" aria-labelledby="daypass-title">
+      <h2 id="daypass-title">Day Pass — 24 hours</h2>
+      <div class="price">$7.99</div>
+      <p>Pick one man for 24 hours. No auto-renew. Instant access.</p>
 
-  <div class="row-actions">
-    <a id="btnDay" class="btn" href="#" aria-disabled="true">Pay $7.99</a>
-    <a class="btn" href="#monthly">See Monthly</a>
-  </div>
+      <div class="select-man">
+        <label for="manChoice">Who do you want today?</label>
+        <select id="manChoice" name="manChoice">
+          <option value="blade">Blade</option>
+          <option value="silas">Silas</option>
+          <option value="alexander">Alexander</option>
+          <option value="grayson">Grayson</option>
+          <option value="viper">Viper</option>
+          <option value="dylan">Dylan</option>
+        </select>
+      </div>
 
-  <p class="muted" style="color: var(--muted); margin-top: 10px;">
-    After payment: no extra prompts—straight to your room.
-  </p>
-</section>
+      <div class="checks">
+        <label><input type="checkbox" id="dp18"> I confirm I am 18+.</label>
+        <label><input type="checkbox" id="dpTerms"> I agree to the
+          <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.
+        </label>
+        <label><input type="checkbox" id="dpAI"> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
+        <label><input type="checkbox" id="dpRefund">
+          I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.
+        </label>
+        <label>
+          <input type="checkbox" id="dpSafety" required>
+          I agree that all chats must comply with Blossom & Blade’s
+          <a href="safety.html" target="_blank">Prohibited Content &amp; Safety Policy</a>.
+        </label>
+      </div>
 
+      <div class="row-actions">
+        <a id="btnDay" class="btn" href="#" aria-disabled="true">Pay $7.99</a>
+        <a class="btn" href="#monthly">See Monthly</a>
+      </div>
 
-<!-- Monthly -->
-<section id="monthly" class="plan" aria-labelledby="monthly-title">
-  <h2 id="monthly-title">Monthly — All 6 men</h2>
-  <div class="price">$14.99</div>
-  <p>$1 is donated to DV support. Swap men anytime. Optional auto-renew.</p>
+      <p class="muted" style="color: var(--muted); margin-top: 10px;">
+        After payment: no extra prompts—straight to your room.
+      </p>
+    </section>
 
-  <div class="checks">
-    <label><input type="checkbox" id="mo18"> I confirm I am 18+.</label>
-    <label><input type="checkbox" id="moTerms"> I agree to the <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.</label>
-    <label><input type="checkbox" id="moAI"> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
-    <label><input type="checkbox" id="moRefund"> I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.</label>
-    <label>
-      <input type="checkbox" required>
-      I agree that all chats must comply with Blossom & Blade’s 
-      <a href="safety.html" target="_blank">Prohibited Content & Safety Policy</a>.
-    </label>
-    <label><input type="checkbox" id="moAuto"> Auto-renew monthly (you can turn this off anytime).</label>
-  </div>
+    <!-- =========================
+         Monthly
+    ========================== -->
+    <section id="monthly" class="plan" aria-labelledby="monthly-title">
+      <h2 id="monthly-title">Monthly — All 6 men</h2>
+      <div class="price">$14.99</div>
+      <p>$1 is donated to DV support. Swap men anytime. Optional auto-renew.</p>
 
-  <div class="row-actions">
-    <a id="btnMonthly" class="btn" href="#" aria-disabled="true">Pay $14.99</a>
-    <a class="btn" href="#daypass">See Day Pass</a>
-  </div>
-</section>
+      <div class="checks">
+        <label><input type="checkbox" id="mo18"> I confirm I am 18+.</label>
+        <label><input type="checkbox" id="moTerms"> I agree to the
+          <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.
+        </label>
+        <label><input type="checkbox" id="moAI"> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
+        <label><input type="checkbox" id="moRefund">
+          I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.
+        </label>
+        <label>
+          <input type="checkbox" id="moSafety" required>
+          I agree that all chats must comply with Blossom & Blade’s
+          <a href="safety.html" target="_blank">Prohibited Content &amp; Safety Policy</a>.
+        </label>
+        <label><input type="checkbox" id="moAuto"> Auto-renew monthly (you can turn this off anytime).</label>
+      </div>
+
+      <div class="row-actions">
+        <a id="btnMonthly" class="btn" href="#" aria-disabled="true">Pay $14.99</a>
+        <a class="btn" href="#daypass">See Day Pass</a>
+      </div>
+    </section>
+
+    <!-- Optional footer hint -->
+    <p class="muted" style="margin-top: 24px;">
+      Questions or comments: blossomnblade1@gmail.com
+    </p>
+
+  </main>
+
+  <!-- If you previously had a script to enable/disable the Pay buttons after checkboxes, include it here -->
+  <!-- <script src="scripts/pay.js" defer></script> -->
+</body>
+</html>
