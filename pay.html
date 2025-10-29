@@ -2,36 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blossom & Blade — Pay</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blossom & Blade — Access</title>
 
-  <!-- Use the SAME links as index.html -->
-  <link rel="stylesheet" href="/styles/chat.css?v=payfix-20251029" />
-  <!-- If your site also has a main.css, mirror it here: -->
-  <!-- <link rel="stylesheet" href="/styles/main.css?v=payfix-20251029" /> -->
-
-  <link rel="icon" href="/favicon.ico" />
-  <meta name="theme-color" content="#111" />
+  <link rel="stylesheet" href="/styles/home.css?v=3" />
+  <link rel="stylesheet" href="/styles/chat.css?v=3" />
 </head>
 <body class="bb theme-dark">
   <main class="container paywall">
 
-    <header class="page-header">
-      <h1 class="site-title">Blossom &amp; Blade</h1>
-      <p class="subtitle">Choose your access</p>
-    </header>
+    <h1 class="site-title">Choose Your Access</h1>
 
-    <!-- =========================
-         Day Pass
-    ========================== -->
-    <section id="daypass" class="plan card" aria-labelledby="daypass-title">
-      <h2 id="daypass-title">Day Pass — 24 hours</h2>
+    <!-- DAY PASS -->
+    <section id="daypass" class="plan">
+      <h2>Day Pass — 24 hours</h2>
       <div class="price">$7.99</div>
-      <p>Pick one man for 24 hours. No auto-renew. Instant access after payment.</p>
+      <p>Pick one man for 24 hours. No auto-renew. Instant access.</p>
 
       <div class="select-man">
         <label for="manChoice">Who do you want today?</label>
-        <select id="manChoice" name="manChoice">
+        <select id="manChoice">
           <option value="blade">Blade</option>
           <option value="silas">Silas</option>
           <option value="alexander">Alexander</option>
@@ -42,71 +32,40 @@
       </div>
 
       <div class="checks">
-        <label><input type="checkbox" id="dp18"> I confirm I am 18+.</label>
-        <label><input type="checkbox" id="dpTerms"> I agree to the
-          <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and
-          <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.
-        </label>
-        <label><input type="checkbox" id="dpAI"> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
-        <label><input type="checkbox" id="dpRefund"> I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.</label>
-        <label>
-          <input type="checkbox" id="dpSafety" required>
-          I agree that all chats must comply with Blossom &amp; Blade’s
-          <a href="/safety.html" target="_blank" rel="noopener">Prohibited Content &amp; Safety Policy</a>.
-        </label>
+        <label><input type="checkbox"> I confirm I am 18+.</label>
+        <label><input type="checkbox"> I agree to the <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.</label>
+        <label><input type="checkbox"> I understand all chats are AI-only and fantasy-forward with safety filters.</label>
+        <label><input type="checkbox"> I understand purchases are <strong>non-refundable after 24 hours</strong>.</label>
+        <label><input type="checkbox" required> I agree that all chats must comply with <a href="/safety.html" target="_blank">Prohibited Content &amp; Safety Policy</a>.</label>
       </div>
 
       <div class="row-actions">
-        <!-- Correct button for Day Pass -->
-        <a id="btnDay" class="btn btn-primary" href="#" aria-disabled="true">Pay $7.99</a>
+        <a class="btn btn-primary" href="#">Pay $7.99</a>
         <a class="btn btn-secondary" href="#monthly">See Monthly</a>
       </div>
-
-      <p class="muted" style="color:var(--muted);margin-top:10px;">
-        After payment: straight to your room. No extra forms.
-      </p>
     </section>
 
-    <!-- =========================
-         Monthly
-    ========================== -->
-    <section id="monthly" class="plan card" aria-labelledby="monthly-title">
-      <h2 id="monthly-title">Monthly — All 6 men</h2>
+    <!-- MONTHLY -->
+    <section id="monthly" class="plan">
+      <h2>Monthly — All 6 Men</h2>
       <div class="price">$14.99</div>
       <p>$1 is donated to DV support. Swap men anytime. Optional auto-renew.</p>
 
       <div class="checks">
-        <label><input type="checkbox" id="mo18"> I confirm I am 18+.</label>
-        <label><input type="checkbox" id="moTerms"> I agree to the
-          <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and
-          <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.
-        </label>
-        <label><input type="checkbox" id="moAI"> I understand all chats are AI-only, private to me, and fantasy-forward with safety filters.</label>
-        <label><input type="checkbox" id="moRefund"> I understand purchases are <strong>non-refundable after 24 hours</strong>. Within 24 hours, refunds are only for verified technical access failures.</label>
-        <label>
-          <input type="checkbox" id="moSafety" required>
-          I agree that all chats must comply with Blossom &amp; Blade’s
-          <a href="/safety.html" target="_blank" rel="noopener">Prohibited Content &amp; Safety Policy</a>.
-        </label>
-        <label><input type="checkbox" id="moAuto"> Auto-renew monthly (you can turn this off anytime).</label>
+        <label><input type="checkbox"> I confirm I am 18+.</label>
+        <label><input type="checkbox"> I agree to the <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.</label>
+        <label><input type="checkbox"> I understand all chats are AI-only and fantasy-forward with safety filters.</label>
+        <label><input type="checkbox"> I understand purchases are <strong>non-refundable after 24 hours</strong>.</label>
+        <label><input type="checkbox" required> I agree that all chats must comply with <a href="/safety.html" target="_blank">Prohibited Content &amp; Safety Policy</a>.</label>
+        <label><input type="checkbox"> Auto-renew monthly (you can turn this off anytime).</label>
       </div>
 
       <div class="row-actions">
-        <!-- Correct button for Monthly -->
-        <a id="btnMonthly" class="btn btn-primary" href="#" aria-disabled="true">Pay $14.99</a>
+        <a class="btn btn-primary" href="#">Pay $14.99</a>
         <a class="btn btn-secondary" href="#daypass">See Day Pass</a>
       </div>
     </section>
 
-    <footer class="page-footer">
-      <p class="muted">Questions or comments:
-        <a href="mailto:blossomnblade1@gmail.com">blossomnblade1@gmail.com</a>
-      </p>
-    </footer>
-
   </main>
-
-  <!-- Keep your existing logic file if you have one -->
-  <script src="/scripts/pay.js" defer></script>
 </body>
 </html>
