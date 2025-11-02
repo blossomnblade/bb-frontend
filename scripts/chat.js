@@ -91,6 +91,25 @@ const MULTILINGUAL_RULE = "Always reply in the user's language. Detect the langu
     if (!input) return;
     const txt = (input.value || "").trim();
     if (!txt) { input.focus(); return; }
+  // --- SAFETY FILTER ---
+  if (window.Safety) {
+    if (!window.Safety.ready) {
+      await window.Safety.load();
+    }
+    const check = window.Safety.check(txt);
+    if (check.blocked) {
+      const warn = document.getElementById("safetyWarn");
+      if (warn) {
+        warn.style.display = "block";
+        warn.innerHTML =
+          "<strong>Content blocked.</strong> This chat follows our " +
+          '<a href="/safety.html" style="color:#f88;">Prohibited Content &amp; Safety Policy</a>.';
+      }
+      input.value = "";
+      return; // stop send
+    }
+  }
+  // --- END SAFETY FILTER ---
 
     // you → bubble
     bubble(txt, "me");
