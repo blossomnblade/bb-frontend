@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "version": 1,
+    "updated": "2025-11-02",
+    "note": "Client-side guardrail. Backend should still enforce server-side safety."
+  },
+  "regex": [
+    {
+      "id": "minor_age",
+      "pattern": "(?i)\\b(under\\s*18|minor|underage|1[0-7])\\b",
+      "reason": "No minors or references implying <18."
+    },
+    {
+      "id": "incest",
+      "pattern": "(?i)\\b(mom|mother|father|sis|sister|bro|brother|step(mom|mother|father|sis|sister|bro|brother))\\b.*\\b(sex|sexual|nude|naked|sleep with|make out)\\b",
+      "reason": "Incest/step-incest disallowed."
+    },
+    {
+      "id": "bestiality",
+      "pattern": "(?i)\\b(zoophilia|bestiality|sex\\s*with\\s*animals?)\\b",
+      "reason": "Bestiality disallowed."
+    },
+    {
+      "id": "nonconsent",
+      "pattern": "(?i)\\b(real\\s*rape|drug\\s*her|unconscious\\s*sex|no\\s*consent)\\b",
+      "reason": "Real-world non-consensual content disallowed."
+    },
+    {
+      "id": "trafficking",
+      "pattern": "(?i)\\b(traffick|sell\\s*(her|him)|pimp|grooming)\\b",
+      "reason": "Exploitation/trafficking disallowed."
+    }
+  ],
+  "terms": [
+    { "id": "doxxing", "term": "doxx", "reason": "PII/doxxing disallowed." }
+  ],
+  "allowlist": [
+    "consent", "consensual", "fantasy-only", "age-verified"
+  ]
+}
