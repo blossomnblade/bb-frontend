@@ -1,70 +1,97 @@
-/* home.css — v18
-   Default wallpaper on landing + unified buttons + dark form controls.
-   Chat backgrounds remain in styles/chat.css only. */
-:root {
-  /* Winter theme background and overlay */
+/* home.css — v19 (Winter theme + non-chat background)
+   ------------------------------------------------------------------
+   - Global theme tokens
+   - Non-chat pages get the winter background
+   - Chat page backgrounds remain controlled by styles/chat.css
+   - Preserves your grid, cards, buttons, forms, and utilities
+   ------------------------------------------------------------------ */
+
+/* =========================
+   THEME TOKENS
+   ========================= */
+:root{
+  /* Background image + overlay darkness (0.45–0.65 recommended) */
   --site-bg-image: url('../images/bg/bg_winter_v1.webp');
-  --site-bg-overlay: rgba(0, 0, 0, 0.55); /* tweak 0.45–0.65 for lighter/darker overlay */
+  --site-bg-overlay: rgba(0,0,0,0.55);
+
+  /* Color system */
+  --bg:#0a0a0a;          /* base dark */
+  --ink:#f4f4f4;         /* primary text */
+  --muted:#bdb8b2;       /* secondary text */
+  --line:#2a2a2a;        /* subtle borders */
+  --accent:#d88cff;      /* winter violet-pink */
+  --card:#111214;        /* panel/card bg */
+  --button:#7e6ea1;      /* control bg */
+
+  /* Effects */
+  --radius:14px;
+  --shadow:0 10px 30px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.03) inset;
+  --btn-grad:linear-gradient(180deg,#a67bcc,#8757b0);
+  --focus:0 0 3px rgba(216,140,255,.4);
 }
 
-/* ===== Theme tokens ===== */
-:root {
-  --bg: #0a0a0a;             /* dark neutral base */
-  --ink: #f4f4f4;            /* off-white text */
-  --muted: #bdb8b2;          /* soft grey-beige for secondary text */
-  --line: #2a2a2a;           /* subtle divider lines */
-  --accent: #d88cff;         /* muted violet-pink accent */
-  --card: #111214;           /* background for cards/boxes */
-  --button: #7e6ea1;         /* winter violet button base */
-  --radius: 14px;
-  --shadow: 0 10px 30px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.03) inset;
-  --btn-grad: linear-gradient(180deg, #a67bcc, #8757b0); /* softer gradient */
-  --focus: 0 0 3px rgba(216,140,255,0.4);
-}
+/* =========================
+   BASE
+   ========================= */
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+html{ -webkit-text-size-adjust:100%; }
 
-/* ===== Base ===== */
-* { box-sizing:border-box; }
-html,body { height:100%; }
-html { -webkit-text-size-adjust:100%; }
-
-/* Default site wallpaper for non-chat pages */
 body{
   margin:0;
   color:var(--ink);
-  font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  background-color:var(--bg);
- background-image: url("../images/bg/bg_winter_v1.webp");
-
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
-  background-repeat:no-repeat;
+  background-color:var(--bg); /* safe base; chat.css will override on chat pages */
+  font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
 }
 
-/* Optional: paywall-specific wallpaper hook (no HTML changes yet) */
-body.paywall{
-background-image: url("../images/bg/bg_winter_v1.webp");
- 
+/* Site background for NON-chat pages only */
+body:not(.chat){
+  background:
+    linear-gradient(var(--site-bg-overlay), var(--site-bg-overlay)),
+    var(--site-bg-image) center / cover no-repeat fixed;
 }
 
+/* Links / images */
 a{ color:var(--ink); text-decoration:none; }
+a:hover{ filter:brightness(1.06); }
 img{ max-width:100%; display:block; }
 
+/* Container */
 .container{
-  width:min(1200px, 92vw);
+  width:min(1200px,92vw);
   margin:0 auto;
   padding:20px 0 56px;
 }
 
-/* ===== Header with Plans button ===== */
+/* =========================
+   HEADER
+   ========================= */
 .site-header{
   display:flex; align-items:center; justify-content:space-between;
   gap:16px; padding:18px 0;
 }
-.brand{ font-weight:700; letter-spacing:.3px; font-size:20px; }
+.brand{
+  font-weight:800;
+  letter-spacing:.3px;
+  font-size:clamp(28px,2.2vw + 10px,44px);
+  color:var(--ink);
+  text-shadow:0 1px 2px rgba(0,0,0,.35);
+}
 .header-actions{ display:flex; align-items:center; gap:10px; }
+.site-header .header-actions a,
+.site-header nav a{ color:#fff; }
 
-/* ===== Announcement band ===== */
+/* Optional tagline under H1 (index & pay) */
+.tagline{
+  margin:-6px 0 14px;
+  color:#b8a7a7;
+  font-style:italic;
+  font-size:.95rem;
+}
+
+/* =========================
+   ANNOUNCEMENT BAND
+   ========================= */
 .announce{
   margin:8px 0 20px;
   border:1px solid var(--line);
@@ -74,15 +101,22 @@ img{ max-width:100%; display:block; }
   text-align:center;
   color:var(--muted);
 }
+.landing .announce{ color:var(--ink); }
+.landing .announce a{ color:var(--ink); text-decoration:underline; }
 
-/* ===== Card grid (landing) ===== */
+/* =========================
+   GRID / CARDS (landing)
+   ========================= */
 .grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
+  gap:24px;
+  grid-template-columns:repeat(2,minmax(0,1fr)); /* phones */
+  align-items:stretch;
 }
-@media (max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr); } }
-@media (max-width:560px){ .grid{ grid-template-columns:1fr; } }
+@media (min-width:768px){ .grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (min-width:1024px){ .grid{ grid-template-columns:repeat(4,minmax(0,1fr)); } }
+@media (min-width:1280px){ .grid{ grid-template-columns:repeat(6,minmax(0,1fr)); } }
+@media (min-width:1440px){ .container{ max-width:1500px; } }
 
 .card{
   background:var(--card);
@@ -93,22 +127,22 @@ img{ max-width:100%; display:block; }
 }
 .card .pic{
   position:relative;
-  aspect-ratio: 4/5;
+  aspect-ratio:4/5;
   background:#000; /* safety base */
 }
-.card .pic img{
-  width:100%; height:100%; object-fit:cover;
-}
+.card .pic img{ width:100%; height:100%; object-fit:cover; }
 .card .body{
   padding:14px;
   display:flex; align-items:center; justify-content:space-between; gap:10px;
 }
 
-/* ===== Landing BG kill-switch (prevents any cached per-man BG on landing) ===== */
+/* Kill any leftover per-card BG rules from older builds */
 .card .pic{ background-image:none !important; }
 .card .pic img{ display:block !important; }
 
-/* ===== Buttons (unified) ===== */
+/* =========================
+   BUTTONS
+   ========================= */
 button,
 .btn,
 a.btn,
@@ -124,35 +158,27 @@ input[type="button"]{
   letter-spacing:.2px;
   box-shadow:var(--shadow);
   cursor:pointer;
-  transition: transform .04s ease, filter .15s ease, opacity .15s ease;
+  transition:transform .04s ease, filter .15s ease, opacity .15s ease;
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
 }
 button:hover,
 .btn:hover,
 a.btn:hover,
 input[type="submit"]:hover,
-input[type="button"]:hover{
-  filter:saturate(1.06) brightness(1.02);
-}
+input[type="button"]:hover{ filter:saturate(1.06) brightness(1.02); }
 button:active,
 .btn:active,
 a.btn:active,
 input[type="submit"]:active,
-input[type="button"]:active{
-  transform: translateY(1px) scale(.997);
-}
+input[type="button"]:active{ transform:translateY(1px) scale(.997); }
 button:focus-visible,
 .btn:focus-visible,
 a.btn:focus-visible,
 input[type="submit"]:focus-visible,
-input[type="button"]:focus-visible{
-  outline:none; box-shadow:var(--focus);
-}
-button[disabled],
-.btn[disabled],
-input[disabled]{ opacity:.55; cursor:not-allowed; }
+input[type="button"]:focus-visible{ outline:none; box-shadow:var(--focus); }
+button[disabled], .btn[disabled], input[disabled]{ opacity:.55; cursor:not-allowed; }
 
-/* Ghost buttons still dark, not white */
+/* Ghost button */
 .btn-ghost{
   background:transparent;
   color:var(--ink);
@@ -160,7 +186,9 @@ input[disabled]{ opacity:.55; cursor:not-allowed; }
 }
 .btn-ghost:hover{ background:rgba(255,255,255,.03); }
 
-/* ===== Form controls (dark; no white boxes) ===== */
+/* =========================
+   FORMS (dark)
+   ========================= */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -174,8 +202,7 @@ textarea{
   padding:12px 12px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
 }
-input:focus-visible,
-textarea:focus-visible{ outline:none; box-shadow:var(--focus); }
+input:focus-visible, textarea:focus-visible{ outline:none; box-shadow:var(--focus); }
 
 /* Selects */
 select{
@@ -190,28 +217,30 @@ select{
     linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.06)),
     url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
   background-repeat:no-repeat,no-repeat;
-  background-position: 0 0, right 12px center;
-  background-size: auto, 18px 18px;
+  background-position:0 0, right 12px center;
+  background-size:auto,18px 18px;
 }
 select:focus-visible{ outline:none; box-shadow:var(--focus); }
 select::-ms-expand{ display:none; }
 
-/* Checkboxes / radios — use pink accent */
+/* Checkboxes / radios use accent */
 input[type="checkbox"],
 input[type="radio"]{
   width:18px; height:18px;
-  accent-color: var(--accent);
+  accent-color:var(--accent);
   cursor:pointer;
 }
 label{ color:var(--ink); }
 
-/* Helper rows */
+/* Helpers */
 .row{ display:flex; gap:10px; flex-wrap:wrap; }
 .spacer{ height:12px; }
 
-/* Paywall containers (look only) */
+/* =========================
+   PAYWALL LOOK (containers only)
+   ========================= */
 .plan{
-  background: rgba(255,255,255,.02);
+  background:rgba(255,255,255,.02);
   border:1px solid var(--line);
   border-radius:24px;
   padding:18px;
@@ -219,7 +248,9 @@ label{ color:var(--ink); }
 }
 .price{ font-size:28px; font-weight:800; }
 
-/* Footer / support strip */
+/* =========================
+   FOOTER / SUPPORT
+   ========================= */
 .footer{
   margin-top:40px;
   border-top:1px solid var(--line);
@@ -228,105 +259,47 @@ label{ color:var(--ink); }
   font-size:14px;
 }
 
-/* Utilities */
+/* =========================
+   UTILITIES
+   ========================= */
 .hidden{ display:none !important; }
 .center{ text-align:center; }
 .right{ text-align:right; }
 
-/* Mobile tap targets */
+/* Mobile targets */
 @media (hover:none){
-  button, .btn, a.btn, input[type="submit"], input[type="button"]{ padding:14px 18px; }
-  select, input, textarea{ padding:14px 14px; }
-}
-/* ===== 6-across desktop override (safe) ===== */
-.grid{
-  display:grid;
-  gap:24px;
-  grid-template-columns: repeat(2, minmax(0,1fr)); /* phones */
-  align-items: stretch;
-}
-.card{ width:100%; }
-
-/* tablet */
-@media (min-width: 768px){
-  .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+  button,.btn,a.btn,input[type="submit"],input[type="button"]{ padding:14px 18px; }
+  select,input,textarea{ padding:14px 14px; }
 }
 
-/* small laptop */
-@media (min-width: 1024px){
-  .grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
-}
+/* =========================
+   LANDING / LEGAL QUALITY OF LIFE
+   ========================= */
+.landing .announce a{ text-decoration:underline; }
+.panel, .panel p, .panel li{ color:var(--ink); }
+.panel a{ color:var(--ink); text-decoration:underline; }
+.legal a{ color:var(--ink); text-decoration:underline; }
 
-/* big laptop / desktop — make it six across */
-@media (min-width: 1280px){
-  .grid{ grid-template-columns: repeat(6, minmax(0,1fr)); }
-}
-
-/* give the outer container room so six columns fit comfortably */
-@media (min-width: 1440px){
-  .container{ max-width: 1500px; }
-}
-/* ===== GRID: force six across on big screens (safe override) ===== */
-.grid{
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(2, minmax(0,1fr)); /* phones */
-  align-items: stretch;
-}
-
-/* tablet */
-@media (min-width: 768px){
-  .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
-}
-
-/* small laptop */
-@media (min-width: 1024px){
-  .grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
-}
-
-/* big laptop / desktop */
-@media (min-width: 1280px){
-  .grid{ grid-template-columns: repeat(6, minmax(0,1fr)); }
-}
-
-/* give the layout some breathing room on very wide screens */
-@media (min-width: 1440px){
-  .container{ max-width: 1500px; }
-}
-/* ==== Header brand: larger + bright ==== */
-.site-header .brand{
-  font-weight: 800;
-  letter-spacing: .3px;
-  /* scales with screen; caps nicely */
-  font-size: clamp(28px, 2.2vw + 10px, 44px);
-  color: var(--ink); /* #eee from your vars */
-}
-
-/* ==== Landing readability: bright text on the chalkboard ==== */
-.landing .announce{ color: var(--ink); }
-.landing .announce a{ color: var(--ink); text-decoration: underline; }
-
-/* General text blocks (your glass panels / checklists) */
-.panel, .panel p, .panel li{ color: var(--ink); }
-.panel a{ color: var(--ink); text-decoration: underline; }
-
-/* Legal pages links stay readable too */
-.legal a{ color: var(--ink); text-decoration: underline; }
-/* ---- Brand header: larger + white across site ---- */
-.site-header .brand {
-  color: #fff !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,.35);
-  font-weight: 600;
-  letter-spacing: .5px;
-  /* Scales nicely from phones to desktop */
-  font-size: clamp(20px, 2.2vw + 10px, 40px);
-}
-.site-header .header-actions a,
-.site-header nav a {
-  color: #fff !important;
-}
-/* Hide Terms / Privacy links on the landing page only */
+/* Hide Terms/Privacy links on LANDING only (keeps hero clean) */
 .landing a[href="/terms.html"],
-.landing a[href="/privacy.html"]{
-  display: none !important;
+.landing a[href="/privacy.html"]{ display:none !important; }
+
+/* =========================
+   REDUNDANCY GUARDS
+   - prevent older cached rules from re-introducing the old graffiti BG
+   ========================= */
+body{
+  background-image: none; /* baseline */
 }
+body:not(.chat){
+  background-image:
+    linear-gradient(var(--site-bg-overlay), var(--site-bg-overlay)),
+    var(--site-bg-image);
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+}
+
+/* Ensure no card/panel tries to set a page wallpaper */
+[class*="wallpaper"], [data-wallpaper]{ background-image:none !important; }
