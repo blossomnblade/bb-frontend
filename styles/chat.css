@@ -72,3 +72,66 @@ body.chat{
 
 /* Safety: prevent any leftover page-specific wallpaper from bleeding in */
 [class*="wallpaper"], [data-wallpaper]{ background-image:none !important; }
+/* === Two-column chat layout (portrait + chat) === */
+.chat-shell{
+  display: grid;
+  grid-template-columns: minmax(260px, 420px) 1fr;
+  gap: 24px;
+  align-items: start;
+  max-width: min(1200px, 94vw);
+  margin: 20px auto 40px;
+}
+
+/* Portrait panel */
+.hero{ position: sticky; top: 20px; }
+#heroImg{
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+
+/* Chat panel look */
+.chat-col{
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  padding: 14px;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+
+/* Chat feed area */
+#feed{
+  min-height: 60vh;
+  padding: 12px;
+  overflow: auto;
+}
+
+/* Composer row */
+.composer-wrap form{ display: flex; gap: 10px; }
+#input{
+  flex: 1;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  padding: 12px 14px;
+  color: #f4f4f4;
+}
+#sendBtn{
+  background: var(--btn-grad, linear-gradient(180deg,#a67bcc,#8757b0));
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  cursor: pointer;
+}
+
+/* Mobile: stack columns */
+@media (max-width: 900px){
+  .chat-shell{ grid-template-columns: 1fr; }
+  .hero{ position: static; }
+}
