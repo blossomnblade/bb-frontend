@@ -85,7 +85,8 @@ const MULTILINGUAL_RULE = "Always reply in the user's language. Detect the langu
   }
 
   /* ---------- composer ---------- */
-  function sendFromComposer(ev){
+  async function sendFromComposer(ev){
+
     if (ev) ev.preventDefault();
     const input = $("#input");
     if (!input) return;
