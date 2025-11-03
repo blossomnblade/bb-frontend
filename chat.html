@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Chat — Blossom N Blade</title>
-  <link rel="preload" as="image" href="/images/bg/default.webp">
+  <link rel="preload" as="image" href="/images/bg/bg_winter_v1.webp">
   <link rel="stylesheet" href="/styles/chat.css?v=7" />
 </head>
 <body class="chat">
@@ -27,19 +27,18 @@
 
       <!-- Composer pinned at bottom -->
       <div class="composer-wrap">
-      <form id="composerForm" class="composer" autocomplete="off"
-      onsubmit="event.preventDefault(); document.getElementById('sendBtn').click();">
-  
+        <form id="composerForm" class="composer" autocomplete="off"
+              onsubmit="event.preventDefault(); document.getElementById('sendBtn').click();">
           <input id="input" type="text" placeholder="Type a message…" inputmode="text" />
           <button id="sendBtn" type="submit">Send</button>
         </form>
-       <div id="safetyWarn"
-  style="display:none; margin:10px 0; padding:10px 14px; border-radius:6px;
-  background:#1a1a1a; color:#f88; font-size:0.9rem; border:1px solid #f88; text-align:center;">
-  <strong>Content blocked.</strong> This chat follows our
-  <a href="/safety.html" style="color:#ff6f91; text-decoration:underline;">Prohibited Content &amp; Safety Policy</a>.
-</div>
 
+        <div id="safetyWarn"
+          style="display:none; margin:10px 0; padding:10px 14px; border-radius:6px;
+          background:#1a1a1a; color:#f88; font-size:0.9rem; border:1px solid #f88; text-align:center;">
+          <strong>Content blocked.</strong> This chat follows our
+          <a href="/safety.html" style="color:#ff6f91; text-decoration:underline;">Prohibited Content &amp; Safety Policy</a>.
+        </div>
       </div>
     </section>
   </main>
@@ -47,29 +46,29 @@
   <!-- PERSONA PHRASES + MEMORY CONFIG MUST LOAD BEFORE chat.js -->
   <script src="/scripts/phrases.js?v=3"></script>
   <script src="/scripts/memory-config.js?v=1"></script>
- <script src="/scripts/safety.js"></script> 
-<script type="module" src="/scripts/chat.js?v=8"></script>
+  <!-- safety.js removed because it causes 404 -->
+  <script type="module" src="/scripts/chat.js?v=8"></script>
 
- <script>
-(() => {
-  // Map just the portrait files (we'll do wallpaper next)
-  const PORTRAIT = {
-    blade:     '/images/characters/blade/blade-chat.webp',
-    alexander: '/images/characters/alexander/alexander-chat.webp',
-    grayson:   '/images/characters/grayson/grayson-chat.webp',
-    dylan:     '/images/characters/dylan/dylan-chat.webp',
-    silas:     '/images/characters/silas/silas-chat.webp',
-    viper:     '/images/characters/viper/viper-chat.webp'
-  };
+  <script>
+  (() => {
+    // Map just the portrait files (we'll do wallpaper next)
+    const PORTRAIT = {
+      blade:     '/images/characters/blade/blade-chat.webp',
+      alexander: '/images/characters/alexander/alexander-chat.webp',
+      grayson:   '/images/characters/grayson/grayson-chat.webp',
+      dylan:     '/images/characters/dylan/dylan-chat.webp',
+      silas:     '/images/characters/silas/silas-chat.webp',
+      viper:     '/images/characters/viper/viper-chat.webp'
+    };
 
-  const params = new URLSearchParams(location.search);
-  const key = (params.get('man') || '').toLowerCase();
-  const src = PORTRAIT[key] || PORTRAIT.blade;
+    const params = new URLSearchParams(location.search);
+    const key = (params.get('man') || '').toLowerCase();
+    const src = PORTRAIT[key] || PORTRAIT.blade;
 
-  const img = document.getElementById('heroImg');
-  if (img) img.src = src;
-})();
-</script>
- 
+    const img = document.getElementById('heroImg');
+    if (img) img.src = src;
+  })();
+  </script>
+
 </body>
 </html>
