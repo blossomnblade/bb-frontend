@@ -27,7 +27,8 @@
 
       <!-- Composer pinned at bottom -->
       <div class="composer-wrap">
-        <form id="composerForm" class="composer" autocomplete="off">
+        <form id="composerForm" class="composer" autocomplete="off" onsubmit="event.preventDefault()">
+
           <input id="input" type="text" placeholder="Type a message…" inputmode="text" />
           <button id="sendBtn" type="submit">Send</button>
         </form>
