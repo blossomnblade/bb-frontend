@@ -1,20 +1,25 @@
 /* home.css — v18
    Default wallpaper on landing + unified buttons + dark form controls.
    Chat backgrounds remain in styles/chat.css only. */
+:root {
+  /* Winter theme background and overlay */
+  --site-bg-image: url('../images/bg/bg_winter_v1.webp');
+  --site-bg-overlay: rgba(0, 0, 0, 0.55); /* tweak 0.45–0.65 for lighter/darker overlay */
+}
 
 /* ===== Theme tokens ===== */
-:root{
-  --bg:#0b0b0d;
-  --ink:#eee;
-  --muted:#bdbdbd;
-  --line:#232326;
-  --accent:#ff2d83;
-  --card:#101113;
-  --button:#1a1b1f;
-  --radius:14px;
-  --shadow:0 10px 30px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.03) inset;
-  --btn-grad:linear-gradient(180deg,#ff2d83,#ff165f);
-  --focus:0 0 0 3px rgba(255,45,131,.35);
+:root {
+  --bg: #0a0a0a;             /* dark neutral base */
+  --ink: #f4f4f4;            /* off-white text */
+  --muted: #bdb8b2;          /* soft grey-beige for secondary text */
+  --line: #2a2a2a;           /* subtle divider lines */
+  --accent: #d88cff;         /* muted violet-pink accent */
+  --card: #111214;           /* background for cards/boxes */
+  --button: #7e6ea1;         /* winter violet button base */
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.03) inset;
+  --btn-grad: linear-gradient(180deg, #a67bcc, #8757b0); /* softer gradient */
+  --focus: 0 0 3px rgba(216,140,255,0.4);
 }
 
 /* ===== Base ===== */
@@ -28,7 +33,8 @@ body{
   color:var(--ink);
   font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
   background-color:var(--bg);
-  background-image:url("/images/bg/default.webp");
+ background-image: url("../images/bg/bg_winter_v1.webp");
+
   background-size:cover;
   background-position:center;
   background-attachment:fixed;
@@ -37,7 +43,8 @@ body{
 
 /* Optional: paywall-specific wallpaper hook (no HTML changes yet) */
 body.paywall{
-  background-image:url("/images/bg/bg-paywall.webp");
+background-image: url("../images/bg/bg_winter_v1.webp");
+ 
 }
 
 a{ color:var(--ink); text-decoration:none; }
