@@ -8,7 +8,7 @@ body.chat{
   margin:0;
   color:#f4f4f4;
   background:
-    linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
+    linear-gradient(rgba(0,0,0,.05), rgba(0,0,0,.05)),
     var(--room-bg, url('../images/bg/bg_winter_v1.webp')) center / cover no-repeat fixed;
   background-color:#0a0a0a;
 }
