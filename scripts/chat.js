@@ -157,7 +157,7 @@ const MULTILINGUAL_RULE = "Always reply in the user's language. Detect the langu
     if (heroImg && art && art.hero) heroImg.src = art.hero;
 
     // system banner + first persona line
-    banner("Welcome. I'm here for you—talk to me.");
+    
     bubble(greetLine(), "them");
 
     // wire composer
