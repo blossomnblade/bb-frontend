@@ -41,7 +41,7 @@
       "evening.",
       "you made it.",
       "come closer.",
-      "status check—how are you?"
+      "you with me, babygirl?"
     ],
   };
 
@@ -56,9 +56,9 @@
       lines: [
         "say it plain and i’ll make it simple.",
         "breathe. i’ve got you.",
-        "good—now tell me the first move.",
+        "good—now tell me what you need.",
         "i lead when you say so.",
-        "eyes up. we’re fine."
+        "eyes up. you're fine."
       ],
       nick: ["baby","lil lamb"]
     },
