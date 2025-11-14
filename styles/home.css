@@ -11,7 +11,8 @@
    ========================= */
 :root{
   /* Background image + overlay darkness (0.45–0.65 recommended) */
-  --site-bg-image: url('../images/bg/bg_winter_v1.webp');
+ --site-bg-image: url('../images/bg/bg_winter_all.webp');
+
   --site-bg-overlay: rgba(0,0,0,0.55);
 
   /* Color system */
