@@ -289,18 +289,6 @@ label{ color:var(--ink); }
    REDUNDANCY GUARDS
    - prevent older cached rules from re-introducing the old graffiti BG
    ========================= */
-body{
-  background-image: none; /* baseline */
-}
-body:not(.chat){
-  background-image:
-    linear-gradient(var(--site-bg-overlay), var(--site-bg-overlay)),
-    var(--site-bg-image);
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
-  background-repeat:no-repeat;
-}
 
 /* Ensure no card/panel tries to set a page wallpaper */
 [class*="wallpaper"], [data-wallpaper]{ background-image:none !important; }
