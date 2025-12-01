@@ -160,7 +160,7 @@
 
   // --- public adapter -------------------------------------------------------
   const state = {
-    useSupabase: false, // flip to true when ready
+    useSupabase: true, // Supabase enabled
   };
 
   async function saveMessage(man, from_role, text, ts){
