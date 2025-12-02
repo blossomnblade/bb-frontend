@@ -45,13 +45,13 @@
   let _sb = null;
   async function ensureSupabase(){
     if (_sb) return _sb;
-    const url = (root.NEXT_PUBLIC_SUPABASE_URL || "").trim();
-    const key = (root.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
+    const url = (window.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+    const key = (window.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
     if (!url || !key) throw new Error("Supabase env missing.");
-    if (!root.supabase){
+    if (!window.supabase){
       await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1/dist/umd/supabase.min.js");
     }
-    _sb = root.supabase.createClient(url, key, { auth: { persistSession: false } });
+    _sb = window.supabase.createClient(url, key, { auth: { persistSession: false } });
     return _sb;
   }
 
