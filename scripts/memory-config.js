@@ -67,10 +67,11 @@
 
   // --- Server-side embedding fetch ----------------------------------------
   async function getEmbedding(text, man, userId){
+    const uidValue = userId || uid();
     const res = await fetch("/api/embeddings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, man, uid: userId })
+      body: JSON.stringify({ text, man, uid: uidValue })
     });
     const data = await res.json();
     if (!res.ok || !data.embedding) throw new Error(data.error || "Failed to get embedding");
@@ -78,26 +79,22 @@
   }
 
   // --- Supabase message/fact operations -----------------------------------
-  async function sbSaveMessage(man, from_role, text, ts){
+  async function sbSaveMessage(man, from_role, text, ts, userId){
     const sb = await ensureSupabase();
     const when = ts ? new Date(ts).toISOString() : new Date().toISOString();
-    const userId = uid();
+    const uidValue = userId || uid();
 
     // insert message
     const { error: msgErr } = await sb.from("messages").insert({
-      man, uid: userId, from_role, text, ts: when
+      man, uid: uidValue, from_role, text, ts: when
     });
     if (msgErr) throw msgErr;
 
     // request embedding from server API
     try {
-      const embedding = await getEmbedding(text, man, userId);
-      const { error: vecErr } = await sb.from("vectors").insert({
-        man, uid: userId, text, embedding, ts: when
-      });
-      if (vecErr) throw vecErr;
+      await getEmbedding(text, man, uidValue);
     } catch(e){
-      console.error("Error storing vector:", e);
+      console.error("Error requesting embedding:", e);
     }
   }
 
@@ -143,8 +140,8 @@
   // --- public adapter -------------------------------------------------------
   const state = { useSupabase: true };
 
-  async function saveMessage(man, from_role, text, ts){
-    try { await sbSaveMessage(man, from_role, text, ts); } 
+  async function saveMessage(man, from_role, text, ts, userId){
+    try { await sbSaveMessage(man, from_role, text, ts, userId); } 
     catch(e){ console.error("Error saving message:", e); }
   }
 
