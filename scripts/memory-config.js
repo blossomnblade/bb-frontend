@@ -65,18 +65,40 @@
     });
   }
 
+  // --- Server-side embedding fetch ----------------------------------------
+  async function getEmbedding(text, man, userId){
+    const res = await fetch("/api/embeddings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, man, uid: userId })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.embedding) throw new Error(data.error || "Failed to get embedding");
+    return data.embedding;
+  }
+
   // --- Supabase message/fact operations -----------------------------------
   async function sbSaveMessage(man, from_role, text, ts){
     const sb = await ensureSupabase();
     const when = ts ? new Date(ts).toISOString() : new Date().toISOString();
-    
+    const userId = uid();
+
     // insert message
     const { error: msgErr } = await sb.from("messages").insert({
-      man, uid: uid(), from_role, text, ts: when
+      man, uid: userId, from_role, text, ts: when
     });
     if (msgErr) throw msgErr;
 
-    // embedding handled by server API — no client-side embedding
+    // request embedding from server API
+    try {
+      const embedding = await getEmbedding(text, man, userId);
+      const { error: vecErr } = await sb.from("vectors").insert({
+        man, uid: userId, text, embedding, ts: when
+      });
+      if (vecErr) throw vecErr;
+    } catch(e){
+      console.error("Error storing vector:", e);
+    }
   }
 
   async function sbLoadHistory(man){
@@ -115,7 +137,6 @@
   }
 
   async function sbClearOld(man){
-    // server-side retention recommended for messages/vectors
     return;
   }
 
