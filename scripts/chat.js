@@ -169,4 +169,6 @@ const MULTILINGUAL_RULE = "Always reply in the user's language. Detect the langu
     wireComposer();
     scrollToBottom();
   });
+     // expose for console testing
+  window.sendFromComposer = sendFromComposer;
 })();
