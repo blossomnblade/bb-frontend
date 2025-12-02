@@ -87,11 +87,12 @@ const MULTILINGUAL_RULE = "Always reply in the user's language. Detect the langu
   /* ---------- composer ---------- */
   async function sendFromComposer(ev){
 
-    if (ev) ev.preventDefault();
-    const input = $("#input");
-    if (!input) return;
-    const txt = (input.value || "").trim();
-    if (!txt) { input.focus(); return; }
+  if (ev) ev.preventDefault();
+  const input = $("#input");
+  if (!input) return;
+  const txt = (input.value || "").trim();
+  if (!txt) { input.focus(); return; }
+
   // --- SAFETY FILTER ---
   if (window.Safety) {
     if (!window.Safety.ready) {
@@ -112,24 +113,28 @@ const MULTILINGUAL_RULE = "Always reply in the user's language. Detect the langu
   }
   // --- END SAFETY FILTER ---
 
-    // you → bubble
-    bubble(txt, "me");
+  // you → bubble
+  bubble(txt, "me");
 
-    // naive persona reply (local-only until backend/LLM)
-    window.setTimeout(() => {
-      bubble(replyLine(), "them");
-    }, 450);
+  // naive persona reply (local-only until backend/LLM)
+  window.setTimeout(() => {
+    bubble(replyLine(), "them");
+  }, 450);
 
-    // TODO: persistence (local or Supabase/Azure via adapter)
-    try {
-      if (window.BBMemory && typeof window.BBMemory.store === "function") {
-        window.BBMemory.store({ man, from: "you", text: txt });
-      }
-    } catch (e) { /* non-fatal */ }
-
-    input.value = "";
-    input.focus();
+  // --- Persistence via BBMemory ---
+  try {
+    if (window.BBMemory && typeof window.BBMemory.saveMessage === "function") {
+      // optional: pass logged-in user ID if available; anonymous users use BBMemory.uid()
+      const loggedInUserId = window.currentUser?.id || null; // adjust to your auth system
+      await window.BBMemory.saveMessage(man, "user", txt, undefined, loggedInUserId);
+    }
+  } catch (e) {
+    console.error("Error saving message:", e);
   }
+
+  input.value = "";
+  input.focus();
+}
 
   function wireComposer(){
     const form = $("#composerForm");
