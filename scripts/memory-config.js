@@ -1,7 +1,8 @@
-/* Blossom & Blade — memory-config.js (vector-enabled)
-   - Messages + vector embeddings
+/* Blossom & Blade — memory-config.js (vector-enabled, server-side embeddings)
+   - Messages stored normally in Supabase
+   - Vectors stored via server API (not in browser)
    - Facts stored normally
-   Env (public): NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, OPENAI_API_KEY
+   Env (public): NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
 */
 
 (function (root, factory) {
@@ -64,42 +65,18 @@
     });
   }
 
-  // --- OpenAI embedding ----------------------------------------------------
-  async function getEmbedding(text){
-    const key = root.OPENAI_API_KEY;
-    if (!key) throw new Error("OPENAI_API_KEY missing");
-    const res = await fetch("https://api.openai.com/v1/embeddings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${key}`
-      },
-      body: JSON.stringify({
-        input: text,
-        model: "text-embedding-3-large"
-      })
-    });
-    const data = await res.json();
-    if (!data.data || !data.data[0] || !data.data[0].embedding) throw new Error("Failed to get embedding");
-    return data.data[0].embedding;
-  }
-
   // --- Supabase message/fact operations -----------------------------------
   async function sbSaveMessage(man, from_role, text, ts){
     const sb = await ensureSupabase();
     const when = ts ? new Date(ts).toISOString() : new Date().toISOString();
+    
     // insert message
     const { error: msgErr } = await sb.from("messages").insert({
       man, uid: uid(), from_role, text, ts: when
     });
     if (msgErr) throw msgErr;
 
-    // insert vector
-    const embedding = await getEmbedding(text);
-    const { error: vecErr } = await sb.from("vectors").insert({
-      man, uid: uid(), text, embedding, ts: when
-    });
-    if (vecErr) throw vecErr;
+    // embedding handled by server API — no client-side embedding
   }
 
   async function sbLoadHistory(man){
@@ -138,6 +115,7 @@
   }
 
   async function sbClearOld(man){
+    // server-side retention recommended for messages/vectors
     return;
   }
 
