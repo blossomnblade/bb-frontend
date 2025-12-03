@@ -66,11 +66,18 @@
   }
 
   // --- Server-side embedding fetch ----------------------------------------
-// --- TEMPORARY: Disable embeddings entirely to prevent JSON.parse errors ---
-async function getEmbedding(text, man, userId){
-  console.warn("⚠ Embeddings disabled — returning dummy vector.");
-  return Array(1536).fill(0.0); // matching OpenAI dimensions
-}
+  async function getEmbedding(text, man, userId){
+    const uidValue = userId || uid();
+    const res = await fetch("/api/embeddings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, man, uid: uidValue })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.embedding) throw new Error(data.error || "Failed to get embedding");
+    return data.embedding;
+  }
+
 
   // --- Supabase message/fact operations -----------------------------------
   async function sbSaveMessage(man, from_role, text, ts, userId){
