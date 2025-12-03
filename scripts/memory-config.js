@@ -163,6 +163,7 @@
     useSupabase: true,
     getPlan, setPlan, retentionDays,
     saveMessage, loadHistory, saveFact, getFact, clearOld,
-    uid
+    uid,
+    getEmbedding // expose for testing   
   };
 });
