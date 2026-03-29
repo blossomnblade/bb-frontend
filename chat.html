@@ -43,11 +43,19 @@
     </section>
   </main>
 
-  <!-- PERSONA PHRASES + MEMORY CONFIG MUST LOAD BEFORE chat.js -->
-  <script src="/scripts/phrases.js?v=4"></script>
-  <script src="/scripts/memory-config.js?v=1"></script>
-  <!-- safety.js removed because it causes 404 -->
-  <script type="module" src="/scripts/chat.js?v=8"></script>
+<!-- PERSONA PHRASES + MEMORY CONFIG MUST LOAD BEFORE chat.js -->
+<!-- <script src="/scripts/phrases.js?v=4"></script> -->
+
+<script>
+  // Supabase config for static page (needed by memory-config.js)
+  window.NEXT_PUBLIC_SUPABASE_URL = "https://jpfhvxavpnkvcqejehjn.supabase.co";
+  window.NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpwZmh2eGF2cG5rdmNxZWplaGpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAwMTI5NDQsImV4cCI6MjA3NTU4ODk0NH0.rU3WMnL_or89OXBXXcZZ4wlBlyU031vaKUm7ZOb3GBg";
+</script>
+
+<script src="/scripts/memory-config.js?v=1"></script>
+
+<!-- safety.js removed because it causes 404 -->
+<script type="module" src="/scripts/chat.js?v=8"></script>
 
   <script>
   (() => {
